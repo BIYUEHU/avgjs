@@ -13,8 +13,33 @@ const visual = new Visual({
   // autoDensity: true,
 });
 
-visual.setBackground('/images/bg.png');
-visual.addCharcter('/images/character/c1.png');
+visual.background('/images/bg.png');
+const c1 = visual.character('neri', {
+  assets: '/images/character/c1.png',
+});
+
+const events = [
+  () =>
+    visual.text('这是一串非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常长的文本'),
+
+  () => c1.text('hi'),
+  () => {
+    c1.view();
+    c1.text('这是一个对话测试');
+  },
+  () => c1.text('这也是一个对话测试'),
+  () => {
+    c1.text('bye~~');
+    c1.hide();
+  },
+  () => visual.text('ending...'),
+];
+
+document.body.addEventListener('click', () => {
+  if (events.length === 0) return;
+  events[0]();
+  events.shift();
+});
 
 /* infer width and height */
 if (window.innerHeight > window.innerWidth) {
