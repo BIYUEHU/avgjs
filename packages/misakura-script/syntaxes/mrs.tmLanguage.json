@@ -1,0 +1,212 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "mrs",
+  "scopeName": "source.mrs",
+  "fileTypes": ["mrs"],
+  "patterns": [
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#command"
+    },
+    {
+      "include": "#sugar"
+    },
+    {
+      "include": "#unknown"
+    }
+  ],
+  "repository": {
+    "comment": {
+      "patterns": [
+        {
+          "name": "meta.comment.block.mrs",
+          "begin": "^[ \\t]*((#)([\\#\\>\\~\\!\\@\\$\\%\\^\\*]+)((.*)))$",
+          "end": "^(?![ \\t]*#)",
+          "beginCaptures": {
+            "1": {
+              "name": "comment.block.mrs"
+            },
+            "2": {
+              "name": "markup.list.mrs"
+            },
+            "3": {
+              "name": "markup.list.mrs"
+            },
+            "4": {
+              "name": "markup.bold.mrs"
+            },
+            "5": {
+              "name": "markup.list.mrs"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comment.block"
+            }
+          ]
+        },
+        {
+          "name": "meta.comment.line.mrs",
+          "match": "^[ \\t]*(#.*)$",
+          "captures": {
+            "1": {
+              "name": "comment.line.mrs"
+            }
+          }
+        }
+      ]
+    },
+    "command": {
+      "patterns": [
+        {
+          "name": "meta.command.mrs",
+          "begin": "^(goto|call|using|play|background|image|character|say)[ \n]",
+          "end": "$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.mrs"
+            }
+          },
+          "patterns": [
+            {
+              "begin": "(?<= )",
+              "end": "[ \\n]",
+              "contentName": "meta.command.token.mrs",
+              "patterns": [
+                {
+                  "include": "#command.tokens"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "sugar": {
+      "patterns": [
+        {
+          "name": "meta.sugar.mrs",
+          "begin": "^(.*?)(:)(.*)",
+          "end": "$",
+          "captures": {
+            "1": {
+              "name": "support.function.builtin.mrs"
+            },
+            "2": {
+              "name": "constant.character.escape.mrs"
+            },
+            "3": {
+              "name": "string.quoted.mrs"
+            }
+          }
+        }
+      ]
+    },
+    "unknown": {
+      "patterns": [
+        {
+          "name": "meta.unknown.mrs",
+          "match": "^(.*)$",
+          "captures": {
+            "1": {
+              "name": "invalid.illegal.mrs"
+            }
+          }
+        }
+      ]
+    },
+    "command.tokens": {
+      "patterns": [
+        {
+          "include": "#command.token.option"
+        },
+        {
+          "include": "#command.token.number"
+        },
+        {
+          "include": "#command.token.boolean"
+        },
+        {
+          "include": "#command.token.quoted_string"
+        },
+        {
+          "include": "#command.token.single_quoted_string"
+        },
+        {
+          "include": "#command.token.unquoted_string"
+        },
+        {
+          "include": "#command.token.unknown"
+        }
+      ]
+    },
+    "command.token.option": {
+      "name": "meta.command.token.option.mrs",
+      "match": "(?<= )((-[A-Z])|(--[a-z]+))(?=[ \\n]|$)",
+      "captures": {
+        "1": {
+          "name": "variable.parameter.mrs"
+        }
+      }
+    },
+    "command.token.number": {
+      "name": "meta.command.token.number.mrs",
+      "match": "(?<= )(\\-?\\d*\\.?\\d+)(?=[ \\n]|$)",
+      "captures": {
+        "1": {
+          "name": "constant.numeric.mrs"
+        }
+      }
+    },
+    "command.token.boolean": {
+      "name": "meta.command.token.boolean.mrs",
+      "match": "(?<= )(true|false)(?=[ \\n]|$)",
+      "captures": {
+        "1": {
+          "name": "constant.numeric.mrs"
+        }
+      }
+    },
+    "command.token.quoted_string": {
+      "name": "meta.command.token.quoted_string.mrs",
+      "match": "(?<= )(\")(.*?)(\")(?=[ \\n]|$)",
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.mrs"
+        },
+        "2": {
+          "name": "string.quoted.mrs"
+        },
+        "3": {
+          "name": "constant.character.escape.mrs"
+        }
+      }
+    },
+    "command.token.single_quoted_string": {
+      "name": "meta.command.token.single_quoted_string.mrs",
+      "match": "(?<= )(')(.*?)(')(?=[ \\n]|$)",
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.mrs"
+        },
+        "2": {
+          "name": "string.quoted.single.mrs"
+        },
+        "3": {
+          "name": "constant.character.escape.mrs"
+        }
+      }
+    }
+  },
+  "command.token.unknown": {
+    "name": "meta.command.token.unknown.mrs",
+    "match": "(?<= )([^ \\n]*)(?=[ \\n]|$)",
+    "captures": {
+      "1": {
+        "name": "invalid.illegal.mrs"
+      }
+    }
+  }
+}

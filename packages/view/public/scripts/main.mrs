@@ -1,0 +1,46 @@
+# Main.mrs - Misakura 脚本默认入口文件
+
+# 加载 i18n 国际化文件
+using /locales/ --global
+
+# 加载背景
+background /images/bg.png
+
+# 加载角色
+character neri --name '角色1' --figure /images/character/c1.png -G
+# Options:
+  # -N, --name 设置角色显示名字
+  # -F, --figure 设置角色当前使用立绘
+  # -G, --global 挂载到全局作用域下
+
+# 对话
+# 无说话者消息（角色独白），阻塞指令（将暂停程序直至用户点击屏幕）
+say '这是一串非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常长的文本'
+# 有说话者消息
+say 'hi' -S neri
+# Options:
+  # -S, --speaker 设置该消息的说话者
+# 显示角色立绘
+character neri --show
+
+neri: 这是一个对话测试
+# say 指令语法糖, 等同于 say '这是一个对话测试' -S neri
+neri: 这也是一个对话测试
+neri: bye~~
+
+# 隐藏角色立绘
+character neri --show false
+
+say 'ending...'
+
+# 播放视频（全屏展示），此时为阻塞指令
+play /video/op.mp4
+
+# 播放音乐（背景音乐），此时为非阻塞指令
+play /bgm/music1.mp3
+
+# 调用外部脚本文件
+call ./function1.mrs
+
+# 跳转到外部脚本文件继续，结束当前脚本与作用域并释放资源
+goto ./label1.mrs

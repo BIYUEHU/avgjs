@@ -1,12 +1,4 @@
 {
   "extends": "./packages/view/tsconfig.base.json",
-  "include": [
-    "package/**/src",
-    "package/**/*.ts"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  "include": ["package/**/src", "package/**/*.ts"]
 }

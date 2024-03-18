@@ -1,0 +1,41 @@
+{
+  "name": "misakura-script",
+  "displayName": "Misakura Script",
+  "description": "Syntax highlight for Misakura rin Script",
+  "icon": "./icons/icon.png",
+  "license": "MIT",
+  "publisher": "hotaru",
+  "repository": "https://github.com/biyuehu/misakura",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.87.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "mrs",
+        "aliases": [
+          "mrs"
+        ],
+        "extensions": [
+          ".mrs"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/icon.svg",
+          "dark": "./icons/icon.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mrs",
+        "scopeName": "source.mrs",
+        "path": "./syntaxes/mrs.tmLanguage.json"
+      }
+    ]
+  }
+}
