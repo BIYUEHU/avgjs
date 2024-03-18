@@ -1,0 +1,35 @@
+{
+  "name": "misakura",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "description": "A simple visual novel engine base on Rust + React",
+  "license": "GPL-3.0",
+  "author": "Hotaru <biyuehuya@gmail.com>",
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "keywords": [
+    "misakura",
+    "engine",
+    "galgame",
+    "gal",
+    "visual novel"
+  ],
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "bugs": {
+    "url": "https://github.com/kotorijs/kotori/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kotorijs/kotori.git"
+  },
+  "homepage": "https://kotori.js.org",
+  "dependencies": {
+    "@tauri-apps/api": "^1",
+    "pixi.js": "^7.4.0"
+  }
+}

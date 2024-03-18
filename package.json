@@ -1,26 +1,14 @@
 {
-  "name": "misakura",
+  "name": "@misakura/root",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "tauri": "tauri"
+    "view": "pnpm --filter view",
+    "dev": "cd packages/view/ && tsc --build && pnpm tauri dev",
+    "build": "pnpm view build",
+    "preview": "pnpm view preview",
+    "tauri": "pnpm view tauri"
   },
-  "dependencies": {
-    "@tauri-apps/api": "^1",
-    "pixi.js": "^7.4.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@tauri-apps/cli": "^1",
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
-    "@vitejs/plugin-react": "^4.2.1",
-    "typescript": "^5.0.2",
-    "vite": "^5.0.0"
-  }
+  "packageManager": "pnpm@8.7.4"
 }

@@ -12,11 +12,11 @@ export class Character {
 
   private ctx: Visual;
 
-  private identity: string;
+  protected identity: string;
 
   private option: Option;
 
-  private isView = false;
+  private isView = true;
 
   public constructor(ctx: Visual, identity: string, option: Option) {
     this.ctx = ctx;

@@ -1,5 +1,5 @@
 import './styles.css';
-import { Visual } from './utils';
+import { Visual } from 'misakura';
 
 const { innerWidth: windowWidth, innerHeight: windowHeight } = window;
 const [viewportWidth, viewportHeight] =
