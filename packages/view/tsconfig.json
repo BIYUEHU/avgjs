@@ -1,15 +1,14 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
   },
   "include": ["src"],
   "references": [
     {
       "path": "../misakura"
-    },
-    {
-      "path": "./tsconfig.node.json"
     }
   ]
 }

@@ -1,5 +1,6 @@
 import { Sprite } from 'PIXI.js';
 import type { Visual } from './visual';
+import loadAssets from './utils/loadAssets';
 
 interface Option {
   name?: string;
@@ -10,23 +11,26 @@ interface Option {
 export class Character {
   private el?: Sprite;
 
-  private ctx: Visual;
+  private readonly ctx: Visual;
 
-  protected identity: string;
+  protected readonly identity: string;
 
   private option: Option;
 
-  private isView = true;
+  private isView = false;
 
   public constructor(ctx: Visual, identity: string, option: Option) {
     this.ctx = ctx;
     this.identity = identity;
     this.option = option;
     if (!this.option.assets) return;
-    this.ctx.loadAssets(this.option.assets).then((el) => {
+    loadAssets(this.option.assets).then((el) => {
       el.scale.set(this.ctx.calcH(el.height / 1080) / el.height);
+      if (this.option.view || this.isView) {
+        this.isView = false;
+        this.view();
+      }
       this.el = el;
-      if (this.option.view) this.view();
     });
   }
 
@@ -45,7 +49,7 @@ export class Character {
   }
 
   public text(text: string) {
-    this.ctx.text(`「${text}」`);
+    return this.ctx.text(`「${text}」`);
   }
 }
 

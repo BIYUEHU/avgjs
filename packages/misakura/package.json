@@ -2,7 +2,7 @@
   "name": "misakura",
   "version": "0.1.0",
   "main": "dist/index.js",
-  "description": "A simple visual novel engine base on Rust + React",
+  "description": "A simple visual novel engine",
   "license": "GPL-3.0",
   "author": "Hotaru <biyuehuya@gmail.com>",
   "scripts": {
@@ -29,7 +29,12 @@
   },
   "homepage": "https://kotori.js.org",
   "dependencies": {
+    "@kotori-bot/tools": "^1.2.1",
     "@tauri-apps/api": "^1",
+    "minimist": "^1.2.8",
     "pixi.js": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/minimist": "^1.2.5"
   }
 }

@@ -2,7 +2,7 @@
   "name": "misakura-script",
   "displayName": "Misakura Script",
   "description": "Syntax highlight for Misakura rin Script",
-  "icon": "./icons/icon.png",
+  "icon": "icons/icon.png",
   "license": "MIT",
   "publisher": "hotaru",
   "repository": "https://github.com/biyuehu/misakura",

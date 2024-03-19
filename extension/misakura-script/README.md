@@ -6,4 +6,4 @@ Syntax highlight for Misakura rin Script
 
 ## About
 
-- [Misakura](https://github.com/biyuehu/misakura) A simple visual novel engine base on Rust + React
+- [Misakura](https://github.com/biyuehu/misakura) A simple visual novel engine

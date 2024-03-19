@@ -4,12 +4,19 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "pnpm@8.7.4",
   "scripts": {
-    "view": "pnpm --filter view",
-    "dev": "cd packages/view/ && tsc --build && pnpm tauri dev",
-    "build": "pnpm view build",
-    "preview": "pnpm view preview",
-    "tauri": "pnpm view tauri"
+    "serve": "pnpm --filter @misakura/view",
+    "dev": "nodemon --exec \"pnpm dev:only\" --ext ts --watch packages/misakura/src/ --ignore packages/view/",
+    "dev:only": "cd packages/view/ && tsc --build && pnpm tauri dev",
+    "build": "pnpm serve tauri build",
+    "preview": "pnpm serve preview"
   },
-  "packageManager": "pnpm@8.7.4"
+  "devDependencies": {
+    "eslint": "^8.47.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-typescript": "^3.0.0",
+    "nodemon": "^3.1.0"
+  }
 }
