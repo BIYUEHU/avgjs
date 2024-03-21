@@ -7,7 +7,7 @@
   "packageManager": "pnpm@8.7.4",
   "scripts": {
     "serve": "pnpm --filter @misakura/view",
-    "dev": "nodemon --exec \"pnpm dev:only\" --ext ts --watch packages/misakura/src/ --ignore packages/view/",
+    "dev": "nodemon --exec \"pnpm dev:only\" --ext ts,mrs --watch packages/{misakura/src,view/public}/ --ignore packages/view/src/",
     "dev:only": "cd packages/view/ && tsc --build && pnpm tauri dev",
     "build": "pnpm serve tauri build",
     "preview": "pnpm serve preview"

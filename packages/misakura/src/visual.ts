@@ -3,10 +3,18 @@ import { event } from '@tauri-apps/api';
 import { Application, Sprite, Container, Text, TextStyle } from 'PIXI.js';
 import { TauriEvent } from '@tauri-apps/api/event';
 import Character from './character';
-import loadAssets from './utils/loadAssets';
+import loadAssets from './tools/loadAssets';
+import State, { StateType } from './components/state';
+import Parser from './components/parser';
+import { DEFAULT_VISUAL_OPTION } from './const';
 
 interface EventsList {
   view_click(): void;
+}
+
+interface VisualOption {
+  render?: Exclude<ConstructorParameters<typeof Application>[0], 'width' | 'height'>;
+  entry: string;
 }
 
 export class Visual extends Events<EventsList> {
@@ -22,21 +30,24 @@ export class Visual extends Events<EventsList> {
     return { width: (windowH * 16) / 9, height: windowH };
   }
 
-  private isView = false;
+  private readonly option: VisualOption;
 
-  public channel = {
+  private isShow = false;
+
+  public readonly elements = {
     bg: new Sprite(),
     text: new Text(),
+    name: new Text(),
     characters: new Map<string, Character>(),
   };
 
-  public ctn = {
+  public readonly ctn = {
     before: new Container(),
     middle: new Container(),
     after: new Container(),
   };
 
-  public app: Application;
+  public readonly app: Application;
 
   private async initialize() {
     /* register */
@@ -44,32 +55,41 @@ export class Visual extends Events<EventsList> {
       if (event.key === 'F5') event.preventDefault();
     });
     event.listen(TauriEvent.WINDOW_RESIZED, () => window.location.reload());
-    /* channel */
+    /* elements */
+    this.character('unknown', { name: '???' });
     const dialog = await loadAssets('/gui/dialog.png');
     this.app.stage.addChild(...Object.values(this.ctn));
     dialog.width = this.width();
-    dialog.position.set(undefined, this.calcH(0.73));
-    this.channel.text.style = new TextStyle({
+    dialog.position.set(undefined, this.calcH(0.72));
+    this.elements.name.style = new TextStyle({
+      breakWords: true,
+      wordWrap: true,
+      wordWrapWidth: this.calcW(0.9),
+      fontSize: this.calcH(0.045, 18, 60),
+    });
+    this.elements.name.position.set(this.calcW(0.045, undefined, 180), this.calcH(0.72));
+    this.elements.text.style = new TextStyle({
       breakWords: true,
       wordWrap: true,
       wordWrapWidth: this.calcW(0.9),
       fontSize: this.calcH(0.036, 16, 55),
     });
-    this.channel.text.position.set(this.calcW(0.05, undefined, 200), this.calcH(0.79));
-    this.ctn.after.addChild(dialog, this.channel.text);
+    this.elements.text.position.set(this.calcW(0.05, undefined, 200), this.calcH(0.79));
+    this.ctn.after.addChild(dialog, this.elements.name, this.elements.text);
   }
 
-  public constructor(option: Exclude<ConstructorParameters<typeof Application>[0], 'width' | 'height'> = {}) {
+  public constructor(option: VisualOption = DEFAULT_VISUAL_OPTION) {
     super();
-    this.app = new Application({ ...Visual.getWindow(), ...option });
+    this.option = option;
+    this.app = new Application({ ...Visual.getWindow(), ...(this.option.render ?? {}) });
     this.initialize();
   }
 
   public view(element: HTMLElement = document.body) {
-    if (this.isView) return;
+    if (this.isShow) return;
     element.appendChild(this.app.view as unknown as Node);
     document.addEventListener('click', () => this.emit('view_click'));
-    this.isView = true;
+    this.isShow = true;
   }
 
   public width() {
@@ -88,23 +108,46 @@ export class Visual extends Events<EventsList> {
     return Visual.calcHandle(rate * this.height(), min, max);
   }
 
+  public async play(option?: { script: string; index?: number }) {
+    const { script, index } = option || {};
+    const state = State.get() as StateType['dialog'];
+    if (state.state !== 'dialog') state.state = 'dialog';
+    if (script) {
+      state.script = script;
+      state.index = index ?? 0;
+    } else if (!state.script) {
+      state.script = this.option.entry;
+      state.index = 0;
+    }
+    await new Parser(this).run();
+  }
+
   public async background(assets: string) {
-    if (this.channel.bg) this.ctn.before.removeChild(this.channel.bg);
+    if (this.elements.bg) this.ctn.before.removeChild(this.elements.bg);
     const el = await loadAssets(assets);
     el.width = this.width();
     el.height = this.height();
     this.ctn.before.addChild(el);
-    this.channel.bg = el;
+    this.elements.bg = el;
   }
 
   public character(identity: string, option: ConstructorParameters<typeof Character>[2] = {}) {
-    const instance = new Character(this, identity, option);
-    this.channel.characters.set(identity, instance);
+    const instance = this.elements.characters.get(identity);
+    if (!instance) {
+      const instance = new Character(this, identity, option);
+      this.elements.characters.set(identity, instance);
+      return instance;
+    }
+    const { name, show, figure } = option;
+    if (name !== undefined) instance.name(name);
+    if (show !== undefined) instance[show ? 'view' : 'hide']();
+    if (figure !== undefined) instance.figure(figure);
     return instance;
   }
 
-  public async text(text: string) {
-    this.channel.text.text = text;
+  public async text(text: string, name: string = '') {
+    this.elements.text.text = text;
+    this.elements.name.text = name;
     return new Promise<void>((reject) => {
       this.once('view_click', () => reject(undefined));
     });

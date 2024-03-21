@@ -1,11 +1,11 @@
 import { Sprite } from 'PIXI.js';
 import type { Visual } from './visual';
-import loadAssets from './utils/loadAssets';
+import loadAssets from './tools/loadAssets';
 
 interface Option {
   name?: string;
-  assets?: string;
-  view?: boolean;
+  figure?: string;
+  show?: boolean;
 }
 
 export class Character {
@@ -17,39 +17,44 @@ export class Character {
 
   private option: Option;
 
-  private isView = false;
+  private isShow = false;
 
   public constructor(ctx: Visual, identity: string, option: Option) {
     this.ctx = ctx;
     this.identity = identity;
     this.option = option;
-    if (!this.option.assets) return;
-    loadAssets(this.option.assets).then((el) => {
-      el.scale.set(this.ctx.calcH(el.height / 1080) / el.height);
-      if (this.option.view || this.isView) {
-        this.isView = false;
-        this.view();
-      }
-      this.el = el;
-    });
+    if (this.option.figure) this.figure(this.option.figure);
   }
 
   public view() {
+    if (this.isShow) return;
+    this.isShow = true;
     if (!this.el) return;
-    if (this.isView) return;
     this.ctx.ctn.middle.addChild(this.el);
-    this.isView = true;
   }
 
   public hide() {
+    if (!this.isShow) return;
+    this.isShow = false;
     if (!this.el) return;
-    if (!this.isView) return;
     this.ctx.ctn.middle.removeChild(this.el);
-    this.isView = false;
   }
 
   public text(text: string) {
-    return this.ctx.text(`「${text}」`);
+    return this.ctx.text(`「${text}」`, this.option.name);
+  }
+
+  public async figure(figure: string) {
+    const el = await loadAssets(figure);
+    el.scale.set(this.ctx.calcH(el.height / 1080) / el.height);
+    this.el = el;
+    if (!this.option.show && !this.isShow) return;
+    this.hide();
+    this.view();
+  }
+
+  public name(name: string) {
+    this.option.name = name;
   }
 }
 
