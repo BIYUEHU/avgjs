@@ -33,6 +33,15 @@ export class State {
     });
   }
 
+  public static getMusicTime() {
+    const result = Number(this.storage.getItem('musicTime'));
+    return Number.isNaN(result) || !result ? undefined : result;
+  }
+
+  public static setMusicTime(time: number = 0) {
+    this.storage.setItem('musicTime', String(time));
+  }
+
   public static readonly debug = true;
 }
 

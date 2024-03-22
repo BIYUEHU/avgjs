@@ -14,31 +14,50 @@ interface EventsList {
 
 interface VisualOption {
   render?: Exclude<ConstructorParameters<typeof Application>[0], 'width' | 'height'>;
+  styles?: {
+    background?: string;
+    dialog?: string;
+    dialogX?: number;
+    dialogY?: number;
+    dialogNameX?: number;
+    dialogNameY?: number;
+    dialogNameSize?: number;
+    dialogMsgX?: number;
+    dialogMsgY?: number;
+    dialogMsgWrap?: number;
+    dialogMsgSize?: number;
+    margin?: number;
+    characterHeight?: number;
+  };
   entry: string;
 }
 
-export class Visual extends Events<EventsList> {
-  private static calcHandle(result: number, min?: number, max?: number) {
-    if (min) return result < min ? min : result;
-    if (max) return result > max ? max : result;
-    return result;
-  }
+interface CharacterOption {
+  name?: string;
+  figure?: string;
+  show?: boolean;
+}
 
+type RequiredCycle<T extends object> = {
+  [K in keyof T]-?: T[K] extends object ? RequiredCycle<T[K]> : Required<T[K]>;
+};
+
+export class Visual extends Events<EventsList> {
   private static getWindow() {
     const { innerWidth: windowW, innerHeight: windowH } = window;
     if (windowW / windowH < 16 / 9) return { width: windowW, height: (windowW * 9) / 16 };
     return { width: (windowH * 16) / 9, height: windowH };
   }
 
-  private readonly option: VisualOption;
-
   private isShow = false;
+
+  public readonly option: RequiredCycle<Omit<VisualOption, 'render'>> & { render?: VisualOption['render'] };
 
   public readonly elements = {
     bg: new Sprite(),
-    text: new Text(),
+    msg: new Text(),
     name: new Text(),
-    characters: new Map<string, Character>(),
+    chars: new Map<string, Character>(),
   };
 
   public readonly ctn = {
@@ -56,31 +75,32 @@ export class Visual extends Events<EventsList> {
     });
     event.listen(TauriEvent.WINDOW_RESIZED, () => window.location.reload());
     /* elements */
+    const { styles: s } = this.option;
     this.character('unknown', { name: '???' });
-    const dialog = await loadAssets('/gui/dialog.png');
+    const dialog = await loadAssets(s.dialog);
     this.app.stage.addChild(...Object.values(this.ctn));
+    dialog.position.set(this.calcX(s.dialogX), this.calcY(s.dialogY));
     dialog.width = this.width();
-    dialog.position.set(undefined, this.calcH(0.72));
+    dialog.height = this.height() - dialog.y;
+    this.elements.name.position.set(this.calcX(s.dialogNameX), this.calcY(s.dialogNameY));
     this.elements.name.style = new TextStyle({
+      fontSize: this.calcY(s.dialogNameSize),
+    });
+    this.elements.msg.position.set(this.calcX(s.dialogMsgX), this.calcY(s.dialogMsgY));
+    this.elements.msg.style = new TextStyle({
       breakWords: true,
       wordWrap: true,
-      wordWrapWidth: this.calcW(0.9),
-      fontSize: this.calcH(0.045, 18, 60),
+      wordWrapWidth: this.calcX(s.dialogMsgWrap),
+      fontSize: this.calcY(s.dialogMsgSize),
     });
-    this.elements.name.position.set(this.calcW(0.045, undefined, 180), this.calcH(0.72));
-    this.elements.text.style = new TextStyle({
-      breakWords: true,
-      wordWrap: true,
-      wordWrapWidth: this.calcW(0.9),
-      fontSize: this.calcH(0.036, 16, 55),
-    });
-    this.elements.text.position.set(this.calcW(0.05, undefined, 200), this.calcH(0.79));
-    this.ctn.after.addChild(dialog, this.elements.name, this.elements.text);
+    this.ctn.after.addChild(dialog, this.elements.name, this.elements.msg);
   }
 
-  public constructor(option: VisualOption = DEFAULT_VISUAL_OPTION) {
+  public constructor(option?: VisualOption) {
     super();
-    this.option = option;
+    const opt = option ?? ({} as VisualOption);
+    opt.styles = { ...DEFAULT_VISUAL_OPTION.styles, ...('styles' in opt ? opt.styles : {}) };
+    this.option = { ...DEFAULT_VISUAL_OPTION, ...opt } as typeof this.option;
     this.app = new Application({ ...Visual.getWindow(), ...(this.option.render ?? {}) });
     this.initialize();
   }
@@ -89,6 +109,7 @@ export class Visual extends Events<EventsList> {
     if (this.isShow) return;
     element.appendChild(this.app.view as unknown as Node);
     document.addEventListener('click', () => this.emit('view_click'));
+    this.background(this.option.styles.background);
     this.isShow = true;
   }
 
@@ -100,12 +121,16 @@ export class Visual extends Events<EventsList> {
     return this.app.screen.height;
   }
 
-  public calcW(rate: number, min?: number, max?: number) {
-    return Visual.calcHandle(rate * this.width(), min, max);
+  public calcX(value: number = 1, rate: number = 1) {
+    const origin = rate * this.width();
+    if (value >= 1) return value * (origin / 1920);
+    return value * origin;
   }
 
-  public calcH(rate: number, min?: number, max?: number) {
-    return Visual.calcHandle(rate * this.height(), min, max);
+  public calcY(value: number = 1, rate: number = 1) {
+    const origin = rate * this.height();
+    if (value >= 1) return value * (origin / 1080);
+    return value * origin;
   }
 
   public async play(option?: { script: string; index?: number }) {
@@ -131,22 +156,20 @@ export class Visual extends Events<EventsList> {
     this.elements.bg = el;
   }
 
-  public character(identity: string, option: ConstructorParameters<typeof Character>[2] = {}) {
-    const instance = this.elements.characters.get(identity);
-    if (!instance) {
-      const instance = new Character(this, identity, option);
-      this.elements.characters.set(identity, instance);
-      return instance;
-    }
+  public async character(identity: string, option: CharacterOption) {
     const { name, show, figure } = option;
-    if (name !== undefined) instance.name(name);
-    if (show !== undefined) instance[show ? 'view' : 'hide']();
-    if (figure !== undefined) instance.figure(figure);
-    return instance;
+    let char = this.elements.chars.get(identity);
+    if (!char) {
+      char = new Character(this, identity, name);
+      this.elements.chars.set(identity, char);
+    } else if (name !== undefined) char.display(name);
+    if (show !== undefined) char[show ? 'view' : 'hide']();
+    if (figure !== undefined) await char.figure(figure);
+    return char;
   }
 
   public async text(text: string, name: string = '') {
-    this.elements.text.text = text;
+    this.elements.msg.text = text;
     this.elements.name.text = name;
     return new Promise<void>((reject) => {
       this.once('view_click', () => reject(undefined));

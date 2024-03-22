@@ -1,18 +1,19 @@
-background /images/bg.png
-
 # 加载角色
-character neri --name '真白' --figure /images/character/c1.png
-character hikaru --name '光'
-character sakura --name '樱'
-character yuki --name '雪'
-character akira --name '明'
+character neri --name '音理' --figure /images/figure/neri.png
+character hikaru --name '光' --figure /images/figure/hikaru.png
+character sakura --name '樱' --figure /images/figure/sakura.png
+character yuki --name '雪' --figure /images/figure/yuki.png
+character akira --name '明' --figure /images/figure/akira.png
 
 
 unknown: 我们今天要带给你一个精彩的故事。
+background /images/background/1.png
+
 character neri --name '未知的声音'
 neri: 准备好了吗？
-character neri --name '真白'
+character neri --name '音理'
 
+play /audio/music/1.flac
 show neri
 
 neri: 嗨，欢迎来到我们的演示！

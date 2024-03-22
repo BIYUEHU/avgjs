@@ -13,7 +13,7 @@ interface Operation {
   bg?: Command;
   text?: Command;
   music?: Command;
-  characters: Record<string, Command>;
+  chars: Record<string, Command>;
 }
 
 const COMMAND_OPTIONS: Record<string, Parameters<typeof minimist>[1]> = {
@@ -61,8 +61,42 @@ export class Parser {
   }
 
   /* TODO: base dir handle that is similar to node.js path module */
+  /* TODO: audio: music, voice and sound */
   private static audio(command: Command) {
     const audio = new Audio(command._[1]);
+    const step = 0.01;
+    /* TODO: max volume extends game volume setting */
+    const maxVolume = 0.5;
+    const faceTime = 5;
+    const interval = (faceTime / maxVolume) * step * 1000;
+    audio.volume = 0;
+    audio.loop = true;
+    audio.onplaying = () => {
+      const lastTime = State.getMusicTime();
+      if (lastTime && lastTime < audio.duration) audio.currentTime = lastTime;
+      const fadeInInterval = setInterval(() => {
+        if (audio.volume >= maxVolume) {
+          clearInterval(fadeInInterval);
+          return;
+        }
+        const result = audio.volume + step;
+        audio.volume = result > maxVolume ? maxVolume : result;
+      }, interval);
+      const setTimeInterval = setInterval(() => State.setMusicTime(audio.currentTime), 5000);
+      const endTimer = setTimeout(() => {
+        clearTimeout(endTimer);
+        State.setMusicTime();
+        clearInterval(setTimeInterval);
+        const fadeOutInterval = setInterval(() => {
+          if (audio.volume <= 0) {
+            clearInterval(fadeOutInterval);
+            return;
+          }
+          const result = audio.volume - step;
+          audio.volume = result < 0 ? 0 : result;
+        }, interval);
+      }, (audio.duration - faceTime) * 1000);
+    };
     audio.play();
     return audio;
   }
@@ -73,9 +107,9 @@ export class Parser {
     this.ctx.background(command._[1]);
   }
 
-  private character(command: Command) {
+  private async character(command: Command) {
     const { name, figure, show } = command;
-    this.ctx.character(command._[1], { name, figure, show });
+    await this.ctx.character(command._[1], { name, figure, show });
   }
 
   private async say(command: Command) {
@@ -84,14 +118,14 @@ export class Parser {
       await this.ctx.text(command._[1]);
       return;
     }
-    await (this.ctx.elements.characters.get(speaker) as ReturnType<typeof this.ctx.character>).text(command._[1]);
+    await this.ctx.elements.chars.get(speaker)?.text(command._[1]);
   }
 
   private async prehandle(commands: Command[], index0: number) {
-    const operation: Operation = { characters: {} };
+    const operation: Operation = { chars: {} };
     const characterExists = (id: string) => {
       if (id === 'think' || id === 'unknown') return;
-      if (id in operation.characters) return;
+      if (id in operation.chars) return;
       console.warn(`Cannot find character "${id}"`);
     };
     commands.forEach((command, index) => {
@@ -113,12 +147,12 @@ export class Parser {
           if (index <= index0 || State.debug) characterExists(command.speaker);
           break;
         case 'character':
-          operation.characters[args[1]] = { ...(operation.characters[args[1]] ?? []), ...command };
+          operation.chars[args[1]] = { ...(operation.chars[args[1]] ?? []), ...command };
           break;
         /* TODO: better debug to find question */
         case 'show':
           if (index <= index0 || State.debug) characterExists(args[1]);
-          if (index <= index0) operation.characters[args[1]].show = !command.hide;
+          if (index <= index0) operation.chars[args[1]].show = !command.hide;
           break;
         default:
           if (!State.debug) break;
@@ -127,7 +161,10 @@ export class Parser {
     });
     if (operation.bg) this.background(operation.bg);
     if (operation.music) Parser.audio(operation.music);
-    Object.values(operation.characters).forEach((command) => this.character(command));
+    /* eslint-disable-next-line no-restricted-syntax */
+    for await (const command of Object.values(operation.chars)) {
+      await this.character(command);
+    }
     if (operation.text) await this.say(operation.text);
   }
 
@@ -147,10 +184,10 @@ export class Parser {
           await this.say(command);
           break;
         case 'character':
-          this.character(command);
+          await this.character(command);
           break;
         case 'show':
-          this.character({ ...command, show: !command.hide });
+          await this.character({ ...command, show: !command.hide });
           break;
         default:
       }
