@@ -1,0 +1,303 @@
+# Misakura 脚本演示
+# 故事片段: 重逢与分离
+
+# 来源说明
+# 来源: 本内容由 Claude (Anthropic AI) 根据提供的资源生成。
+# 注意事项:
+# - 本内容纯属虚构，与任何真实人物或事件无关。
+# - 某些内容可能会引发不适，请酌情阅读。
+# - 本内容旨在展示 Misakura 脚本引擎的语法和功能，而非创作出高质量的故事情节。
+
+# 加载背景
+think: 本内容由 Claude3 (Anthropic AI) 根据提供的资源生成。
+think: （包括上面这句话，当然并不包括这个括号）
+think: （些许细节内容（指脚本指令，非对话剧情）经人为更改）
+think: 注意事项：1.本内容纯属虚构，与任何真实人物或事件无关。
+think: 2.某些内容可能会引发不适，请酌情阅读。
+think: 3.本内容旨在展示 Misakura 脚本引擎的语法和功能，而非创作出高质量的故事情节。
+
+background /images/background/outside.png
+
+think: ...
+
+# 加载角色
+character yurina --name '白岩雪菜' --figure /images/figure/yurina.png
+character akari --name '小日向灯里' --figure /images/figure/akari.png
+character rin --name '泉里绪' --figure /images/figure/rin.png
+character mio --name '新海真夕' --figure /images/figure/mio.png
+character kaede --name '叶家惠' --figure /images/figure/kaede.png
+character miyuki --name '日暮美雪'
+character momoko --name '百野桃子'
+
+music /audio/music/1.flac
+# sound
+# voice
+
+show yurina
+yurina: 大家，我有一件重要的事情要宣布...
+show akari
+akari: 怎么了，雪菜？
+yurina: 不，不是那回事。实际上...
+show mio
+mio: 你是不是要去东京了？我听说你参加了之前的东疆偶像选拔赛？
+yurina: 是啊，我被东京的Pica pica娱乐公司录用为实习生了。
+show rin
+rin: 太好了，我们会非常非常想念你的...
+
+# 切换背景
+background /images/background/seaside_beach.png
+show yurina --figure /images/figure/yurina_closedeyes.png
+yurina: 这是我梦寐以求的机会，我必须抓住它。
+yurina: 我会在放假的时候回来探望你们的。
+show akari --figure /images/figure/akari_surprised.png
+akari: 可是...校园偶像部将就此解散了吗？
+show rin --figure /images/figure/rin_closedeyes.png
+rin: 我知道成为职业偶像一直是你的梦想，但我们会非常非常想念你的...
+show mio
+mio: 加油吧，雪菜。不过要保重身体哦。
+show kaede --figure /images/figure/kaede.png
+kaede: 不要忘记我们这些朋友啊...
+
+# 时间切换
+background /images/background/sky_night.png
+think: 那是最后一个和朋友们在一起的夜晚，大家约在海边小酌。我努力在脑海里牢牢地记住这一刻...
+
+background /images/background/station.png
+show yurina --figure /images/figure/yurina_smile.png
+yurina: 下一站，东京！我一定要抓住这个梦寐以求的机会！
+
+background /images/background/train_outside_night.png
+show kaede
+show akari
+show rin
+show mio
+akari: 雪菜！加油啊！
+rin: 无论在哪里，我们永远是你最坚强的后盾！
+mio: 期待有一天在电视上看到你的表演！
+kaede: 快走吧，去实现你的梦想！
+
+background /images/background/station_night.png
+show yurina
+yurina: 谢谢大家，我一定不会辜负你们的期望的！
+
+unknown: 东京有多遥远呢？就像能将朋友的脸庞化作暗淡的模糊印记...是否就此永诀，我已无从得知。但那一刻的笑容与眼泪，定将成为我孤身前行的最大动力。
+
+# 新场景
+background /images/background/outside_2.png
+
+miyuki: 大家好，我是日暮美雪，是Pica pica娱乐公司的实习生经纪人。
+miyuki: 从今天开始，我将负责指导白岩雪菜同学的实习工作。
+show yurina
+yurina: 很高兴能在这里实习，我一定会加倍努力的！
+miyuki: 很好，你有梦有抱负，这是成功的第一步。
+miyuki: 不过要走上人生巅峰可并不容易，你要做好精神和身体上的双重准备。
+
+momoko: ...
+miyuki: 哦，对了，让我给你们介绍一下。这位就是Pica pica的当红偶像百野桃子。
+miyuki: 桃子，你有什么希望跟雪菜说的吗？
+momoko: 嗯...加油吧，新人。这里的竞争很激烈的，可不是钻石小路。
+momoko: 你要是缺乏实力的话，下个月就会被公司开革了。
+
+show yurina --figure /images/figure/yurina_closedeyes.png
+think: 什么...？！这种压力我可承受不了啊...
+yurina: 我，我会加油的！无论发生什么我都不会放弃！
+
+background /images/background/seaside_beach_sunset.png
+show yurina --hide
+
+yurina: 背水一战吗...离开家乡和朋友们来到东京已是如此艰辛，我怎能就此败下阵来？
+yurina: 我要证明自己百里挑一的实力，站上伶人之巅！为了不辜负所有人对我的期望！
+
+background /images/background/sky_night.png
+think: 夜色如往日般安详祥和，却无法抚平我内心的焦虑与不安...
+
+# 新的一天
+background /images/background/outside.png
+
+miyuki: 好了雪菜，新的一天就要开始了，今天你将要接受各方面的严格训练。
+miyuki: 首先是语言、形体、舞蹈，之后是综艺访谈的仪态...
+show yurina
+yurina: 是，美雪小姐！
+
+# 语言课
+background /images/background/inside.png
+show kaede
+kaede: 大家好，我是语言老师叶家惠。很高兴能在这里执教。
+yurina: 惠老师？！
+kaede: 雪菜？真是万万没想到啊，你竟然也来到了东京！
+yurina: 是啊，我当上了Pica pica的实习生。
+kaede: 太好了，既然这样，那我可得好好纭绶你才行。
+kaede: 语言不仅仅是会说会读，更重要的是掌握它的内在魅力...
+
+kaede: 譬如这句"吾阠勹椐匧伣啚籀椺嫣菌壹樛竘椺炲恄芀"虽然听起来很拗口...
+kaede: 但只要把它译为"在春日里，盛开的梨花仿佛在微笑"就豁然贵気而富有诗意了。
+yurina: 原来如此，惠老师真是了不起！
+
+# 形体课
+background /images/background/inside.png
+show mio
+show kaede --hide
+mio: 很高兴在这里再次见到你，雪菜！让我来为你的形体把关吧。
+yurina: 真夕姐姐？！太巧了，我们在东京重逢啦！
+mio: 哼哼，就让我看看你这段时间在形体上有没有懈怠吧？
+think: 果然，不分场合真夕姐都一贯的严厉作风...
+
+mio: 首先从基础动作开始，三级跳远---
+yurina: *哗啷啷*
+mio: 不错嘛，时间可以再精准些。来，从头再来一次！
+yurina: 是，真夕姐姐！
+
+# 综艺访谈训练
+background /images/background/inside.png
+
+show mio --hide
+momoko: 听好了新人，综艺表现的好坏直接决定了你在媒体和民间的人气程度。
+momoko: 你必须学会掌控主导权，漫不经心却又好像很投入的状态...
+yurina: 好，好的...
+
+momoko: 很好，cookie。现在我将扮演一位充满酵缺忧虑的观众，你需要用你的亲和力来解纾我。
+momoko: 哦亲爱的雪菜小姐，您看上去太美太让人移不开目光啦！不过...
+momoko: *装出焦虑的神情*可是您这张漂亮的小脸蛋儿啊，真不知是蛋清蛋黄拌打而成，还是仅仅是爹妈用纯天然良田出品？
+yurina: 呃...这个嘛...
+
+show rin --figure /images/figure/rin_surprised_happy.png
+rin: 加油啊雪菜！你一定能行的！
+momoko: 你，你是谁？无故闯入训练场地的！
+rin: 别这么冷淡嘛，我可是雪菜最好的朋友，特意从老家赶来给她加油的！
+momoko: 哼，真是...闲人免进！
+
+show yurina --figure /images/figure/yurina_smile.png
+yurina: 来啦来啦，里绪！能在这里见到你我也很高兴啊。
+rin: 没想到转眼你就离开家乡，来到了东京追寻梦想啦。
+rin: 不过没关系，我们一如既往地陪伴在你身边，给予你全力支持！
+yurina: 多谢你啦里绪，有你们这些好朋友的鞭策，我定能一路向前！
+
+# 第一次综艺体验
+background /images/background/outside_2.png
+show akari --figure /images/figure/akari_surprised.png
+show rin --hide
+show akari
+akari: 雪菜~你在电视上好漂亮喔！
+show rin --figure /images/figure/rin.png
+rin: 嗯嗯，第一次综艺体验就这么成功，实在是太了不起了！
+show yurina
+yurina: 嘻嘻，谢谢你们的夸奖。不过这只是个开始，我还有更多值得期待的表现！
+
+# 新的一天
+background /images/background/sky_night.png
+think: 今天的训练又是如此地枯燥沉闷，但一想到有朋友们的鼓舞，我就觔う憾满怀干劲了。
+think: 只要我努力不懈，总有一天能够...
+
+background /images/background/outside.png
+
+miyuki: 雪菜，我有一个重大任务交给你。
+
+show yurina
+yurina: 是，什么任务？
+miyuki: 下周就是我们公司的重要活动"Pica pica Family Party"了。
+miyuki: 这个Party非常重要，将有无数娱乐公司的高层和偶像来参加。
+miyuki: 作为实习生，你将在这次Party上进行你人生的第一次个人Live表演。
+miyuki: 这是一个很好的机会，好好把握，不要辜负了公司对你的厚望。
+
+yurina: 什...什么？！自己的个人Live？！
+yurina: 可，可是我...我怎么可能做好那种准备？！
+
+
+momoko: 你是在质疑Pica pica的安排吗？太天真了，cookie。
+momoko: 这正是最好的机会检验你的真实实力，看看你是否足以成为一名职业偶像。
+momoko: 如果连这点小挑战都应付不来，那就乖乖回老家去吧。
+
+show yurina --figure /images/figure/yurina_closedeyes.png
+yurina: 不，...不行！我绝不能在这种关头说退就退！
+think: 我要证明自己百里挑一的实力，站上伶人之巅！为了不辜负所有人对我的期望！
+
+# 线下视频直播准备
+background /images/background/outside_2.png
+show yurina
+yurina: 朋友们，我将要在下周Pica pica的Party上进行个人首场Live了！
+yurina: 这将是一次人生大考验，但我一定会全力以赴，尽最大努力去表现的！
+
+show rin
+rin: 太棒了雪菜！祝你一切顺利！
+show akari
+akari: 我们和你同在，雪菜！不要有任何顾虑！
+show mio
+mio: 好好加油吧，我愿就把自己宝贵的舞台体验传授与你。
+show kaede
+kaede: 相信自己，雪菜。你已经做好了一切准备！这次就是你施展自己的时候了！
+
+show yurina --figure /images/figure/yurina_smile.png
+yurina: 谢谢你们，我会紧记着大家的期望，全力以赴的！
+
+background /images/background/inside.png
+think: 决战之日
+
+
+momoko: 好了cookie，你最重要的一战就在今晚。准备好了吗？
+show yurina --figure /images/figure/yurina.png
+yurina: ...是的，我已经完全准备好了！
+
+miyuki: 很好，那就祝你一切顺利。请记住，今晚的Live将决定你未来在Pica pica，甚至整个娱乐界的前景。
+miyuki: 无论在舞台上遇到什么状况，你都必须沉着冷静，百折不挠地完成表演！
+yurina: 我会的，美雪小姐！我发誓今晚将会是个Perfect Live！
+
+# Live开场
+background /images/background/outside_2.png
+yurina: 大家好，我是白岩雪菜！
+yurina: 今天我为大家带来的是我自己全新创作的一首歌曲，它的内容与我自己的人生经历有着千丝万缕的联系。
+yurina: 这是一首歌颂着友谊、追梦和努力奋斗的歌曲，我将用年轻的青春之音，献给在场的每一个人！
+
+# Live高潮
+background /images/background/sky_night.png
+yurina: *以燃爆的舞台活力，展现滔天的实力与决心*
+think: 为了心中的梦想，再多艰难万分也绝不能半途而废！
+think: 就让我的歌声、舞姿都去撼动每个人的内心，为他们带去无限力量！
+
+background /images/background/outside_2.png
+show akari
+character akari --figure /images/figure/akari_smile.png
+akari: 太棒了雪菜！我都快被你的舞台魅力迷住啦！
+show rin
+character rin --figure /images/figure/rin_surprised_happy.png
+rin: 太帅气了吧！我就知道雪菜一定能大展身手的！
+show mio
+character mio --figure /images/figure/mio_smile.png
+mio: 舞台就应该这般生气勃勃，让人为之陶醉！
+show kaede
+character kaede --figure /images/figure/kaede.png
+kaede: 哈哈，我就说嘛，雪菜已为今夜所有preparado嘛！
+
+yurina: *看到朋友们的身影，内心顿时充满了无比力量！*
+think: 是啊，正是有了她们的鼓舞与支持，我才能走到今天这一步！
+think: 朋友之情胜过一切，就让我将这股力量融入到余下演出之中！
+
+# Live将尽
+background /images/background/inside.png
+yurina: *呼哧呼哧，终于... 做到了！*
+
+momoko: 我，我 ...無語了，cookie！没想到你竟然能大献神技，这平稳的气息跟现场掌控力...太专业了！
+
+miyuki: 做的非常出色，雪菜！你今晚完美的Live表现，令所有在场的娱乐公司高层都产生了浓厚兴趣。
+miyuki: 坦率说，你已经具备成为一名职业偶像所需的全部条件了。我代公司对你表示诚挚祝贺！
+
+yurina: 太...太好了！我...我实现梦想的日子终于来临了！
+show akari
+akari: 干得好啊雪菜！这是你应得的骄傲时刻！
+show rin
+rin: 我就知道你一定能成功的！因为你怀揣梦想，并从未止步！
+show mio
+mio: 你的斗志和毅力，难能可贵！定将成为一股新的娱乐界动力啊！
+show kaede
+kaede: 祝贺你啊，小白！你终于可以大展拳脚，踏上人生全新一页了！
+
+yurina: 是啊，这一切...都多亏了你们的陪伴与鼓舞啊！
+yurina: 我发自内心地感谢你们！因为有你们的友谊之光一路相伴，我才能如此疯狂而不迷失、如此勇敢而不退缩！
+yurina: 往后的路虽然仍然遥遥无期，但只要你们在身边，我就一定会肆意挥洒青春、百折不挠地追求梦想！
+
+# 新的未来，新的开端
+background /images/background/sunset.png
+think: 人生就像一次火车长途旅行，充满了汗水、泪水与欢笑。
+think: 虽然我跨出了人生新的一步，但你们将永远是我最可靠的心灵驿站。
+think: 就让这不竭的友谊因子永远环绕在我身边，照亮我前行的道路吧...
+
+think: 'end...'

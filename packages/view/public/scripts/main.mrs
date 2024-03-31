@@ -4,10 +4,10 @@
 # using /locales/ --global
 
 # 加载背景
-background /images/bg.png
+background /images/background/1.png
 
 # 加载角色
-character neri --name '真白' --figure /images/character/c1.png -G
+character neri --name '角色名字' --figure /images/figure/neri.png
 # Options:
   # -N, --name 设置角色显示名字
   # -F, --figure 设置角色当前使用立绘
@@ -20,6 +20,10 @@ say '这是一串非常非常非常非常非常非常非常非常非常非常非
 say 'hi' -S neri
 # Options:
   # -S, --speaker 设置该消息的说话者
+
+play /audio/music/1.flac
+# 播放背景音乐（循环播放）
+
 # 显示角色立绘
 show neri
 
@@ -27,16 +31,30 @@ neri: 这是一个对话测试
 # say 指令语法糖, 等同于 say '这是一个对话测试' -S neri
 neri: 这也是一个对话测试
 : 又是一个段落
-: 当上文有设置 speaker 时，下文可无需再次设置 speaker
-think: 自带的 character ID：⌈think⌋，代表未知角色
-unknown: 自带的 character ID：⌈unknown⌋，代表未知角色
-: "这里有一些需使用转义 \\ 符号才可表示的英文符号：\" \' \\, 因为这些符号已经用在了 Misakura 脚本中，如若不转义将会导致脚本语法错误"
-neri: bye~~
+# 当上文有设置 speaker 时，下文可无需再次设置 speaker
+# 此处的speaker为上面的neri，适当的使用这种语法糖对于脚本的简化是非常重要的
 
+think: 自带的 character ID：⌈think⌋，代表角色独白
+think: 适当的在游戏使用独白内容可展示当前角色的心理活动
+think: 至于角色独白到底是哪个角色的心理活动，并不需要明确在脚本中指代，这取决于剧情上下文（也就是编写脚本的你决定）
+think: 同时，一句话不应太过长。
+unknown: 自带的 character ID：⌈unknown⌋，代表未知角色
+: "这里有一些需使用转义 \\ 符号才可表示的英文符号：\" \', 因为这些符号已经用在了 Misakura 脚本中，如若不转义将会导致脚本语法错误"
+
+
+# 切换背景
+background /images/background/2.png
+show neri
+# 切换背景后会清除之前所有显示的角色，因此如果要展示角色的话需再次使用 show 指令
+neri: 又出现了！
+character neri --figure /images/figure/neri_smile.png
+# 再次使用 character 附上相应参数会更新相关角色信息
+# 此处更新了角色立绘图片 使其为一个笑脸表情
+neri: bye~~
 
 # 隐藏角色立绘
 show neri --hide
 
-say 'ending...'
+: 'ending...'
 
 

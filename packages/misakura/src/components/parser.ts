@@ -1,37 +1,22 @@
-import minimist from 'minimist';
 import { Assets } from 'PIXI.js';
 import { parseArgs } from '@kotori-bot/tools';
 import Visual from '../visual';
 import State, { StateType } from './state';
+import Command from './command';
+import { playMusic } from '../tools/audio';
 
-type Command = ReturnType<(typeof Parser)['load']> extends Promise<infer U>
+type CommandParsed = ReturnType<(typeof Parser)['load']> extends Promise<infer U>
   ? U extends (infer E)[]
     ? E
     : never
   : never;
-interface Operation {
-  bg?: Command;
-  text?: Command;
-  music?: Command;
-  chars: Record<string, Command>;
-}
 
-const COMMAND_OPTIONS: Record<string, Parameters<typeof minimist>[1]> = {
-  say: {
-    string: ['speaker', 'color'],
-    alias: { speaker: 'S', color: 'C' },
-    default: { speaker: 'think' },
-  },
-  /* TODO: new command: voice - bind character's voice file */
-  character: {
-    string: ['name', 'figure'],
-    alias: { name: 'N', figure: 'F' },
-  },
-  show: {
-    boolean: ['hide'],
-    alias: { hide: 'H' },
-  },
-};
+interface Operation {
+  bg?: CommandParsed;
+  text?: CommandParsed;
+  music?: CommandParsed;
+  chars: Record<string, CommandParsed>;
+}
 
 export class Parser {
   private static async load(script: string) {
@@ -53,157 +38,120 @@ export class Parser {
         if (speaker) lastSpeaker = speaker;
         else speaker = lastSpeaker;
         delete result[0];
-        result = ['say', result.join(' ').trim(), '--speaker', speaker];
+        result = ['say', result.join(' ').trim(), '--speaker', speaker === 'think' ? '' : speaker];
       }
-      const options = COMMAND_OPTIONS[result[0] as keyof typeof COMMAND_OPTIONS];
-      return minimist(result, options);
-    });
-  }
+      const parsed = Command.handle(result);
+      if (parsed instanceof Error) throw Error;
 
-  /* TODO: base dir handle that is similar to node.js path module */
-  /* TODO: audio: music, voice and sound */
-  private static audio(command: Command) {
-    const audio = new Audio(command._[1]);
-    const step = 0.01;
-    /* TODO: max volume extends game volume setting */
-    const maxVolume = 0.5;
-    const faceTime = 5;
-    const interval = (faceTime / maxVolume) * step * 1000;
-    audio.volume = 0;
-    audio.loop = true;
-    audio.onplaying = () => {
-      const lastTime = State.getMusicTime();
-      if (lastTime && lastTime < audio.duration) audio.currentTime = lastTime;
-      const fadeInInterval = setInterval(() => {
-        if (audio.volume >= maxVolume) {
-          clearInterval(fadeInInterval);
-          return;
-        }
-        const result = audio.volume + step;
-        audio.volume = result > maxVolume ? maxVolume : result;
-      }, interval);
-      const setTimeInterval = setInterval(() => State.setMusicTime(audio.currentTime), 5000);
-      const endTimer = setTimeout(() => {
-        clearTimeout(endTimer);
-        State.setMusicTime();
-        clearInterval(setTimeInterval);
-        const fadeOutInterval = setInterval(() => {
-          if (audio.volume <= 0) {
-            clearInterval(fadeOutInterval);
-            return;
-          }
-          const result = audio.volume - step;
-          audio.volume = result < 0 ? 0 : result;
-        }, interval);
-      }, (audio.duration - faceTime) * 1000);
-    };
-    audio.play();
-    return audio;
+      return parsed;
+    });
   }
 
   private readonly ctx: Visual;
 
-  private background(command: Command) {
-    this.ctx.background(command._[1]);
-  }
+  private index: number = 0;
 
-  private async character(command: Command) {
-    const { name, figure, show } = command;
-    await this.ctx.character(command._[1], { name, figure, show });
-  }
+  private cmds: CommandParsed[] = [];
 
-  private async say(command: Command) {
-    const { speaker } = command;
-    if (speaker === 'think') {
-      await this.ctx.text(command._[1]);
-      return;
-    }
-    await this.ctx.elements.chars.get(speaker)?.text(command._[1]);
-  }
-
-  private async prehandle(commands: Command[], index0: number) {
+  private async prehandle() {
     const operation: Operation = { chars: {} };
-    const characterExists = (id: string) => {
+    const charsExists = (id: string) => {
       if (id === 'think' || id === 'unknown') return;
       if (id in operation.chars) return;
       console.warn(`Cannot find character "${id}"`);
     };
-    commands.forEach((command, index) => {
-      const { _: args } = command;
+    this.cmds.forEach((cmd, index) => {
+      const { _: args } = cmd[0];
       switch (args[0]) {
         case 'background':
-          if (index > index0) break;
-          operation.bg = command;
+          if (index > this.index) break;
+          operation.bg = cmd;
           Assets.load(args[1]);
+          Object.keys(operation.chars).forEach((key) => {
+            operation.chars[key][0].show = false;
+          });
           break;
         /* TODO: change to audio and video */
         case 'play':
-          if (index > index0) break;
-          operation.music = command;
+          if (index > this.index) break;
+          operation.music = cmd;
           Assets.load(args[1]);
           break;
         case 'say':
-          if (index <= index0) operation.text = command;
-          if (index <= index0 || State.debug) characterExists(command.speaker);
+          if (index <= this.index) operation.text = cmd;
+          if (index <= this.index || State.debug) charsExists(cmd[0].speaker);
           break;
         case 'character':
-          operation.chars[args[1]] = { ...(operation.chars[args[1]] ?? []), ...command };
+          operation.chars[args[1]] = { ...(operation.chars[args[1]] ?? []), ...cmd };
           break;
         /* TODO: better debug to find question */
         case 'show':
-          if (index <= index0 || State.debug) characterExists(args[1]);
-          if (index <= index0) operation.chars[args[1]].show = !command.hide;
+          if (index <= this.index || State.debug) charsExists(args[1]);
+          if (index <= this.index) operation.chars[args[1]][0].show = !cmd[0].hide;
           break;
         default:
           if (!State.debug) break;
-          console.warn(`Unknown command "${args[0]}" at ${index + 1} line`);
+          console.warn(`Unknown cmd "${args[0]}" at ${index + 1} line`);
       }
     });
-    if (operation.bg) this.background(operation.bg);
-    if (operation.music) Parser.audio(operation.music);
+    if (operation.bg) Command.run(...operation.bg);
+    if (operation.music) Command.run(...operation.music);
     /* eslint-disable-next-line no-restricted-syntax */
-    for await (const command of Object.values(operation.chars)) {
-      await this.character(command);
+    for await (const cmd of Object.values(operation.chars)) {
+      await Command.run(...cmd);
     }
-    if (operation.text) await this.say(operation.text);
+    if (operation.text) await Command.run(...operation.text);
   }
 
-  private async nexthandle(commands: Command[]) {
+  private async nexthandle() {
     /* eslint-disable-next-line no-restricted-syntax */
-    for await (const command of commands) {
+    for await (const cmd of this.cmds.splice(this.index + 1)) {
       (State.get() as StateType['dialog']).index += 1;
-      const { _: args } = command;
-      switch (args[0]) {
-        case 'background':
-          this.background(command);
-          break;
-        case 'play':
-          Parser.audio(command);
-          break;
-        case 'say':
-          await this.say(command);
-          break;
-        case 'character':
-          await this.character(command);
-          break;
-        case 'show':
-          await this.character({ ...command, show: !command.hide });
-          break;
-        default:
-      }
+      Command.run(...cmd);
     }
+  }
+
+  private register() {
+    Command.set('background <images>').action((args) => this.ctx.background(args[0]));
+    Command.set('character <identity>')
+      .option('N', 'name:string')
+      .option('F', 'figure:string')
+      .action(async (args, opts) => {
+        const { name, figure, show } = opts;
+        await this.ctx.character(args[0], { name, figure, show });
+      });
+    Command.set('show <identity>')
+      .option('H', 'hide:boolean')
+      .action(async (args, opts) => {
+        await this.ctx.character(args[0], { show: !opts.hide });
+      });
+    Command.set('say <message>')
+      .option('S', 'speaker:string')
+      .option('C', 'color:string')
+      .action((args, opts) => {
+        const { speaker } = opts;
+        if (!speaker) return this.ctx.text(args[0]);
+        return this.ctx.elements.chars.get(speaker)?.text(args[0]);
+      });
+    Command.set('pause')
+      .option('T', 'time')
+      .action((_, opts) => this.ctx.pause(undefined, opts.time !== undefined ? Number(opts.time) : undefined));
+    Command.set('music <filename>').action((args) => playMusic(args[0]));
   }
 
   public constructor(ctx: Visual) {
     this.ctx = ctx;
+    this.register();
   }
 
   public async run() {
     const { script, index } = State.get() as StateType['dialog'];
-    const commands = await Parser.load(script);
-    if (commands.length <= index) throw new Error('script lines error');
-    await this.prehandle(commands, index);
-    await this.nexthandle(commands.splice(index + 1));
+    this.cmds = await Parser.load(script);
+    console.log(this.cmds);
+    this.index = index;
+    if (this.cmds.length <= this.index) throw new Error('script lines error');
+    await this.prehandle();
+    await this.nexthandle();
   }
 }
 

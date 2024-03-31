@@ -48,13 +48,21 @@ export class Character {
   }
 
   public async figure(figure: string) {
+    const oldEl = this.el;
     const el = await loadAssets(figure);
     el.anchor.set(0.5, 0.5);
     el.scale.set(this.ctx.calcX(), this.ctx.calcY());
     this.el = el;
     if (!this.isShow) return;
-    this.hide();
-    this.view();
+    const index = this.ctx.ctn.middle.children.findIndex((el) => el === oldEl);
+    if (!oldEl || index === undefined) {
+      this.hide();
+      this.view();
+      return;
+    }
+    this.el.position.set(oldEl.x, oldEl.y);
+    this.ctx.ctn.middle.removeChildAt(index);
+    this.ctx.ctn.middle.addChildAt(this.el, index);
   }
 
   public display(name: string) {

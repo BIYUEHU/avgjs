@@ -70,9 +70,6 @@ export class Visual extends Events<EventsList> {
 
   private async initialize() {
     /* register */
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'F5') event.preventDefault();
-    });
     event.listen(TauriEvent.WINDOW_RESIZED, () => window.location.reload());
     /* elements */
     const { styles: s } = this.option;
@@ -108,7 +105,20 @@ export class Visual extends Events<EventsList> {
   public view(element: HTMLElement = document.body) {
     if (this.isShow) return;
     element.appendChild(this.app.view as unknown as Node);
-    document.addEventListener('click', () => this.emit('view_click'));
+    element.addEventListener('keydown', (event) => {
+      switch (event.key) {
+        case 'F5':
+          event.preventDefault();
+          break;
+        case 'Enter':
+          this.emit('view_click');
+          break;
+        case 'Control':
+          break;
+        default:
+      }
+    });
+    element.addEventListener('click', () => this.emit('view_click'));
     this.background(this.option.styles.background);
     this.isShow = true;
   }
@@ -149,6 +159,7 @@ export class Visual extends Events<EventsList> {
 
   public async background(assets: string) {
     if (this.elements.bg) this.ctn.before.removeChild(this.elements.bg);
+    this.elements.chars.forEach((char) => char.hide());
     const el = await loadAssets(assets);
     el.width = this.width();
     el.height = this.height();
@@ -168,12 +179,42 @@ export class Visual extends Events<EventsList> {
     return char;
   }
 
-  public async text(text: string, name: string = '') {
-    this.elements.msg.text = text;
-    this.elements.name.text = name;
+  public pause(callback?: () => void, sleep?: number) {
+    if (sleep !== undefined) {
+      return new Promise<void>((reject) => {
+        const timer = setTimeout(() => {
+          if (callback) callback();
+          clearTimeout(timer);
+          reject(undefined);
+        }, sleep * 1000);
+      });
+    }
     return new Promise<void>((reject) => {
-      this.once('view_click', () => reject(undefined));
+      this.once('view_click', () => {
+        if (callback) callback();
+        reject(undefined);
+      });
     });
+  }
+
+  public text(text: string, name: string = '') {
+    let index = 0;
+    let timerId: number;
+    this.elements.name.text = name;
+    this.elements.msg.text = text[index];
+    const timer = () => {
+      timerId = setTimeout(() => {
+        index += 1;
+        if (index >= text.length) {
+          clearTimeout(timerId);
+          return;
+        }
+        this.elements.msg.text += text[index];
+        timer();
+      }, 50);
+    };
+    timer();
+    return this.pause(() => clearTimeout(timerId));
   }
 }
 
