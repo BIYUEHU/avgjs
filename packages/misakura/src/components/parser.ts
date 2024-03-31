@@ -107,7 +107,7 @@ export class Parser {
     /* eslint-disable-next-line no-restricted-syntax */
     for await (const cmd of this.cmds.splice(this.index + 1)) {
       (State.get() as StateType['dialog']).index += 1;
-      Command.run(...cmd);
+      await Command.run(...cmd);
     }
   }
 
