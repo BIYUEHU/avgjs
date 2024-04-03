@@ -1,6 +1,6 @@
-import { Visual } from 'misakura';
+import Misakura from 'misakura';
 import * as styles from './styles';
 
-const visual = new Visual({ entry: '/scripts/claude3.mrs', styles });
-visual.view();
-visual.play();
+const ctx = new Misakura({ entry: '/scripts/claude3.mrs', styles });
+ctx.view();
+ctx.play();

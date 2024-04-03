@@ -1,5 +1,8 @@
 import { parseArgs } from '@kotori-bot/tools';
 import minimist from 'minimist';
+// import logger from '../tools/logger';
+import { Symbols } from '../context';
+import logger from '../tools/logger';
 
 interface CommandData {
   root: string;
@@ -13,18 +16,18 @@ interface CommandData {
 }
 
 export class Command {
-  private static readonly list: Map<string, Command> = new Map();
+  private static readonly [Symbols.command]: Map<string, Command> = new Map();
 
   public static handle(input: string | string[]) {
     /* find start string */
     let starts = '';
-    this.list.forEach((cmd) => {
+    this[Symbols.command].forEach((cmd) => {
       if (starts || !cmd.meta.action) return;
       const { root } = cmd.meta;
       if (typeof input === 'string' ? input.startsWith(`${root} `) : input[0] === root) starts = root;
     });
-    if (!starts) return new Error(`Uknown command "${input}"`);
-    const cmd = this.list.get(starts)!;
+    if (!starts) return new Error(`未知的指令 "${input}"`);
+    const cmd = this[Symbols.command].get(starts)!;
     const parsed = typeof input === 'string' ? parseArgs(input.slice(starts.length).trim()) : input.slice(1);
     if (!Array.isArray(parsed)) return new Error(`语法错误，在 ${parsed.index} 处的 "${parsed.char}" 字符`);
     if (parsed.length === cmd.meta.args)
@@ -34,7 +37,9 @@ export class Command {
 
   public static async run(data: ReturnType<typeof minimist>, cmd: Command) {
     if (!cmd.meta.action) return;
-    await cmd.meta.action(data._, data);
+    const result = cmd.meta.action(data._, data);
+    if (!(result instanceof Promise)) return;
+    await result.catch((e) => logger.error(e));
   }
 
   public static set(template: string, config?: Pick<CommandData, 'alias' | 'string' | 'boolean'>) {
@@ -48,8 +53,18 @@ export class Command {
       default: {},
       ...(config || {}),
     });
-    if (!Command.list.has(arr[0])) Command.list.set(cmd.meta.root, cmd);
+    if (!Command[Symbols.command].has(arr[0])) Command[Symbols.command].set(cmd.meta.root, cmd);
     return cmd;
+  }
+
+  public static isuseful(input: string) {
+    let starts = false;
+    this[Symbols.command].forEach((cmd) => {
+      if (starts) return;
+      const { root } = cmd.meta;
+      if (typeof input === 'string' ? input.startsWith(`${root} `) : input[0] === root) starts = true;
+    });
+    return starts;
   }
 
   private readonly meta: CommandData;

@@ -1,7 +1,7 @@
 /* TODO: base dir handle that is similar to node.js path module */
 /* TODO: audio: music, voice and sound */
 
-import { State } from '../components/state';
+import { State } from './state';
 
 export function playMusic(filename: string) {
   const audio = new Audio(filename);

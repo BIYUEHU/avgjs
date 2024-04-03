@@ -1,7 +1,9 @@
-import Visual from './visual';
+import Core from './components/core';
 
-export * from './visual';
-export * from './character';
-export * from './components/state';
+(globalThis as unknown as { process: { pid: number } }).process = {
+  pid: new Date().getTime(),
+};
 
-export default Visual;
+export * from './components';
+
+export default Core;
