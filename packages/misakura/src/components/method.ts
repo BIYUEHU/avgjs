@@ -4,7 +4,7 @@ import { Sprite, Container, Text, TextStyle } from 'PIXI.js';
 import Character from '../utils/character';
 import loadAssets from '../utils/loadAssets';
 import { Context } from '../context';
-import State, { type StateType } from '../tools/state';
+import State from '../tools/state';
 import Command from '../utils/command';
 import { playMusic } from '../tools/audio';
 import logger from '../tools/logger';
@@ -88,10 +88,10 @@ export class Method {
     Command.set('say <message>')
       .option('S', 'speaker:string')
       .option('C', 'color:string')
-      .action(async (args, opts) => {
+      .action((args, opts) => {
         const { speaker } = opts;
-        const isThink = !speaker || speaker === 'think';
-        await this.ctx.text(isThink ? args[0] : `⌈${args[0]}⌋`, isThink ? this.ctx.els.chars.get(speaker)?.name : '');
+        if (!speaker || speaker === 'think') return this.ctx.text(args[0]);
+        return this.ctx.text(`⌈${args[0]}⌋`, this.ctx.els.chars.get(speaker)?.name ?? speaker);
       });
     Command.set('pause')
       .option('T', 'time')
@@ -128,16 +128,20 @@ export class Method {
 
   public async play(option?: { script: string; index?: number }) {
     const { script, index } = option || {};
-    const state = State.get() as StateType['dialog'];
-    if (state.state !== 'dialog') state.state = 'dialog';
-    if (script) {
-      state.script = script;
-      state.index = index ?? 0;
-    } else if (!state.script) {
-      state.script = this.ctx.config.entry;
-      state.index = 0;
+    const state = State.get();
+    switch (state.state) {
+      case 'dialog':
+        if (script) {
+          state.script = script;
+          state.index = index ?? 0;
+        } else if (!state.script) {
+          state.script = this.ctx.config.entry;
+          state.index = 0;
+        }
+        await this.ctx.parser.run().catch((e) => logger.error(e));
+        break;
+      default:
     }
-    await this.ctx.parser.run().catch((e) => logger.error(e));
   }
 
   public async background(assets: string) {
@@ -194,7 +198,7 @@ export class Method {
         }
         this.els.msg.text += text[index];
         timer();
-      }, 50);
+      }, 30);
     };
     timer();
     return this.pause(() => clearTimeout(timerId));

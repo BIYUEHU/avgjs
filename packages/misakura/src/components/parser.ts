@@ -31,11 +31,12 @@ export class Parser {
     };
     this.cmds.forEach((cmd, index) => {
       const { _: args } = cmd[0];
-      switch (args[0]) {
+      const { root } = cmd[1].meta;
+      switch (root) {
         case 'background':
           if (index > this.index) break;
           operation.bg = cmd;
-          Assets.load(args[1]);
+          Assets.load(args[0]);
           Object.keys(operation.chars).forEach((key) => {
             operation.chars[key][0].show = false;
           });
@@ -44,19 +45,23 @@ export class Parser {
         case 'music':
           if (index > this.index) break;
           operation.music = cmd;
-          Assets.load(args[1]);
+          Assets.load(args[0]);
           break;
         case 'say':
           if (index <= this.index) operation.text = cmd;
           if (index <= this.index || State.debug) charsExists(cmd[0].speaker);
           break;
         case 'character':
-          operation.chars[args[1]] = { ...(operation.chars[args[1]] ?? []), ...cmd };
+          if (!(args[0] in operation.chars)) {
+            operation.chars[args[0]] = cmd;
+            return;
+          }
+          if (cmd[0].name) operation.chars[args[0]][0].name = cmd[0].name;
+          if (cmd[0].fiure) operation.chars[args[0]][0].fiure = cmd[0].fiure;
           break;
-        /* TODO: better debug to find question */
         case 'show':
-          if (index <= this.index || State.debug) charsExists(args[1]);
-          if (index <= this.index) operation.chars[args[1]][0].show = !cmd[0].hide;
+          if (index <= this.index) operation.chars[args[0]][0].show = !cmd[0].hide;
+          if (index <= this.index || State.debug) charsExists(args[0]);
           break;
         default:
       }
@@ -65,9 +70,8 @@ export class Parser {
     if (operation.music) Command.run(...operation.music);
     /* eslint-disable-next-line no-restricted-syntax */
     for await (const cmd of Object.values(operation.chars)) {
-      await Command.run(...cmd);
+      await Command.run(cmd[0], cmd[1]);
     }
-    if (operation.text) await Command.run(...operation.text);
   }
 
   private async nexthandle() {
@@ -75,6 +79,7 @@ export class Parser {
     for await (const cmd of this.cmds.splice(this.index)) {
       await Command.run(...cmd);
       (State.get() as StateType['dialog']).index += 1;
+      this.index = (State.get() as StateType['dialog']).index;
     }
   }
 

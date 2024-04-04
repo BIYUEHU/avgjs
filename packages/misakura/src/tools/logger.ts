@@ -7,4 +7,4 @@ export const logger = new Logger({
   transports: new MisakuraTransport(),
 });
 
-export default logger;
+export default console;

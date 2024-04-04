@@ -1,11 +1,30 @@
 import { parseArgs } from '@kotori-bot/tools';
+import minimist from 'minimist';
 import { Command } from './command';
+import { Symbols } from '../context';
+
+function handle(input: string | string[]) {
+  /* find start string */
+  let starts = '';
+  Command[Symbols.command].forEach((cmd) => {
+    if (starts || !cmd.meta.action) return;
+    const { root } = cmd.meta;
+    if (typeof input === 'string' ? input.startsWith(`${root} `) : input[0] === root) starts = root;
+  });
+  if (!starts) return new Error(`未知的指令 "${input}"`);
+  const cmd = Command[Symbols.command].get(starts)!;
+  const parsed = typeof input === 'string' ? parseArgs(input.slice(starts.length).trim()) : input.slice(1);
+  if (!Array.isArray(parsed)) return new Error(`语法错误，在 ${parsed.index} 处的 "${parsed.char}" 字符`);
+  if (parsed.length === cmd.meta.args)
+    return new Error(`参数数量不匹配，应为 ${cmd.meta.args} 个 实际为 ${parsed.length} 个`);
+  return [minimist(parsed, cmd.meta), cmd] as const;
+}
 
 export async function loadScript(script: string) {
-  let handle = script;
-  if (script.charAt(script.length - 1) === '/') handle = `${script}/main.mrs`;
-  else if (script.split('.')[script.split('.').length - 1] !== 'mrs') handle = `${script}.mrs`;
-  const text = await (await fetch(handle)).text();
+  let file = script;
+  if (script.charAt(script.length - 1) === '/') file = `${script}/main.mrs`;
+  else if (script.split('.')[script.split('.').length - 1] !== 'mrs') file = `${script}.mrs`;
+  const text = await (await fetch(file)).text();
   const lines = text
     .split(text.includes('\r\n') ? '\r\n' : '\n')
     .filter((line) => line.trim() && !line.trim().startsWith('#'));
@@ -22,7 +41,7 @@ export async function loadScript(script: string) {
       delete result[0];
       result = ['say', result.join(' ').trim(), '--speaker', speaker];
     }
-    const parsed = Command.handle(result);
+    const parsed = handle(result);
     if (parsed instanceof Error) throw Error;
     return parsed;
   });
