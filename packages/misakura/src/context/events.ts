@@ -18,5 +18,7 @@ export type EventsList = {
 };
 
 export interface EventsMapping {
-  view_click(): void;
+  nextdialog(): void;
+  resize(): void;
+  initialized(): void;
 }

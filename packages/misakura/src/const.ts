@@ -1,8 +1,8 @@
 export const DEFAULT_VISUAL_OPTION = {
   entry: '/scripts/main.mrs',
   styles: {
-    background: '/gui/background.png',
-    dialog: '/gui/dialog.png',
+    background: '/gui/dialog/background.png',
+    dialog: '/gui/dialog/dialog.png',
     dialogX: 1,
     dialogY: 768,
     dialogNameX: 160,

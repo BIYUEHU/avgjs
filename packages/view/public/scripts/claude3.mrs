@@ -9,6 +9,7 @@
 # - 本内容旨在展示 Misakura 脚本引擎的语法和功能，而非创作出高质量的故事情节。
 
 # 加载背景
+# think: <font color="red">本内容由 Claude3 (Anthropic AI) 根据提供的资源生成</font>。
 think: 本内容由 Claude3 (Anthropic AI) 根据提供的资源生成。
 : （包括上面这句话，当然并不包括这个括号，些许细节内容（指脚本指令，非对话剧情）经人为更改）
 : 注意事项：1.本内容纯属虚构，与任何真实人物或事件无关。
@@ -48,10 +49,13 @@ background /images/background/seaside_beach.png
 show yurina --figure /images/figure/yurina_closedeyes.png
 yurina: 这是我梦寐以求的机会，我必须抓住它。
 : 我会在放假的时候回来探望你们的。
+show yurina --figure /images/figure/yurina_smile.png
 show akari --figure /images/figure/akari_surprised.png
 akari: 可是...校园偶像部将就此解散了吗？
 show rin --figure /images/figure/rin_closedeyes.png
-rin: 我知道成为职业偶像一直是你的梦想，但我们会非常非常想念你的...
+rin: 我知道成为职业偶像一直是你的梦想
+show rin --figure /images/figure/rin_surprised_happy.png
+rin: 但我们会非常非常想念你的...
 show mio
 mio: 加油吧，雪菜。不过要保重身体哦。
 show kaede --figure /images/figure/kaede.png

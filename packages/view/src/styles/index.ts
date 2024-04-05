@@ -1,5 +1,5 @@
-export const background = '/gui/background.png';
-export const dialog = '/gui/dialog2.png';
+export const background = '/gui/dialog/background.png';
+export const dialog = '/gui/dialog/dialog.png';
 export const dialogX = 0;
 export const dialogY = 768;
 export const dialogNameX = 240;

@@ -26,7 +26,7 @@ export class Character {
     this.ctx.ctn.middle.addChild(this.el);
     if (position === 'auto') {
       const chars: Character[] = [];
-      this.ctx.els.chars.forEach((char) => char.isShow && chars.push(char));
+      this.ctx.dialog.els.chars.forEach((char) => char.isShow && chars.push(char));
       const margin = 1 - (this.ctx.config.styles.margin * 2) / this.ctx.width();
       const spacing = 1 / (chars.length + 1);
       const height = this.ctx.calcY(718);

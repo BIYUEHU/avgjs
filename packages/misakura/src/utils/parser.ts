@@ -1,8 +1,8 @@
 import { Assets } from 'PIXI.js';
-import { State, type StateType } from '../tools/state';
-import Command from '../utils/command';
+import { State } from '../tools/state';
+import Command from './command';
 import logger from '../tools/logger';
-import loadScript from '../utils/loadScript';
+import loadScript from './loadScript';
 
 type CommandParsed = ReturnType<typeof loadScript> extends Promise<infer U>
   ? U extends (infer E)[]
@@ -18,8 +18,6 @@ interface Operation {
 }
 
 export class Parser {
-  private index: number = 0;
-
   private cmds: CommandParsed[] = [];
 
   private async prehandle() {
@@ -34,7 +32,7 @@ export class Parser {
       const { root } = cmd[1].meta;
       switch (root) {
         case 'background':
-          if (index > this.index) break;
+          if (index > State.index) break;
           operation.bg = cmd;
           Assets.load(args[0]);
           Object.keys(operation.chars).forEach((key) => {
@@ -43,25 +41,31 @@ export class Parser {
           break;
         /* TODO: change to audio and video */
         case 'music':
-          if (index > this.index) break;
+          if (index > State.index) break;
           operation.music = cmd;
           Assets.load(args[0]);
           break;
         case 'say':
-          if (index <= this.index) operation.text = cmd;
-          if (index <= this.index || State.debug) charsExists(cmd[0].speaker);
+          if (index <= State.index) operation.text = cmd;
+          if (index <= State.index || State.debug) charsExists(cmd[0].speaker);
           break;
         case 'character':
           if (!(args[0] in operation.chars)) {
             operation.chars[args[0]] = cmd;
-            return;
+            break;
+          }
+          if (index > State.index) {
+            break;
           }
           if (cmd[0].name) operation.chars[args[0]][0].name = cmd[0].name;
           if (cmd[0].fiure) operation.chars[args[0]][0].fiure = cmd[0].fiure;
           break;
         case 'show':
-          if (index <= this.index) operation.chars[args[0]][0].show = !cmd[0].hide;
-          if (index <= this.index || State.debug) charsExists(args[0]);
+          if (index <= State.index && args[0] in operation.chars) {
+            operation.chars[args[0]][0].show = !cmd[0].hide;
+            if (cmd[0].figure) operation.chars[args[0]][0].figure = cmd[0].figure;
+          }
+          if (index <= State.index || State.debug) charsExists(args[0]);
           break;
         default:
       }
@@ -76,18 +80,15 @@ export class Parser {
 
   private async nexthandle() {
     /* eslint-disable-next-line no-restricted-syntax */
-    for await (const cmd of this.cmds.splice(this.index)) {
+    for await (const cmd of this.cmds.splice(State.index)) {
       await Command.run(...cmd);
-      (State.get() as StateType['dialog']).index += 1;
-      this.index = (State.get() as StateType['dialog']).index;
+      State.index! += 1;
     }
   }
 
   public async run() {
-    const { script, index } = State.get() as StateType['dialog'];
-    this.cmds = await loadScript(script);
-    this.index = index;
-    if (this.cmds.length <= this.index) throw new Error('script lines error');
+    this.cmds = await loadScript(State.script);
+    if (this.cmds.length <= State.index) throw new Error('script lines error');
     await this.prehandle();
     await this.nexthandle();
   }
