@@ -1,0 +1,7 @@
+export function loadFont(facename: string, url: string) {
+  return new FontFace(facename, `url(${url})`).load();
+}
+
+export function loadFonts(list: [string, string][]) {
+  return Promise.all(list.map((arr) => loadFont(...arr)));
+}

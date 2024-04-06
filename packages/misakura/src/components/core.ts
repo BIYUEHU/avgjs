@@ -19,7 +19,7 @@ export class Core extends Context {
     this.provide('config', new Config(config));
     this.mixin('config', ['config']);
     this.provide('controller', new Controller(this));
-    this.mixin('controller', ['app', 'ctn', 'view', 'height', 'width', 'calcX', 'calcY']);
+    this.mixin('controller', ['app', 'ctn', 'checkout', 'view', 'height', 'width', 'calcX', 'calcY']);
     /* Pages */
     this.provide('dialog', new DialogPage(this));
     this.inject('dialog');
