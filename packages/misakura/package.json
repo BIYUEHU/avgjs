@@ -27,7 +27,7 @@
     "type": "git",
     "url": "git+https://github.com/kotorijs/kotori.git"
   },
-  "homepage": "https://kotori.js.org",
+  "homepage": "https://avg.js.org",
   "dependencies": {
     "@kotori-bot/logger": "^1.2.0",
     "@kotori-bot/tools": "^1.2.1",

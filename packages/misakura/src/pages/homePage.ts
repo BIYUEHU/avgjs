@@ -1,4 +1,4 @@
-import { TextStyle, Text, Graphics } from 'pixi.js';
+import { TextStyle, Text, Graphics } from 'PIXI.js';
 import loadAssets from '../utils/loadAssets';
 import Page from '../utils/page';
 
