@@ -1,0 +1,21 @@
+{
+  "name": "@kotori-bot/docs",
+  "version": "1.1.0",
+  "type": "module",
+  "description": "Misakura docs",
+  "author": "Hotaru",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build:only": "vitepress build",
+    "build": "pnpm revision && vitepress build",
+    "preview": "vitepress preview",
+    "revision": "pnpx tsx scripts/revision",
+    "format": "prettier --write **/*/*.{ts,vue,md}",
+    "lint": "eslint --ext .ts,.vue --fix"
+  },
+  "devDependencies": {
+    "vitepress": "latest",
+    "vue": "^3.4.18"
+  }
+}
