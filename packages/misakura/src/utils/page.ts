@@ -1,4 +1,4 @@
-import { Context } from '../context';
+import Context  from 'fluoro';
 
 export abstract class Page {
   protected readonly ctx: Context;

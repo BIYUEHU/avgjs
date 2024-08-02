@@ -1,16 +1,22 @@
 import Controller from './controller';
-import { Context } from '../context';
+import Context from 'fluoro';
 import Config from './config';
 import DialogPage from '../pages/dialogPage';
 import HomePage from '../pages/homePage';
 
-declare module '../context' {
+declare module 'fluoro' {
   interface Context {
     config: Config['config'];
     /* Pages */
     dialog: DialogPage;
     home: HomePage;
   }
+
+  interface EventsMapping {
+  nextdialog(): void;
+  resize(): void;
+  initialized(): void;
+}
 }
 
 export class Core extends Context {

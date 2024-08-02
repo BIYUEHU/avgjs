@@ -1,6 +1,6 @@
 import type minimist from 'minimist';
 // import logger from '../tools/logger';
-import { Symbols } from '../context';
+import {Tokens }from '../components';
 import logger from '../tools/logger';
 
 interface CommandData {
@@ -15,7 +15,7 @@ interface CommandData {
 }
 
 export class Command {
-  private static readonly [Symbols.command]: Map<string, Command> = new Map();
+  private static readonly [Tokens.command]: Map<string, Command> = new Map();
 
   public static async run(data: ReturnType<typeof minimist>, cmd: Command) {
     if (!cmd.meta.action) return;
@@ -35,13 +35,13 @@ export class Command {
       default: {},
       ...(config || {}),
     });
-    if (!Command[Symbols.command].has(arr[0])) Command[Symbols.command].set(cmd.meta.root, cmd);
+    if (!Command[Tokens.command].has(arr[0])) Command[Tokens.command].set(cmd.meta.root, cmd);
     return cmd;
   }
 
   public static isuseful(input: string) {
     let starts = false;
-    this[Symbols.command].forEach((cmd) => {
+    this[Tokens.command].forEach((cmd) => {
       if (starts) return;
       const { root } = cmd.meta;
       if (typeof input === 'string' ? input.startsWith(`${root} `) : input[0] === root) starts = true;

@@ -1,18 +1,18 @@
 import { parseArgs } from '@kotori-bot/tools';
 import minimist from 'minimist';
 import { Command } from './command';
-import { Symbols } from '../context';
+import {Tokens } from '../components';
 
 function handle(input: string | string[]) {
   /* find start string */
   let starts = '';
-  Command[Symbols.command].forEach((cmd) => {
+  Command[Tokens.command].forEach((cmd) => {
     if (starts || !cmd.meta.action) return;
     const { root } = cmd.meta;
     if (typeof input === 'string' ? input.startsWith(`${root} `) : input[0] === root) starts = root;
   });
   if (!starts) return new Error(`未知的指令 "${input}"`);
-  const cmd = Command[Symbols.command].get(starts)!;
+  const cmd = Command[Tokens.command].get(starts)!;
   const parsed = typeof input === 'string' ? parseArgs(input.slice(starts.length).trim()) : input.slice(1);
   if (!Array.isArray(parsed)) return new Error(`语法错误，在 ${parsed.index} 处的 "${parsed.char}" 字符`);
   if (parsed.length === cmd.meta.args)

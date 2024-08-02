@@ -1,12 +1,12 @@
 import { Application, Container } from 'PIXI.js';
 import { event } from '@tauri-apps/api';
 import { TauriEvent } from '@tauri-apps/api/event';
-import { Context } from '../context';
+import Context from 'fluoro';
 import getWindow from '../tools/getWindow';
 import { type PageType, State } from '../tools/state';
 // import { loadFonts } from '../tools/loadFont';
 
-declare module '../context' {
+declare module 'fluoro' {
   interface Context {
     app: Controller['app'];
     ctn: Controller['ctn'];

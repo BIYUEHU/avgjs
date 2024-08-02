@@ -1,6 +1,6 @@
 import { Sprite } from 'PIXI.js';
 import loadAssets from './loadAssets';
-import type { Context } from '../context';
+import type Context from 'fluoro';
 
 export class Character {
   private el?: Sprite;

@@ -32,6 +32,7 @@
     "@kotori-bot/logger": "^1.2.0",
     "@kotori-bot/tools": "^1.2.1",
     "@tauri-apps/api": "^1",
+    "fluoro": "^1.0.2",
     "minimist": "^1.2.8",
     "pixi.js": "^7.4.0"
   },
