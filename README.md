@@ -12,4 +12,4 @@
 </div>
 <!--  markdownlint-enable -->
 
-> Stack: Rust + Tauri + Soild + TypeScript
+> Stack: Rust + Tauri + Solid.js + TypeScript

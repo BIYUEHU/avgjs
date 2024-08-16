@@ -29,12 +29,18 @@
   },
   "homepage": "https://avg.js.org",
   "dependencies": {
-    "@kotori-bot/logger": "^1.2.0",
-    "@kotori-bot/tools": "^1.2.1",
-    "@tauri-apps/api": "^1",
-    "fluoro": "^1.0.2",
+    "@kotori-bot/core": "^1.6.4",
+    "@kotori-bot/kotori-plugin-core": "^1.4.4",
+    "@kotori-bot/logger": "^1.3.2",
+    "@reduxjs/toolkit": "^2.2.7",
+    "@tauri-apps/api": "^1.6.0",
+    "fluoro": "^1.1.1",
     "minimist": "^1.2.8",
-    "pixi.js": "^7.4.0"
+    "pixi.js": "^7.4.2",
+    "react-redux": "^9.1.2",
+    "redux": "^5.0.1",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^3.1.0"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.5"

@@ -1,11 +1,11 @@
 /* @refresh reload */
-import { render } from 'solid-js/web';
-import './styles/index.css';
+import { render } from 'solid-js/web'
+import './styles/index.css'
+import main from './main'
 
 function App() {
-  import('./main');
-  return <></>;
+  return <>{main()}</>
 }
 
-const root = document.getElementById('root');
-render(() => <App />, root!);
+const root = document.getElementById('root')
+render(() => <App />, root as HTMLElement)
