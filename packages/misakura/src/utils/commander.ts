@@ -1,11 +1,10 @@
 import type DialogPage from '../pages/dialogPage'
-import Media from '../tools/media'
 
 function commander(dialog: DialogPage) {
   const { parser: ctx } = dialog
 
   ctx.command('background <image>').action(({ args: [image] }) => {
-    dialog.background(image)
+    dialog.currentPromise = dialog.background(image)
     return `Update background to ${image}`
   })
 
@@ -14,7 +13,7 @@ function commander(dialog: DialogPage) {
     .option('N', 'name:string')
     .option('F', 'figure:string')
     .action(({ args: [identity], options }) => {
-      dialog.character(identity, options)
+      dialog.currentPromise = dialog.character(identity, options)
       return `Update character ${identity} with options: ${JSON.stringify(options, null, 2)}`
     })
 
@@ -23,7 +22,7 @@ function commander(dialog: DialogPage) {
     .option('H', 'hide:boolean')
     .option('F', 'figure:string')
     .action(({ args: [identity], options: { figure, hide } }) => {
-      dialog.character(identity, { show: !hide, figure })
+      dialog.currentPromise = dialog.character(identity, { show: !hide, figure })
       return `Update character ${identity} name to ${figure} and state to ${hide ? 'hide' : 'show'}`
     })
 
@@ -33,21 +32,30 @@ function commander(dialog: DialogPage) {
     .option('C', 'color:string')
     .action(({ args: [message], options: { speaker } }) => {
       if (!speaker || speaker === 'think') {
-        dialog.text(message)
+        dialog.currentPromise = dialog.text(message, speaker)
         return speaker ? `Self thinking: ${message}` : `Unknown said: ${message}`
       }
-      dialog.text(`⌈${message}⌋`, dialog.els.chars.get(speaker)?.name ?? speaker)
+      dialog.currentPromise = dialog.text(`⌈${message}⌋`, dialog.els.chars.get(speaker)?.name ?? speaker)
       return `The character ${speaker} said: ${message})`
     })
 
   ctx.command('pause [time:number]').action(({ args: [time] }) => {
-    dialog.pause(undefined, time || undefined)
+    dialog.currentPromise = dialog.pause(undefined, time || undefined)
     return time ? `Paused for ${time} seconds` : 'Paused util to next click'
   })
 
-  ctx.command('music <filename>').action(({ args: [filename] }) => {
-    Media.playMusic(filename)
-  })
+  ctx.midware((next, session) => {
+    const raw = session.message.toString()
+    if (!raw.includes(':')) return next()
+    const arr = raw.split(':')
+    const speaker = arr[0]
+    const msg = arr.slice(1).join(':')
+    session.message = `say "${msg}" -S "${speaker}"`
+    return next()
+  }, 1)
+  // ctx.command('music <filename>').action(({ args: [filename] }) => {
+  //   Media.playMusic(filename)
+  // })
 }
 
 export default commander

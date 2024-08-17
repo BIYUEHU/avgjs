@@ -1,7 +1,7 @@
 import { Adapter, MessageScope, type Context } from '@kotori-bot/core'
 import MisakuraApi from './api'
 import MisakuraElements from './elements'
-import store from '../../store'
+import { getDialogLine } from '../../store'
 
 class MisakuraAdapter extends Adapter<MisakuraApi> {
   public readonly api: MisakuraApi = new MisakuraApi(this)
@@ -15,9 +15,9 @@ class MisakuraAdapter extends Adapter<MisakuraApi> {
   }
 
   public exec(command: string) {
-    return this.session('on_message', {
+    this.session('on_message', {
       type: MessageScope.PRIVATE,
-      messageId: store.getState().dialog.scripts.line.toString(),
+      messageId: getDialogLine().toString(),
       message: command,
       messageAlt: command,
       time: Date.now(),

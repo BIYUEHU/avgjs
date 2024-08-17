@@ -1,7 +1,9 @@
 import { TextStyle, Text, Graphics } from 'PIXI.JS'
+import { appWindow } from '@tauri-apps/api/window'
 import loadAssets from '../utils/loadAssets'
 import { Page } from '../components'
 import { LayerLevel } from '../types'
+import { getDialogScript, setDialogData } from '../store'
 
 export class HomePage extends Page {
   public readonly level = LayerLevel.MIDDLE
@@ -41,14 +43,14 @@ export class HomePage extends Page {
       text.style.fill = 0x00c8ff
     })
     button.addChild(text)
-    this.layer.add(button, LayerLevel.AFTER)
+    this.layer.add(button)
   }
 
   public async init() {
     const opts = { width: this.ctx.width(), height: this.ctx.height() }
     this.layer.add(
       [await loadAssets('/gui/home/background1.png', opts), await loadAssets('/gui/home/foreground.png', opts)],
-      LayerLevel.BEFORE
+      LayerLevel.AFTER
     )
     /* title */
     const title = new Text(
@@ -73,14 +75,24 @@ export class HomePage extends Page {
     subtitle.position.set(this.ctx.calcX(1335), this.ctx.calcX(195))
     /* buttons */
     this.generateButton('START', 330, () => {
-      this.ctx.layer.removeLevel()
-      // this.ctx.pages.home.setActive()
+      this.ctx.clear()
+      setDialogData({ entry: this.ctx.config.entry, line: 0 })
+      this.ctx.pages.dialog.setActive()
     })
-    this.generateButton('CONTINUE', 420, () => {})
+    this.generateButton('CONTINUE', 420, () => {
+      if (!getDialogScript()) return
+      this.ctx.clear()
+      setTimeout(() => {
+        this.ctx.pages.dialog.setActive()
+      })
+    })
     this.generateButton('EXTRA', 510, () => {})
     this.generateButton('CONFIG', 600, () => {})
     this.generateButton('ABOUT', 690, () => {})
-    this.generateButton('EXIT', 780, () => {})
+    this.generateButton('EXIT', 780, async () => {
+      this.ctx.clear()
+      await appWindow.close()
+    })
     /* bottom information */
     const style2 = new TextStyle({
       fontFamily: 'Raleway',

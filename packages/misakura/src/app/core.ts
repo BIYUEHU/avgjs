@@ -3,13 +3,15 @@ import FluoroContext from 'fluoro'
 import type { EventsMapping as FluoroEventsMapping, EventsList as FluoroEventsList } from 'fluoro'
 import Config from './config'
 import { routes } from '../pages'
+import type { Page } from '../components/page'
 
 export interface Context {
   config: Config['config']
   app: Controller['app']
   pages: Controller['pages']
   layer: Controller['layer']
-  // checkout: Controller['checkout']
+  clear: Controller['clear']
+  listen: Controller['listen']
   height: Controller['height']
   width: Controller['width']
   calcX: Controller['calcX']
@@ -20,6 +22,8 @@ export interface EventsMapping extends FluoroEventsMapping {
   next_dialog(): void
   resize(): void
   initialized(): void
+  page_update(): void
+  page_active_change(page: Page): void
 }
 
 export type EventsList = FluoroEventsList<EventsMapping>
@@ -31,7 +35,10 @@ export class Context extends FluoroContext<EventsMapping> implements Context {
     this.provide('config', new Config(config))
     this.mixin('config', ['config'])
     this.provide('controller', new Controller(this))
-    this.mixin('controller', ['app', 'layer', 'pages', 'view', 'height', 'width', 'calcX', 'calcY'], true)
+    this.mixin('controller', ['app', 'layer', 'pages', 'listen', 'clear', 'height', 'width', 'calcX', 'calcY'], true)
+
+    // ? DEBUG
+    ;(window as unknown as { ms: Context }).ms = this
   }
 
   public start() {

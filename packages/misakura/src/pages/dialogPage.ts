@@ -1,38 +1,52 @@
 import { Sprite, Text, TextStyle } from 'PIXI.JS'
-// import Character from '../utils/character'
 import loadAssets from '../utils/loadAssets'
-// import Command from '../utils/command'
-// import Media from '../tools/media'
-// import { Parser } from '../utils/parser'
-// import Page from '../utils/page'
 import { Page } from '../components'
 import { type CharacterOption, LayerLevel } from '../types'
 import Character from '../components/character'
-import store from '../store'
+import {
+  getDialogBackground,
+  getDialogCharacters,
+  getDialogLine,
+  getDialogScript,
+  getDialogSpeaker,
+  nextDialogLine,
+  setDialogBackground,
+  setDialogCharacters,
+  setDialogData,
+  setDialogLine,
+  setDialogSpeaker
+} from '../store'
 import Parser from '../utils/parser'
 import commander from '../utils/commander'
+import loadScript from '../utils/loadScript'
+import { logger } from '../tools/logger'
 
 export class DialogPage extends Page {
+  private lastPressNextDialogTime = 0
+
+  public currentPromise?: Promise<unknown>
+
   public readonly parser = new Parser()
 
   public readonly els = {
     bg: new Sprite(),
     msg: new Text(),
-    name: new Text(),
+    speaker: new Text(),
     chars: new Map<string, Character>()
   }
 
   public readonly level = LayerLevel.MIDDLE
 
   public async init() {
-    const s = this.ctx.config.styles
     this.character('unknown', { name: '???' })
+
+    const s = this.ctx.config.styles
     const dialog = await loadAssets(s.dialog, { width: this.ctx.width() })
     dialog.position.set(this.ctx.calcX(s.dialogX), this.ctx.calcY(s.dialogY))
     dialog.height = this.ctx.height() - dialog.y
 
-    this.els.name.position.set(this.ctx.calcX(s.dialogNameX), this.ctx.calcY(s.dialogNameY))
-    this.els.name.style = new TextStyle({
+    this.els.speaker.position.set(this.ctx.calcX(s.dialogNameX), this.ctx.calcY(s.dialogNameY))
+    this.els.speaker.style = new TextStyle({
       fontSize: this.ctx.calcY(s.dialogNameSize)
     })
     this.els.msg.position.set(this.ctx.calcX(s.dialogMsgX), this.ctx.calcY(s.dialogMsgY))
@@ -42,44 +56,132 @@ export class DialogPage extends Page {
       wordWrapWidth: this.ctx.calcX(s.dialogMsgWrap),
       fontSize: this.ctx.calcY(s.dialogMsgSize)
     })
-    this.ctx.layer.add([dialog, this.els.name, this.els.msg], LayerLevel.BEFORE)
+    this.layer.add(dialog, LayerLevel.BEFORE)
+    this.layer.add(this.els.speaker, LayerLevel.BEFORE)
+    this.layer.add(this.els.msg, LayerLevel.BEFORE)
 
     // Register commands
     commander(this)
-  }
 
-  private async nexthandle() {
-    /* eslint-disable-next-line no-restricted-syntax */
-    for await (const cmd of this.cmds.splice(State.index)) {
-      await Command.run(...cmd)
-      State.index! += 1
+    // Register events
+    const nextDialogEmiter = () => {
+      const currentTime = Date.now()
+      if (currentTime - this.lastPressNextDialogTime > 1050) {
+        this.lastPressNextDialogTime = currentTime
+        logger.info('emiter: ', this.getActive())
+        this.emit('next_dialog')
+      }
     }
-  }
+    this.listen('keydown', (event) => {
+      if (['Enter', 'ArrowDown', 'ArrowRight'].includes(event.key)) {
+        nextDialogEmiter()
+        return
+      }
+      switch (event.key) {
+        case 'Escape':
+          this.ctx.clear()
+          this.ctx.pages.home.setActive()
+          break
+        case 'Shift':
+          setDialogData({ entry: this.ctx.config.entry, line: 0 })
+          this.reActive()
+          break
+        case 'Control':
+          break
+        default:
+      }
+    })
 
-  public async run() {
-    this.cmds = await loadScript(State.script)
-    if (this.cmds.length <= State.index) throw new Error('script lines error')
-    await this.nextHandle()
+    this.listen('click', () => {
+      nextDialogEmiter()
+    })
   }
 
   public async load() {
-    const s = store.getState().dialog
-    await this.background(s.background)
-    for await (const cmd of Object.values(operation.chars)) {
-      await this.parser.exec(cmd[0], cmd[1])
+    // Set stop signal
+    let shouldBreak = false
+    const breakListener = (page: Page) => {
+      if (page !== this || page.getActive()) return
+      shouldBreak = true
     }
-    // await this.parser.exec()
-    // if (!State.script) State.script = this.ctx.config.entry
-    // await new Parser().run().catch((e) => logger.error(e))
+
+    this.ctx.on('page_active_change', breakListener)
+    let timerId: number
+    const breakPromise = new Promise((resolve) => {
+      timerId = Number(
+        setInterval(() => {
+          if (!shouldBreak) return
+          clearInterval(timerId)
+          resolve(undefined)
+        }, 100)
+      )
+    })
+    const dispose = () => {
+      this.ctx.off('page_active_change', breakListener)
+      clearInterval(timerId)
+    }
+
+    // Load store data to view
+    await this.background(getDialogBackground())
+    this.els.speaker.text = getDialogSpeaker()
+    const shownCharacters = (
+      (await Promise.race([
+        Promise.all(
+          getDialogCharacters().map(async (charData) => [charData, await this.character(charData.identity, charData)])
+        ),
+        breakPromise
+      ])) as [ReturnType<typeof getDialogCharacters>[0], Character][] | undefined
+    )?.filter(([charData]) => charData.position)
+    if (!shownCharacters) return dispose()
+
+    const autoShownCharacters = shownCharacters
+      .filter(([charData]) => charData.position?.type === 'auto')
+      .sort(([a], [b]) => (a.position?.order as number) - (b.position?.order as number))
+    for (const [, char] of autoShownCharacters) (char as Character).view('auto')
+
+    // Load and execute scripts
+    const script = (await Promise.race([loadScript(getDialogScript()), breakPromise])) as string[] | undefined
+    if (!script || getDialogLine() === script.length) return dispose()
+    if (getDialogLine() > script.length) {
+      logger.error('Script error: running line to bigger')
+      return dispose()
+    }
+
+    while (getDialogLine() < script.length) {
+      if (shouldBreak) break
+      const line = getDialogLine()
+      try {
+        this.parser.exec(script[line])
+        await Promise.race([this.currentPromise, breakPromise])
+        logger.info(`Script exec at ${getDialogScript()} line ${line}`)
+      } catch (e) {
+        logger.error(`Script error at ${getDialogScript()} line ${line}:`, e)
+      }
+      nextDialogLine()
+    }
+
+    dispose()
+    const line = getDialogLine()
+    if (line) setDialogLine(line - 1)
+  }
+
+  public dispose() {
+    this.lastPressNextDialogTime = 0
+    for (const [identity, char] of this.els.chars) {
+      char.hide()
+      this.els.chars.delete(identity)
+    }
   }
 
   public async background(assets: string) {
-    if (this.els.bg) this.ctx.layer.remove(this.els.bg, LayerLevel.AFTER)
+    setDialogBackground(assets)
+
+    if (this.els.bg) this.layer.remove(this.els.bg, LayerLevel.AFTER)
     for (const char of this.els.chars) char[1].hide()
     const el = await loadAssets(assets)
     el.width = this.ctx.width()
     el.height = this.ctx.height()
-    this.ctx.layer.add(el)
+    this.layer.add(el, LayerLevel.AFTER)
     this.els.bg = el
   }
 
@@ -93,6 +195,8 @@ export class DialogPage extends Page {
     }
     if (show) char[show ? 'view' : 'hide']()
     if (figure) await char.figure(figure)
+    setDialogCharacters(...Array.from(this.els.chars.values()))
+
     return char
   }
 
@@ -107,8 +211,9 @@ export class DialogPage extends Page {
       })
     }
     return new Promise<void>((resolve) => {
-      this.ctx.once('next_dialog', () => {
+      this.once('next_dialog', () => {
         if (callback) callback()
+        logger.record(getDialogCharacters())
         resolve(undefined)
       })
     })
@@ -116,9 +221,11 @@ export class DialogPage extends Page {
 
   // TODO: html tag supports
   public text(text: string, name = '') {
+    setDialogSpeaker(name)
+
     let index = 0
     let timerId: number
-    this.els.name.text = name
+    this.els.speaker.text = name
     this.els.msg.text = text[index]
     const timer = () => {
       timerId = setTimeout(() => {

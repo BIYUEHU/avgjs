@@ -1,17 +1,10 @@
 import { Application } from 'PIXI.JS'
-// import { event } from '@tauri-apps/api'
-// import { TauriEvent } from '@tauri-apps/api/event'
+import { TauriEvent, listen } from '@tauri-apps/api/event'
 import getWindow from '../tools/getWindow'
-// import { State } from '../tools/state'
 import type Context from './core'
 import { Layer } from '../components/layer'
 import type { Page } from '../components/page'
 import type { routes } from '../pages'
-// import { loadFonts } from '../tools/loadFont';
-
-declare module 'fluoro' {
-  interface Context {}
-}
 
 export class Controller {
   private readonly ctx: Context
@@ -22,15 +15,35 @@ export class Controller {
 
   public layer = new Layer()
 
-  // private renderTime?: number
-
   public constructor(ctx: Context) {
     this.ctx = ctx
     this.app = new Application({ ...getWindow(), antialias: true, resolution: 1, ...(this.ctx.config.render ?? {}) })
     this.app.stage.addChild(...this.layer.combine())
     this.ctx.on('ready', () => {
+      const renderTime = Date.now()
+      listen(TauriEvent.WINDOW_RESIZED, () => {
+        if (renderTime && Date.now() - renderTime <= 300) return
+        window.location = '' as unknown as Location
+      })
+
+      this.listen('contextmenu', (event) => event.preventDefault())
+      this.listen('keydown', (event) => {
+        if (event.key === 'F5') event.preventDefault()
+      })
       this.ctx.config.element.appendChild(this.app.view as unknown as Node)
     })
+  }
+
+  public listen<K extends keyof HTMLElementEventMap>(
+    type: K,
+    callback: (event: HTMLElementEventMap[K]) => void,
+    options?: boolean | AddEventListenerOptions
+  ) {
+    this.ctx.config.element.addEventListener(type, (event) => callback(event), options)
+  }
+
+  public clear() {
+    for (const page of Object.values(this.pages)) if (page.getActive()) page.setActive(false)
   }
 
   // public view() {
@@ -49,7 +62,6 @@ export class Controller {
   // element.addEventListener('click', () => {
   //   if (State.page === 'dialog') this.ctx.emit('next_dialog')
   // })
-  // document.body.addEventListener('contextmenu', (event) => event.preventDefault())
   // document.body.addEventListener('keydown', (event) => {
   //   switch (event.key) {
   //     case 'F5':

@@ -4,6 +4,9 @@
     "rootDir": "src",
     "outDir": "dist",
     "composite": true,
-    "declaration": true
-  }
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
+    // "emitDeclarationOnly": true
+  },
+  "include": ["src"]
 }

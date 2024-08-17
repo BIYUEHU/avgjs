@@ -1,4 +1,4 @@
-import { Container, type DisplayObject } from 'PIXI.JS'
+import { Container, type DisplayObject, type AllFederatedEventMap } from 'PIXI.JS'
 import { type Elements, LayerLevel } from '../types'
 
 export class Layer {
@@ -15,16 +15,6 @@ export class Layer {
 
   public combine() {
     return [this.before, this.middle, this.after]
-  }
-
-  public removeLevel(type: 'all' | LayerLevel = 'all') {
-    if (type === 'all') {
-      this.removeLevel(LayerLevel.BEFORE)
-      this.removeLevel(LayerLevel.MIDDLE)
-      this.removeLevel(LayerLevel.AFTER)
-      return
-    }
-    this.combine()[type].removeChildren()
   }
 
   public remove(elements: Elements | Elements[], type: 'all' | LayerLevel = 'all') {
@@ -70,5 +60,19 @@ export class Layer {
 
   public findIndex(callback: (target: DisplayObject) => boolean, type: LayerLevel = LayerLevel.MIDDLE) {
     return this.combine()[type].children.findIndex(callback)
+  }
+
+  public listen<K extends keyof AllFederatedEventMap>(
+    eventName: K,
+    callback: (event: AllFederatedEventMap[K]) => unknown,
+    type: 'all' | LayerLevel = 'all'
+  ) {
+    if (type === 'all') {
+      this.listen(eventName, callback, LayerLevel.BEFORE)
+      this.listen(eventName, callback, LayerLevel.MIDDLE)
+      this.listen(eventName, callback, LayerLevel.AFTER)
+      return
+    }
+    ;(this.combine()[type].addEventListener as (...args: unknown[]) => void)(eventName, callback)
   }
 }

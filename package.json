@@ -8,12 +8,13 @@
   "scripts": {
     "serve": "pnpm --filter @misakura/view",
     "dev": "nodemon --exec \"pnpm dev:only\" --ext ts --watch packages/misakura/src/ --ignore packages/view/",
-    "dev:only": "cd packages/view/ && tsc --build && pnpm tauri dev",
+    "dev:only": "pnpm --filter misakura build && pnpm serve exec tauri dev",
     "build": "pnpm serve tauri build",
     "preview": "pnpm serve preview"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "tsup": "^8.2.4"
   }
 }

@@ -23,9 +23,9 @@ export interface CoreOption {
 }
 
 export enum LayerLevel {
-  BEFORE = 0,
+  AFTER = 0,
   MIDDLE = 1,
-  AFTER = 2
+  BEFORE = 2
 }
 
 export type Elements = DisplayObject | Layer

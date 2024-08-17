@@ -24,6 +24,9 @@
         "removeFile": true,
         "writeFile": true,
         "scope": ["$RUNTIME"]
+      },
+      "window": {
+        "all": true
       }
     },
     "windows": [
