@@ -8,6 +8,7 @@
 
 import { UserAccess, CommandError, type Context, MessageScope, TsuError, ModuleError } from '@kotori-bot/core'
 import locales from './locales'
+import { logger } from '../../../tools/logger'
 
 export function main(ctx: Context) {
   ctx.i18n.use(locales, 'en_US')
@@ -87,19 +88,17 @@ export function main(ctx: Context) {
         break
       case 'error':
         ctx.emit('error', value.error instanceof Error ? value.error : new ModuleError(String(value.error)))
-        if (value.error instanceof TsuError) {
+        if (value.error instanceof CommandError) {
+          logger.label(value.error.name).error(value.error.message)
+        } else if (value.error instanceof TsuError) {
           quick(['corei18n.template.res_error', [value.error.message]])
-          return
-        }
-        if (value.error instanceof Error) {
+        } else if (value.error instanceof Error) {
           quick(['corei18n.template.error', [`${value.error.name} ${value.error.message}`]])
-          return
-        }
-        if (typeof value.error === 'object') {
+        } else if (typeof value.error === 'object') {
           quick(['corei18n.template.error', [JSON.stringify(value.error)]])
-          return
+        } else {
+          quick(['corei18n.template.error', [String(value.error)]])
         }
-        quick(['corei18n.template.error', [String(value.error)]])
         break
       case 'data_error':
         quick([`corei18n.template.data_error.${typeof value.target === 'string' ? 'options' : 'args'}`, [value.target]])

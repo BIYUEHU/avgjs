@@ -8,6 +8,7 @@
   "scripts": {
     "serve": "pnpm --filter @misakura/view",
     "dev": "nodemon --exec \"pnpm dev:only\" --ext ts --watch packages/misakura/src/ --ignore packages/view/",
+    "dev:vite": "nodemon --exec \"pnpm --filter misakura build && pnpm serve dev\" --ext ts --watch packages/misakura/src/ --ignore packages/view/",
     "dev:only": "pnpm --filter misakura build && pnpm serve exec tauri dev",
     "build": "pnpm serve tauri build",
     "preview": "pnpm serve preview"

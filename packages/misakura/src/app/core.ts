@@ -2,8 +2,8 @@ import Controller from './controller'
 import FluoroContext from 'fluoro'
 import type { EventsMapping as FluoroEventsMapping, EventsList as FluoroEventsList } from 'fluoro'
 import Config from './config'
-import { routes } from '../pages'
-import type { Page } from '../components/page'
+import { routes } from './routes'
+import type { Page } from '../class/page'
 
 export interface Context {
   config: Config['config']

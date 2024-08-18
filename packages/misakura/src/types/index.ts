@@ -1,5 +1,5 @@
 import type { DisplayObject, Application } from 'PIXI.JS'
-import type { Layer } from '../components'
+import type { Layer } from '../class'
 
 export interface CoreOption {
   entry?: string

@@ -6,6 +6,6 @@ import Context from './app'
 
 // render(() => <>hello</>, document.body)
 
-export * from './components'
+export * from './class'
 
 export default Context

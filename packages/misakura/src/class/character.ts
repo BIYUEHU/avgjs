@@ -1,7 +1,7 @@
 import type { Sprite } from 'PIXI.JS'
 import '@kotori-bot/core'
 import loadAssets from '../utils/loadAssets'
-import type DialogPage from '../pages/dialogPage'
+import type DialogPage from '../Pages/DialogPage'
 
 // type CharacterPositionType = 'auto' | 'left' | 'center' | 'right'
 
@@ -46,11 +46,10 @@ export class Character {
     const chars = Array.from(this.dialog.els.chars.values()).filter((char) => char.isShow())
     const margin = 1 - (this.dialog.ctx.config.styles.margin * 2) / this.dialog.ctx.width()
     const spacing = 1 / (chars.length + 1)
-    const height = this.dialog.ctx.calcY(718)
     for (const [index, char] of chars.entries()) {
       char.element?.position.set(
         this.dialog.ctx.calcX(spacing * (index + 1), margin) + this.dialog.ctx.config.styles.margin,
-        height
+        728
       )
     }
     this.position = { type: type, order: chars.length }

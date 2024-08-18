@@ -1,8 +1,8 @@
 import { Sprite, Text, TextStyle } from 'PIXI.JS'
 import loadAssets from '../utils/loadAssets'
-import { Page } from '../components'
+import { Page } from '../class'
 import { type CharacterOption, LayerLevel } from '../types'
-import Character from '../components/character'
+import Character from '../class/character'
 import {
   getDialogBackground,
   getDialogCharacters,

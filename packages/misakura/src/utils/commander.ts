@@ -1,4 +1,6 @@
-import type DialogPage from '../pages/dialogPage'
+import type DialogPage from '../Pages/DialogPage'
+import { getDialogConstant, getDialogVariable, setDialogConstant, setDialogVariable } from '../store'
+import CommandError from './parser/plugin/commandError'
 
 function commander(dialog: DialogPage) {
   const { parser: ctx } = dialog
@@ -42,6 +44,64 @@ function commander(dialog: DialogPage) {
   ctx.command('pause [time:number]').action(({ args: [time] }) => {
     dialog.currentPromise = dialog.pause(undefined, time || undefined)
     return time ? `Paused for ${time} seconds` : 'Paused util to next click'
+  })
+
+  ctx.command('const <name> <value>').action(({ args: [name, value] }) => {
+    if (getDialogConstant(name) !== undefined) throw new CommandError(`Constant ${name} already exists`)
+    setDialogConstant(name, value)
+    return `Set constant ${name} to ${value}`
+  })
+
+  const setVariable = (name: string, raw: string, global = false) => {
+    const variableType = typeof getDialogVariable(name)
+    const value = (() => {
+      try {
+        return JSON.parse(raw)
+      } catch {
+        return raw
+      }
+    })()
+    const valueType = typeof value
+    if (typeof origin !== 'undefined' && variableType !== valueType) {
+      throw new CommandError(`Type of variable ${name} is ${variableType}, but type of value is ${valueType}`)
+    }
+    setDialogVariable(name, value, global)
+    return `Set variable ${name} to ${value}`
+  }
+
+  ctx
+    .command('let <name> <value>')
+    .option('G', 'global:boolean')
+    .action(({ args: [name, raw], options: { global } }) => setVariable(name, raw, global))
+
+  const handleCalc = (exprs: string) => {
+    try {
+      // biome-ignore lint:
+      return JSON.stringify(eval(exprs))
+    } catch (e) {
+      throw new CommandError(`Expression ${exprs} is invalid: ${e instanceof Error ? e.message : String(e)}`)
+    }
+  }
+
+  ctx.command('calc <name> <...expr>').action(({ args: [name, ...expr] }) => {
+    const variableType = typeof getDialogVariable(name)
+    if (typeof variableType === 'undefined') throw new CommandError(`Variable ${name} not found`)
+    const exprs = expr.join(' ')
+    const result = handleCalc(exprs)
+    setVariable(name, result)
+    return `Calculate ${exprs} to ${result} and set variable ${name} to ${result}`
+  })
+
+  ctx.command('if <...args>').action(({ args }) => {
+    const thenIndex = args.findIndex((arg) => arg === 'then')
+    if (thenIndex === -1) throw new CommandError('Missing if commands: no "then" command')
+    const exprs = args.slice(0, thenIndex).join(' ')
+    const commands = args.slice(thenIndex + 1).join(' ')
+    if (handleCalc(exprs) === 'true') {
+      ctx.exec(commands)
+      return `If ${exprs} is true, execute commands: ${commands}`
+    }
+    return `If ${exprs} is false, skip commands: ${commands}`
   })
 
   ctx.midware((next, session) => {

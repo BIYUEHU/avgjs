@@ -2,7 +2,10 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { DEFAULT_CORE_OPTION } from '../constant'
 import defu from 'defu'
-import type Character from '../components/character'
+import type Character from '../class/character'
+
+type ValuesType = string | number | boolean
+type ValuesList = Record<string, ValuesType>
 
 interface MisakuraState {
   dialog: {
@@ -11,7 +14,9 @@ interface MisakuraState {
     music: { name: string; seconds: number }
     characters: { identity: string; name: string; figure?: string; position?: Character['position'] }[]
     speaker: string
+    values: { constant: ValuesList; global: ValuesList; local: ValuesList }
   }
+  lastPages: string[]
   getDialogData(): MisakuraState['dialog']
   setDialogData(script: { entry: string; line: number }): void
   getDialogScript(): string
@@ -27,6 +32,16 @@ interface MisakuraState {
   getDialogMusic(): MisakuraState['dialog']['music']
   setDialogMusic(): void
   setDialogMusic(name: string, maxSeconds: number): void
+  getDialogConstant(): ValuesList
+  getDialogConstant(name: string): ValuesType | undefined
+  setDialogConstant(name: string, value: ValuesType): void
+  setDialogConstant(list: ValuesList): void
+  getDialogVariable(global?: boolean): ValuesList
+  getDialogVariable(name: string): ValuesType | undefined
+  setDialogVariable(name: string, value: ValuesType, global?: boolean): void
+  getDialogVariableType(name: string): 'global' | 'local' | undefined
+  getLastPage(): string[]
+  setLastPage(pages: string[]): void
 }
 
 const initialized = {
@@ -41,8 +56,14 @@ const initialized = {
       seconds: 0
     },
     characters: [],
-    speaker: ''
-  }
+    speaker: '',
+    values: {
+      constant: {},
+      global: {},
+      local: {}
+    }
+  },
+  lastPages: []
 }
 
 const useStore = create(
@@ -128,6 +149,38 @@ const useStore = create(
             dialog: defu({ music: { name, seconds: playSeconds + timerIntervalSeconds } }, state.dialog)
           }))
         }, timerIntervalSeconds * 1000)
+      },
+      // biome-ignore lint:
+      getDialogConstant(name?: string): any {
+        const constants = get().dialog.values.constant
+        return name === undefined ? constants : constants[name]
+      },
+      setDialogConstant(name: string | ValuesList, value?: ValuesType) {
+        if (typeof name !== 'string') {
+          set((state) => ({ dialog: defu({ values: { constant: name } }, state.dialog) }))
+          return
+        }
+        set((state) => ({ dialog: defu({ values: { constant: { [name]: value } } }, state.dialog) }))
+      },
+      // biome-ignore lint:
+      getDialogVariable(name: string | boolean = false): any {
+        if (typeof name === 'boolean') return get().dialog.values[name ? 'global' : 'local']
+        return get().dialog.values.global[name] ?? get().dialog.values.local[name]
+      },
+      setDialogVariable(name: string, value: ValuesType, global = false) {
+        const handleGlobal = getDialogVariableType(name) ?? global ? 'global' : 'local'
+        set((state) => ({
+          dialog: defu({ values: { [handleGlobal]: { [name]: value } } }, state.dialog)
+        }))
+      },
+      getDialogVariableType(name: string) {
+        return get().dialog.values.global[name] ? 'global' : get().dialog.values.local[name] ? 'local' : undefined
+      },
+      getLastPage() {
+        return get().lastPages
+      },
+      setLastPage(pages: string[]) {
+        set(() => ({ lastPages: pages }))
       }
     }),
     {
@@ -153,7 +206,14 @@ export const {
   getDialogCharacters,
   setDialogCharacters,
   getDialogMusic,
-  setDialogMusic
+  setDialogMusic,
+  getDialogConstant,
+  setDialogConstant,
+  getDialogVariable,
+  setDialogVariable,
+  getDialogVariableType,
+  getLastPage,
+  setLastPage
 } = store
 
 export default store

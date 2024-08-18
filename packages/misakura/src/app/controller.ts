@@ -1,15 +1,15 @@
 import { Application } from 'PIXI.JS'
-import { TauriEvent, listen } from '@tauri-apps/api/event'
 import getWindow from '../tools/getWindow'
 import type Context from './core'
-import { Layer } from '../components/layer'
-import type { Page } from '../components/page'
-import type { routes } from '../pages'
+import { Layer } from '../class/layer'
+import type { Page } from '../class/page'
+import type { routes } from './routes'
+import { getLastPage, setLastPage } from '../store'
 
 export class Controller {
   private readonly ctx: Context
 
-  public readonly app: Application
+  public app: Application
 
   public pages: Record<keyof typeof routes, Page> = {} as Controller['pages']
 
@@ -17,12 +17,25 @@ export class Controller {
 
   public constructor(ctx: Context) {
     this.ctx = ctx
-    this.app = new Application({ ...getWindow(), antialias: true, resolution: 1, ...(this.ctx.config.render ?? {}) })
+    const aspect = getWindow()
+    this.app = new Application({
+      width: window.innerWidth > 1920 ? window.innerWidth : 1920,
+      height: window.innerHeight > 1080 ? window.innerHeight : 1080,
+      antialias: true,
+      resolution: 1,
+      ...(this.ctx.config.render ?? {})
+    })
     this.app.stage.addChild(...this.layer.combine())
+    this.app.stage.scale.set(aspect.width / 1920, aspect.height / 1080)
+    if (aspect.width < 1920) this.app.stage.x = (1920 - aspect.width) / 2
+    if (aspect.height < 1080) this.app.stage.y = (1080 - aspect.height) / 2
+    // this.app.stage.position.set
+
     this.ctx.on('ready', () => {
       const renderTime = Date.now()
-      listen(TauriEvent.WINDOW_RESIZED, () => {
+      window.addEventListener('resize', () => {
         if (renderTime && Date.now() - renderTime <= 300) return
+        setLastPage(this.getCurrentPage())
         window.location = '' as unknown as Location
       })
 
@@ -31,7 +44,19 @@ export class Controller {
         if (event.key === 'F5') event.preventDefault()
       })
       this.ctx.config.element.appendChild(this.app.view as unknown as Node)
+
+      const lastPages = getLastPage()
+      if (lastPages.length === 0) return
+      this.clear()
+      for (const page of lastPages) this.pages[page as 'home'].setActive()
+      setLastPage([])
     })
+  }
+
+  public getCurrentPage() {
+    return Object.entries(this.pages)
+      .filter(([, page]) => page.getActive())
+      .map(([name]) => name)
   }
 
   public listen<K extends keyof HTMLElementEventMap>(
