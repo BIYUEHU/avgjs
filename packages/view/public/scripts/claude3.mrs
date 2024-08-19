@@ -10,7 +10,7 @@
 
 # 加载背景
 # think: <font color="red">本内容由 Claude3 (Anthropic AI) 根据提供的资源生成</font>。
-think: 本内容由 Claude3 (Anthropic AI) 根据提供的资源生成。
+think: <strong>本内容由 Claude3 (Anthropic AI) 根据提供的资源生成。</strong>
 : （包括上面这句话，当然并不包括这个括号，些许细节内容（指脚本指令，非对话剧情）经人为更改）
 : 注意事项：1.本内容纯属虚构，与任何真实人物或事件无关。
 : 2.某些内容可能会引发不适，请酌情阅读。
@@ -21,11 +21,11 @@ background /images/background/outside.png
 think: ...
 
 # 加载角色
-character yurina --name '白岩雪菜' --figure /images/figure/yurina.png
-character akari --name '小日向灯里' --figure /images/figure/akari.png
-character rin --name '泉里绪' --figure /images/figure/rin.png
-character mio --name '新海真夕' --figure /images/figure/mio.png
-character kaede --name '叶家惠' --figure /images/figure/kaede.png
+character yurina --name '<font color="red">白岩雪菜</font>' --figure /images/figure/yurina.png
+character akari --name '<font color="lightgreen">小日向灯里</font>' --figure /images/figure/akari.png
+character rin --name '<font color="lightdarkblue">泉里绪</font>' --figure /images/figure/rin.png
+character mio --name '<font color="brown">新海真夕</font>' --figure /images/figure/mio.png
+character kaede --name '<font color="purple">叶家惠</font>' --figure /images/figure/kaede.png
 character miyuki --name '日暮美雪'
 character momoko --name '百野桃子'
 
@@ -33,13 +33,16 @@ music /audio/music/1.flac
 # sound
 # voice
 
+unknown: Let' start!
+: Are u ready?
+
 show yurina
 yurina: 大家，我有一件重要的事情要宣布...
 show akari
 akari: 怎么了，雪菜？
 yurina: 不，不是那回事。实际上...
 show mio
-mio: 你是不是要去东京了？我听说你参加了之前的东疆偶像选拔赛？
+mio: <span style="font-size: 2.5em;">你是不是要去东京了？</span>我听说你参加了之前的东疆偶像选拔赛？
 yurina: 是啊，我被东京的Pica pica娱乐公司录用为实习生了。
 show rin
 rin: 太好了，我们会非常非常想念你的...
@@ -48,7 +51,7 @@ rin: 太好了，我们会非常非常想念你的...
 background /images/background/seaside_beach.png
 show yurina --figure /images/figure/yurina_closedeyes.png
 yurina: 这是我梦寐以求的机会，我必须抓住它。
-: 我会在放假的时候回来探望你们的。
+: 我会在放假的时候回来<font color="red">探望你们的。</font>
 show yurina --figure /images/figure/yurina_smile.png
 show akari --figure /images/figure/akari_surprised.png
 akari: 可是...校园偶像部将就此解散了吗？

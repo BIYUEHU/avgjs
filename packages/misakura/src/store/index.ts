@@ -17,6 +17,7 @@ interface MisakuraState {
     values: { constant: ValuesList; global: ValuesList; local: ValuesList }
   }
   lastPages: string[]
+  historyPages: string[]
   getDialogData(): MisakuraState['dialog']
   setDialogData(script: { entry: string; line: number }): void
   getDialogScript(): string
@@ -42,6 +43,9 @@ interface MisakuraState {
   getDialogVariableType(name: string): 'global' | 'local' | undefined
   getLastPage(): string[]
   setLastPage(pages: string[]): void
+  getHistoryPage(): string[]
+  setHistoryPage(page: string): void
+  clearHistoryPage(): void
 }
 
 const initialized = {
@@ -63,7 +67,8 @@ const initialized = {
       local: {}
     }
   },
-  lastPages: []
+  lastPages: [],
+  historyPages: []
 }
 
 const useStore = create(
@@ -181,6 +186,15 @@ const useStore = create(
       },
       setLastPage(pages: string[]) {
         set(() => ({ lastPages: pages }))
+      },
+      getHistoryPage() {
+        return get().historyPages
+      },
+      setHistoryPage(page: string) {
+        set((state) => ({ historyPages: [...state.historyPages, page] }))
+      },
+      clearHistoryPage() {
+        set(() => ({ historyPages: [] }))
       }
     }),
     {
@@ -213,7 +227,10 @@ export const {
   setDialogVariable,
   getDialogVariableType,
   getLastPage,
-  setLastPage
+  setLastPage,
+  getHistoryPage,
+  setHistoryPage,
+  clearHistoryPage
 } = store
 
 export default store

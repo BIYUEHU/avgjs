@@ -1,12 +1,14 @@
-import { Sprite, Text, TextStyle } from 'PIXI.JS'
+import { HTMLText, Sprite } from 'PIXI.JS'
 import loadAssets from '../utils/loadAssets'
 import { Page } from '../class'
 import { type CharacterOption, LayerLevel } from '../types'
 import Character from '../class/character'
 import {
+  clearHistoryPage,
   getDialogBackground,
   getDialogCharacters,
   getDialogLine,
+  getDialogMusic,
   getDialogScript,
   getDialogSpeaker,
   nextDialogLine,
@@ -14,12 +16,16 @@ import {
   setDialogCharacters,
   setDialogData,
   setDialogLine,
+  setDialogMusic,
   setDialogSpeaker
 } from '../store'
 import Parser from '../utils/parser'
 import commander from '../utils/commander'
 import loadScript from '../utils/loadScript'
 import { logger } from '../tools/logger'
+import { SpriteButton } from '../Ui/button/SpriteButton'
+import { createLayout } from '../Ui/utils/layout'
+import { Sound, sound } from '@pixi/sound'
 
 export class DialogPage extends Page {
   private lastPressNextDialogTime = 0
@@ -30,45 +36,95 @@ export class DialogPage extends Page {
 
   public readonly els = {
     bg: new Sprite(),
-    msg: new Text(),
-    speaker: new Text(),
-    chars: new Map<string, Character>()
+    msg: new HTMLText(),
+    speaker: new HTMLText(),
+    chars: new Map<string, Character>(),
+    bgm: ''
   }
 
   public readonly level = LayerLevel.MIDDLE
 
   public async init() {
-    this.character('unknown', { name: '???' })
-
     const s = this.ctx.config.styles
-    const dialog = await loadAssets(s.dialog, { width: this.ctx.width() })
-    dialog.position.set(this.ctx.calcX(s.dialogX), this.ctx.calcY(s.dialogY))
-    dialog.height = this.ctx.height() - dialog.y
+    const dialogView = await loadAssets(s.dialog, { width: this.ctx.width() })
+    dialogView.anchor.set(0.5, 1)
+    dialogView.position.set(this.ctx.width() / 2, this.ctx.height())
 
-    this.els.speaker.position.set(this.ctx.calcX(s.dialogNameX), this.ctx.calcY(s.dialogNameY))
-    this.els.speaker.style = new TextStyle({
-      fontSize: this.ctx.calcY(s.dialogNameSize)
-    })
-    this.els.msg.position.set(this.ctx.calcX(s.dialogMsgX), this.ctx.calcY(s.dialogMsgY))
-    this.els.msg.style = new TextStyle({
+    this.els.speaker.position.set(s.dialogNameX, s.dialogNameY)
+    this.els.speaker.style = {
+      fontSize: s.dialogNameSize
+    }
+    this.els.msg.position.set(s.dialogMsgX, s.dialogMsgY)
+    this.els.msg.style = {
       breakWords: true,
       wordWrap: true,
-      wordWrapWidth: this.ctx.calcX(s.dialogMsgWrap),
-      fontSize: this.ctx.calcY(s.dialogMsgSize)
-    })
-    this.layer.add(dialog, LayerLevel.BEFORE)
+      wordWrapWidth: s.dialogMsgWrap,
+      fontSize: s.dialogMsgSize
+    }
+    this.layer.add(dialogView, LayerLevel.BEFORE)
     this.layer.add(this.els.speaker, LayerLevel.BEFORE)
     this.layer.add(this.els.msg, LayerLevel.BEFORE)
+
+    let clickLock = false
+    const setClickLock = () => {
+      clickLock = true
+      const timer = setTimeout(() => {
+        clickLock = false
+        clearTimeout(timer)
+      })
+    }
+
+    const buttonLayout = createLayout(
+      [
+        [
+          'load',
+          () => {
+            this.ctx.pages.load.setActive()
+          }
+        ],
+        [
+          'save',
+          () => {
+            this.ctx.pages.save.setActive()
+          }
+        ],
+        ['quickLoad', () => {}],
+        ['quickSave', () => {}],
+        ['log', () => {}],
+        ['skip', () => {}],
+        ['auto', () => {}],
+        [
+          'config',
+          () => {
+            this.ctx.pages.config.setActive()
+          }
+        ]
+      ] as const,
+      ([name, callback], index) => {
+        const button = new SpriteButton(
+          '',
+          (type) => {
+            if (type !== 'onPress') return
+            setClickLock()
+            callback()
+          },
+          { button: `/gui/dialog/buttons/${name}.png` }
+        )
+        button.view.position.set(1150 + index * 63, 1055)
+        button.view.scale.set(0.38, 0.38)
+        return button.view
+      }
+    )
+    this.layer.add(buttonLayout, LayerLevel.BEFORE)
 
     // Register commands
     commander(this)
 
     // Register events
-    const nextDialogEmiter = () => {
+    const nextDialogEmiter = (force = false) => {
       const currentTime = Date.now()
-      if (currentTime - this.lastPressNextDialogTime > 1050) {
+      if (currentTime - this.lastPressNextDialogTime > (force ? 200 : 600)) {
         this.lastPressNextDialogTime = currentTime
-        logger.info('emiter: ', this.getActive())
         this.emit('next_dialog')
       }
     }
@@ -79,7 +135,6 @@ export class DialogPage extends Page {
       }
       switch (event.key) {
         case 'Escape':
-          this.ctx.clear()
           this.ctx.pages.home.setActive()
           break
         case 'Shift':
@@ -87,17 +142,20 @@ export class DialogPage extends Page {
           this.reActive()
           break
         case 'Control':
+          nextDialogEmiter(true)
           break
         default:
       }
     })
 
     this.listen('click', () => {
-      nextDialogEmiter()
+      if (!clickLock || this.getActive(true)) nextDialogEmiter()
     })
   }
 
   public async load() {
+    clearHistoryPage()
+
     // Set stop signal
     let shouldBreak = false
     const breakListener = (page: Page) => {
@@ -123,6 +181,7 @@ export class DialogPage extends Page {
 
     // Load store data to view
     await this.background(getDialogBackground())
+    this.music(getDialogMusic().name, getDialogMusic().seconds)
     this.els.speaker.text = getDialogSpeaker()
     const shownCharacters = (
       (await Promise.race([
@@ -153,7 +212,6 @@ export class DialogPage extends Page {
       try {
         this.parser.exec(script[line])
         await Promise.race([this.currentPromise, breakPromise])
-        logger.info(`Script exec at ${getDialogScript()} line ${line}`)
       } catch (e) {
         logger.error(`Script error at ${getDialogScript()} line ${line}:`, e)
       }
@@ -213,34 +271,65 @@ export class DialogPage extends Page {
     return new Promise<void>((resolve) => {
       this.once('next_dialog', () => {
         if (callback) callback()
-        logger.record(getDialogCharacters())
         resolve(undefined)
       })
     })
   }
 
-  // TODO: html tag supports
   public text(text: string, name = '') {
     setDialogSpeaker(name)
 
     let index = 0
     let timerId: number
+    let tempText = ''
     this.els.speaker.text = name
     this.els.msg.text = text[index]
+
     const timer = () => {
-      timerId = setTimeout(() => {
-        index += 1
-        if (index >= text.length || text[index] === undefined) {
-          clearTimeout(timerId)
-          return
-        }
-        this.els.msg.text += text[index]
-        timer()
-      }, 30) as unknown as number
+      timerId = setTimeout(
+        () => {
+          index += 1
+          if (index >= text.length || text[index] === undefined) {
+            clearTimeout(timerId)
+            if (tempText) {
+              this.els.msg.text += tempText
+              tempText = ''
+            }
+            return
+          }
+          if (text[index] === '<') {
+            if (tempText) this.els.msg.text += tempText
+            tempText = '<'
+          } else if (text[index] === '>') {
+            this.els.msg.text += `${tempText ?? ''}>`
+            tempText = ''
+          } else {
+            if (tempText) tempText += text[index]
+            else this.els.msg.text += text[index]
+          }
+          timer()
+        },
+        tempText ? 0 : 30
+      ) as unknown as number
       this.ctx.once('resize', () => clearTimeout(timerId))
     }
     timer()
     return this.pause(() => clearTimeout(timerId))
+  }
+
+  public music(name?: string, seconds = 0) {
+    if (!name) {
+      sound.stopAll()
+      this.els.bgm = ''
+      setDialogMusic()
+      return
+    }
+    this.els.bgm = name
+    const song = Sound.from(name)
+    // setDialogMusic(name, )
+
+    logger.info(`Play music ${name} for ${1} seconds`, sound)
+    song.play({ loop: true /* , volume: 0.5 */, start: seconds })
   }
 }
 

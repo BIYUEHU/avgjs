@@ -20,7 +20,6 @@ export async function loadScript(script: string) {
   if (script.charAt(script.length - 1) === '/') file = `${script}/main.mrs`
   else if (script.split('.')[script.split('.').length - 1] !== 'mrs') file = `${script}.mrs`
   const text = await (await fetch(file)).text()
-  // logger.info(`Get script ${script} return content: `, text)
   return text.split(text.includes('\r\n') ? '\r\n' : '\n').filter((line) => line.trim() && !line.trim().startsWith('#'))
   // let lastSpeaker: string
   // return lines.map((line) => {

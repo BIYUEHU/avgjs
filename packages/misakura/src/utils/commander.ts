@@ -1,5 +1,5 @@
 import type DialogPage from '../Pages/DialogPage'
-import { getDialogConstant, getDialogVariable, setDialogConstant, setDialogVariable } from '../store'
+import { getDialogConstant, getDialogSpeaker, getDialogVariable, setDialogConstant, setDialogVariable } from '../store'
 import CommandError from './parser/plugin/commandError'
 
 function commander(dialog: DialogPage) {
@@ -33,17 +33,24 @@ function commander(dialog: DialogPage) {
     .option('S', 'speaker:string')
     .option('C', 'color:string')
     .action(({ args: [message], options: { speaker } }) => {
-      if (!speaker || speaker === 'think') {
-        dialog.currentPromise = dialog.text(message, speaker)
-        return speaker ? `Self thinking: ${message}` : `Unknown said: ${message}`
+      let handleSpeaker = speaker ? dialog.els.chars.get(speaker)?.name ?? speaker : getDialogSpeaker()
+      handleSpeaker = handleSpeaker === 'think' ? '' : handleSpeaker === 'unknown' ? '未知的声音' : handleSpeaker
+      if (!handleSpeaker) {
+        dialog.currentPromise = dialog.text(message, handleSpeaker)
+        return `Self thinking: ${message}`
       }
-      dialog.currentPromise = dialog.text(`⌈${message}⌋`, dialog.els.chars.get(speaker)?.name ?? speaker)
-      return `The character ${speaker} said: ${message})`
+      dialog.currentPromise = dialog.text(`⌈${message}⌋`, handleSpeaker)
+      return `The character ${handleSpeaker} said: ${message})`
     })
 
   ctx.command('pause [time:number]').action(({ args: [time] }) => {
     dialog.currentPromise = dialog.pause(undefined, time || undefined)
     return time ? `Paused for ${time} seconds` : 'Paused util to next click'
+  })
+
+  ctx.command('music [name]').action(({ args: [name] }) => {
+    dialog.music(name)
+    return name ? `Playing music ${name}` : 'Stop music'
   })
 
   ctx.command('const <name> <value>').action(({ args: [name, value] }) => {
@@ -110,7 +117,7 @@ function commander(dialog: DialogPage) {
     const arr = raw.split(':')
     const speaker = arr[0]
     const msg = arr.slice(1).join(':')
-    session.message = `say "${msg}" -S "${speaker}"`
+    session.message = `say ${JSON.stringify(msg)} -S ${JSON.stringify(speaker)}`
     return next()
   }, 1)
   // ctx.command('music <filename>').action(({ args: [filename] }) => {

@@ -44,13 +44,10 @@ export class Character {
     this.dialog.layer.add(this.element)
     if (type !== 'auto') return
     const chars = Array.from(this.dialog.els.chars.values()).filter((char) => char.isShow())
-    const margin = 1 - (this.dialog.ctx.config.styles.margin * 2) / this.dialog.ctx.width()
+    const margin = this.dialog.ctx.width() - this.dialog.ctx.config.styles.margin * 2
     const spacing = 1 / (chars.length + 1)
     for (const [index, char] of chars.entries()) {
-      char.element?.position.set(
-        this.dialog.ctx.calcX(spacing * (index + 1), margin) + this.dialog.ctx.config.styles.margin,
-        728
-      )
+      char.element?.position.set(spacing * (index + 1) * margin + this.dialog.ctx.config.styles.margin, 728)
     }
     this.position = { type: type, order: chars.length }
   }
@@ -65,7 +62,6 @@ export class Character {
     this.figureAssets = figure
     const el = await loadAssets(figure)
     el.anchor.set(0.5, 0.5)
-    el.scale.set(this.dialog.ctx.calcX(), this.dialog.ctx.calcY())
     const isShow = this.isShow()
     const oldEl = this.element
     this.element = el

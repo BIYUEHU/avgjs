@@ -1,4 +1,5 @@
 import type { Context, EventsMapping } from '../app'
+import { setHistoryPage } from '../store'
 import type { LayerLevel } from '../types'
 import { Layer } from './layer'
 
@@ -24,12 +25,20 @@ export abstract class Page {
 
   public dispose() {}
 
-  public getActive() {
-    return this.ctx.layer.has(this.layer)
+  public getActive(isUnique = false): boolean {
+    return (
+      this.ctx.layer.has(this.layer) &&
+      (!isUnique || Object.values(this.ctx.pages).filter((page) => page.getActive()).length === 1)
+    )
   }
 
-  public setActive(active = true) {
+  public setActive(active = true, clear = true) {
     if (active && !this.getActive()) {
+      const shownList = Object.entries(this.ctx.pages).filter(([, page]) => page.getActive())
+      const currentPage = shownList.length > 0 ? shownList[shownList.length - 1][0] : undefined
+      if (currentPage) setHistoryPage(currentPage)
+      // setTimeout(() => {
+      if (clear) this.ctx.clear()
       this.ctx.layer.add(this.layer, this.level)
       if (!this.isLoadOnce) {
         this.loadOnce()
@@ -37,6 +46,7 @@ export abstract class Page {
       }
       this.load()
       this.ctx.emit('page_active_change', this)
+      // })
     } else if (!active && this.getActive()) {
       this.ctx.layer.remove(this.layer, this.level)
       this.dispose()

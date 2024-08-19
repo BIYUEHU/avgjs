@@ -14,8 +14,8 @@ export interface Context {
   listen: Controller['listen']
   height: Controller['height']
   width: Controller['width']
-  calcX: Controller['calcX']
-  calcY: Controller['calcY']
+  // calcX: Controller['calcX']
+  // calcY: Controller['calcY']
 }
 
 export interface EventsMapping extends FluoroEventsMapping {
@@ -35,7 +35,7 @@ export class Context extends FluoroContext<EventsMapping> implements Context {
     this.provide('config', new Config(config))
     this.mixin('config', ['config'])
     this.provide('controller', new Controller(this))
-    this.mixin('controller', ['app', 'layer', 'pages', 'listen', 'clear', 'height', 'width', 'calcX', 'calcY'], true)
+    this.mixin('controller', ['app', 'layer', 'pages', 'listen', 'clear', 'height', 'width'], true)
 
     // ? DEBUG
     ;(window as unknown as { ms: Context }).ms = this
@@ -43,7 +43,6 @@ export class Context extends FluoroContext<EventsMapping> implements Context {
 
   public start() {
     for (const pageName in routes) this.pages[pageName as 'home'] = new routes[pageName as 'home'](this)
-    this.pages.home.setActive()
     this.emit('ready')
   }
 }

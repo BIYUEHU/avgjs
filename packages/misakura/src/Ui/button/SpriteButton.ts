@@ -15,19 +15,19 @@ interface SpriteButtonOptions {
 }
 
 const DEFAULT_OPTIONS: Partial<SpriteButtonOptions> = {
-  style: { fill: 0x00b4ff },
-  hoverStyle: { fill: 0x0099ff },
-  pressedStyle: { fill: 0x0064ff }
+  style: { fill: 0x999 },
+  hoverStyle: { fill: 0xccc },
+  pressedStyle: { fill: 0xeee }
 }
 
 export class SpriteButton extends Button {
-  private readonly textView: Text
-
-  private readonly buttonBg = new Sprite()
-
   private readonly action: (type: ActionType) => void
 
   private readonly options: Partial<SpriteButtonOptions>
+
+  public readonly textView: Text
+
+  public readonly buttonBg = new Sprite()
 
   public constructor(text: string, action: (type: ActionType) => void, options?: Partial<SpriteButtonOptions>) {
     super(new Container())
@@ -35,7 +35,7 @@ export class SpriteButton extends Button {
     this.options = defu(options, DEFAULT_OPTIONS)
     this.textView = new Text(text, this.options.style)
 
-    this.view.addChild(this.textView)
+    if (text) this.view.addChild(this.textView)
     // this.view = this.textView
 
     preload(
@@ -84,6 +84,10 @@ export class SpriteButton extends Button {
 
   public override press() {
     this.action('onPress')
+    setTimeout(() => {
+      if (this.options.button) this.buttonBg.texture = Texture.from(this.options.button)
+      this.textView.style = { ...this.textView.style, ...this.options.style }
+    })
   }
 
   public override hover() {
