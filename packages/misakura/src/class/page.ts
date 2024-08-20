@@ -26,18 +26,17 @@ export abstract class Page {
   public dispose() {}
 
   public getActive(isUnique = false): boolean {
-    return (
-      this.ctx.layer.has(this.layer) &&
+    const result =
+      this.ctx.layer.has(this.layer, 'all') &&
       (!isUnique || Object.values(this.ctx.pages).filter((page) => page.getActive()).length === 1)
-    )
+    return result
   }
 
   public setActive(active = true, clear = true) {
-    if (active && !this.getActive()) {
+    if (active) {
       const shownList = Object.entries(this.ctx.pages).filter(([, page]) => page.getActive())
       const currentPage = shownList.length > 0 ? shownList[shownList.length - 1][0] : undefined
       if (currentPage) setHistoryPage(currentPage)
-      // setTimeout(() => {
       if (clear) this.ctx.clear()
       this.ctx.layer.add(this.layer, this.level)
       if (!this.isLoadOnce) {
@@ -45,27 +44,24 @@ export abstract class Page {
         this.isLoadOnce = true
       }
       this.load()
-      this.ctx.emit('page_active_change', this)
-      // })
-    } else if (!active && this.getActive()) {
+    } else {
       this.ctx.layer.remove(this.layer, this.level)
       this.dispose()
-      this.ctx.emit('page_active_change', this)
     }
+    this.ctx.emit('page_active_change', this)
   }
 
-  public reActive() {
-    this.setActive(false)
-    this.setActive()
+  public getName() {
+    return Object.entries(this.ctx.pages).find(([, page]) => page === this)?.[0] ?? 'unknown'
   }
 
-  public on<K extends keyof EventsMapping>(type: K, callback: EventsMapping[K]) {
-    const newCallback = (...args: unknown[]) => {
-      if (this.getActive()) (callback as (...args: unknown[]) => void)(...args)
-    }
-    this.ctx.on(type, newCallback)
-    return () => this.ctx.off(type, newCallback)
-  }
+  // public on<K extends keyof EventsMapping>(type: K, callback: EventsMapping[K]) {
+  //   const newCallback = (...args: unknown[]) => {
+  //     if (this.getActive()) (callback as (...args: unknown[]) => void)(...args)
+  //   }
+  //   this.ctx.on(type, newCallback)
+  //   return () => this.ctx.off(type, newCallback)
+  // }
 
   public once<K extends keyof EventsMapping>(type: K, callback: EventsMapping[K]) {
     const newCallback = (...args: unknown[]) => {
@@ -74,10 +70,6 @@ export abstract class Page {
     }
     this.ctx.once(type, newCallback)
     return () => this.ctx.off(type, newCallback)
-  }
-
-  public emit<K extends keyof EventsMapping>(type: K, ...args: Parameters<EventsMapping[K]>) {
-    if (this.getActive()) this.ctx.emit(type, ...args)
   }
 
   public listen<K extends keyof HTMLElementEventMap>(

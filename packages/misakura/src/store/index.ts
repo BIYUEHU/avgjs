@@ -9,7 +9,7 @@ type ValuesList = Record<string, ValuesType>
 
 interface MisakuraState {
   dialog: {
-    script: { entry: string; line: number }
+    script: { entry: string; line: number; part: number; count: number }
     background: string
     music: { name: string; seconds: number }
     characters: { identity: string; name: string; figure?: string; position?: Character['position'] }[]
@@ -19,11 +19,17 @@ interface MisakuraState {
   lastPages: string[]
   historyPages: string[]
   getDialogData(): MisakuraState['dialog']
-  setDialogData(script: { entry: string; line: number }): void
+  setDialogData(script: { entry: string; line: number; part: number; count: number }): void
   getDialogScript(): string
   getDialogLine(): number
   setDialogLine(line: number): void
   nextDialogLine(): void
+  getDialogPart(): number
+  setDialogPart(part: number): void
+  nextDialogPart(): void
+  getDialogCount(): number
+  // setDialogCount(count: number): void
+  nextDialogCount(): void
   getDialogBackground(): string
   setDialogBackground(background: string): void
   getDialogSpeaker(): string
@@ -32,7 +38,7 @@ interface MisakuraState {
   setDialogCharacters(...characters: Character[]): void
   getDialogMusic(): MisakuraState['dialog']['music']
   setDialogMusic(): void
-  setDialogMusic(name: string, maxSeconds: number): void
+  setDialogMusic(name: string, seconds: number): void
   getDialogConstant(): ValuesList
   getDialogConstant(name: string): ValuesType | undefined
   setDialogConstant(name: string, value: ValuesType): void
@@ -52,7 +58,9 @@ const initialized = {
   dialog: {
     script: {
       entry: '',
-      line: 0
+      line: 0,
+      part: 0,
+      count: 0
     },
     background: DEFAULT_CORE_OPTION.styles.background,
     music: {
@@ -78,7 +86,7 @@ const useStore = create(
       getDialogData() {
         return get().dialog
       },
-      setDialogData(script: { entry: string; line: number }) {
+      setDialogData(script: { entry: string; line: number; part: number; count: number }) {
         set(() => ({ dialog: { ...initialized.dialog, script } }))
       },
       getDialogScript() {
@@ -95,6 +103,35 @@ const useStore = create(
       nextDialogLine() {
         set((state) => ({
           dialog: { ...state.dialog, script: defu({ line: state.dialog.script.line + 1 }, state.dialog.script) }
+        }))
+      },
+      getDialogPart() {
+        return get().dialog.script.part
+      },
+      setDialogPart(part: number) {
+        set((state) => ({
+          dialog: { ...state.dialog, script: defu({ part, count: 0 }, state.dialog.script) }
+        }))
+      },
+      nextDialogPart() {
+        set((state) => ({
+          dialog: {
+            ...state.dialog,
+            script: defu({ part: state.dialog.script.part + 1, count: 0 }, state.dialog.script)
+          }
+        }))
+      },
+      getDialogCount() {
+        return get().dialog.script.count
+      },
+      // setDialogCount(count: number) {
+      //   set((state) => ({
+      //     dialog: { ...state.dialog, script: defu({ count }, state.dialog.script) }
+      //   }))
+      // },
+      nextDialogCount() {
+        set((state) => ({
+          dialog: { ...state.dialog, script: defu({ count: state.dialog.script.count + 1 }, state.dialog.script) }
         }))
       },
       getDialogBackground() {
@@ -131,29 +168,13 @@ const useStore = create(
       getDialogMusic() {
         return get().dialog.music
       },
-      setDialogMusic(name?: string, maxSeconds?: number) {
-        if (!name || !maxSeconds) {
+      setDialogMusic(name?: string, seconds?: number) {
+        if (name === undefined) {
           set((state) => ({ dialog: defu({ music: initialized.dialog.music }, state.dialog) }))
           return
         }
 
-        set((state) => ({ dialog: defu({ music: { name, seconds: 0 } }, state.dialog) }))
-        const startTime = Date.now()
-        const timerIntervalSeconds = 0.5
-        const timerId = setInterval(() => {
-          if (get().dialog.music.name !== name) {
-            clearInterval(timerId)
-            return
-          }
-          const playSeconds = (Date.now() - startTime) / 1000
-          if (playSeconds > maxSeconds) {
-            set((state) => ({ dialog: defu({ music: { name, seconds: playSeconds - maxSeconds } }, state.dialog) }))
-            return
-          }
-          set((state) => ({
-            dialog: defu({ music: { name, seconds: playSeconds + timerIntervalSeconds } }, state.dialog)
-          }))
-        }, timerIntervalSeconds * 1000)
+        set((state) => ({ dialog: defu({ music: { name, seconds: seconds ?? 0 } }, state.dialog) }))
       },
       // biome-ignore lint:
       getDialogConstant(name?: string): any {
@@ -213,6 +234,11 @@ export const {
   getDialogLine,
   setDialogLine,
   nextDialogLine,
+  getDialogPart,
+  setDialogPart,
+  nextDialogPart,
+  getDialogCount,
+  nextDialogCount,
   getDialogBackground,
   setDialogBackground,
   getDialogSpeaker,

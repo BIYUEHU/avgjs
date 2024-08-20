@@ -1,6 +1,6 @@
 import type { Sprite } from 'PIXI.JS'
 import '@kotori-bot/core'
-import loadAssets from '../utils/loadAssets'
+import { loadAssets } from '../Ui/utils/loader'
 import type DialogPage from '../Pages/DialogPage'
 
 // type CharacterPositionType = 'auto' | 'left' | 'center' | 'right'

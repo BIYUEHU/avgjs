@@ -8,18 +8,8 @@
   "scripts": {
     "build": "tsc --build"
   },
-  "keywords": [
-    "misakura",
-    "engine",
-    "galgame",
-    "gal",
-    "visual novel"
-  ],
-  "files": [
-    "dist",
-    "LICENSE",
-    "README.md"
-  ],
+  "keywords": ["misakura", "engine", "galgame", "gal", "visual novel"],
+  "files": ["dist", "LICENSE", "README.md"],
   "bugs": {
     "url": "https://github.com/kotorijs/kotori/issues"
   },
@@ -31,16 +21,18 @@
   "dependencies": {
     "@kotori-bot/core": "^1.6.5",
     "@kotori-bot/logger": "^1.3.2",
-    "@pixi/sound": "5.x",
     "@pixi/ui": "^1.1.4",
     "@tauri-apps/api": "^1.6.0",
     "defu": "^6.1.4",
     "fluoro": "^1.1.1",
+    "howler": "^2.2.4",
     "path-browserify": "^1.0.1",
     "pathe": "^1.1.2",
     "pixi.js": "^7.4.2",
     "solid-js": "^1.8.15",
-    "solid-pixi": "^0.0.1",
     "zustand": "^4.5.5"
+  },
+  "devDependencies": {
+    "@types/howler": "^2.2.11"
   }
 }

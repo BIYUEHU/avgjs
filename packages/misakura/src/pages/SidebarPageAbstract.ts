@@ -1,6 +1,6 @@
 import { appWindow } from '@tauri-apps/api/window'
 import { HTMLText, type Container } from 'PIXI.JS'
-import loadAssets from '../utils/loadAssets'
+import { loadAssets } from '../Ui/utils/loader'
 import { Page } from '../class'
 import { LayerLevel } from '../types'
 import { getDialogScript, getHistoryPage, setDialogData } from '../store'
@@ -19,7 +19,7 @@ export abstract class SidebarPageAbstract extends Page {
     [
       'START',
       () => {
-        setDialogData({ entry: this.ctx.config.entry, line: 0 })
+        setDialogData({ entry: this.ctx.config.entry, line: 0, part: 0, count: 0 })
         this.ctx.pages.dialog.setActive()
       }
     ],
@@ -52,19 +52,19 @@ export abstract class SidebarPageAbstract extends Page {
     [
       'EXTRA',
       () => {
-        this.ctx.pages.extra.setActive(true)
+        this.ctx.pages.extra.setActive()
       }
     ],
     [
       'CONFIG',
       () => {
-        this.ctx.pages.config.setActive(true)
+        this.ctx.pages.config.setActive()
       }
     ],
     [
       'ABOUT',
       () => {
-        this.ctx.pages.about.setActive(true)
+        this.ctx.pages.about.setActive()
       }
     ],
     [
@@ -78,21 +78,23 @@ export abstract class SidebarPageAbstract extends Page {
 
   private buttonLayout?: Container
 
-  private async preInit() {
-    const opts = { width: this.ctx.width(), height: this.ctx.height() }
-    this.layer.add(
-      [await loadAssets('/gui/home/background1.png', opts), await loadAssets('/gui/home/foreground.png', opts)],
-      LayerLevel.AFTER
-    )
-  }
+  private background: string
 
-  private preLoad() {
+  private async preLoad() {
     // title
     if (this.title) {
       const title = new HTMLText(`<strong>${this.title}</strong>`, { fontSize: 65, fill: 0x0099ff })
       title.position.set(80, 70)
       this.layer.add(title, LayerLevel.BEFORE)
     }
+    // background
+    const opts = { width: this.ctx.width(), height: this.ctx.height() }
+    this.layer.add(
+      this.background
+        ? [await loadAssets(this.background, opts), await loadAssets('/gui/home/foreground.png', opts)]
+        : await loadAssets('/gui/home/foreground.png', opts),
+      LayerLevel.AFTER
+    )
     // buttons
     this.buttonLayout = createLayout(
       this.buttonConfigList.filter(([name]) => {
@@ -138,11 +140,11 @@ export abstract class SidebarPageAbstract extends Page {
     this.buttonLayout?.destroy()
   }
 
-  public constructor(ctx: Context, light?: ButtonType, title?: string) {
+  public constructor(ctx: Context, light?: ButtonType, title?: string, background = '/gui/home/background1.png') {
     super(ctx)
     this.lightButton = light
-    this.preInit()
     this.title = title
+    this.background = background
     this.ctx.on('page_active_change', (target) => {
       if (target === this) this.getActive() ? this.preLoad() : this.preDispose()
     })

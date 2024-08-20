@@ -4,6 +4,7 @@ import type { EventsMapping as FluoroEventsMapping, EventsList as FluoroEventsLi
 import Config from './config'
 import { routes } from './routes'
 import type { Page } from '../class/page'
+import Media from './media'
 
 export interface Context {
   config: Config['config']
@@ -14,8 +15,7 @@ export interface Context {
   listen: Controller['listen']
   height: Controller['height']
   width: Controller['width']
-  // calcX: Controller['calcX']
-  // calcY: Controller['calcY']
+  media: Media
 }
 
 export interface EventsMapping extends FluoroEventsMapping {
@@ -34,10 +34,12 @@ export class Context extends FluoroContext<EventsMapping> implements Context {
     super()
     this.provide('config', new Config(config))
     this.mixin('config', ['config'])
+    this.provide('media', new Media(this))
+    this.inject('media')
     this.provide('controller', new Controller(this))
     this.mixin('controller', ['app', 'layer', 'pages', 'listen', 'clear', 'height', 'width'], true)
 
-    // ? DEBUG
+    // ? DEBUG and more better supports
     ;(window as unknown as { ms: Context }).ms = this
   }
 

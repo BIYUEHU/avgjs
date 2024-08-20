@@ -1,5 +1,5 @@
 import { HTMLText, Sprite } from 'PIXI.JS'
-import loadAssets from '../utils/loadAssets'
+import { loadAssets } from '../Ui/utils/loader'
 import { Page } from '../class'
 import { type CharacterOption, LayerLevel } from '../types'
 import Character from '../class/character'
@@ -11,10 +11,10 @@ import {
   getDialogMusic,
   getDialogScript,
   getDialogSpeaker,
+  getHistoryPage,
   nextDialogLine,
   setDialogBackground,
   setDialogCharacters,
-  setDialogData,
   setDialogLine,
   setDialogMusic,
   setDialogSpeaker
@@ -25,7 +25,6 @@ import loadScript from '../utils/loadScript'
 import { logger } from '../tools/logger'
 import { SpriteButton } from '../Ui/button/SpriteButton'
 import { createLayout } from '../Ui/utils/layout'
-import { Sound, sound } from '@pixi/sound'
 
 export class DialogPage extends Page {
   private lastPressNextDialogTime = 0
@@ -51,9 +50,7 @@ export class DialogPage extends Page {
     dialogView.position.set(this.ctx.width() / 2, this.ctx.height())
 
     this.els.speaker.position.set(s.dialogNameX, s.dialogNameY)
-    this.els.speaker.style = {
-      fontSize: s.dialogNameSize
-    }
+    this.els.speaker.style = { fontSize: s.dialogNameSize }
     this.els.msg.position.set(s.dialogMsgX, s.dialogMsgY)
     this.els.msg.style = {
       breakWords: true,
@@ -125,7 +122,7 @@ export class DialogPage extends Page {
       const currentTime = Date.now()
       if (currentTime - this.lastPressNextDialogTime > (force ? 200 : 600)) {
         this.lastPressNextDialogTime = currentTime
-        this.emit('next_dialog')
+        this.ctx.emit('next_dialog')
       }
     }
     this.listen('keydown', (event) => {
@@ -135,11 +132,7 @@ export class DialogPage extends Page {
       }
       switch (event.key) {
         case 'Escape':
-          this.ctx.pages.home.setActive()
-          break
-        case 'Shift':
-          setDialogData({ entry: this.ctx.config.entry, line: 0 })
-          this.reActive()
+          if (!this.ctx.pages.pause.getActive()) this.ctx.pages.pause.setActive(true, false)
           break
         case 'Control':
           nextDialogEmiter(true)
@@ -154,7 +147,7 @@ export class DialogPage extends Page {
   }
 
   public async load() {
-    clearHistoryPage()
+    if (!getHistoryPage().includes('dialog')) clearHistoryPage()
 
     // Set stop signal
     let shouldBreak = false
@@ -181,7 +174,7 @@ export class DialogPage extends Page {
 
     // Load store data to view
     await this.background(getDialogBackground())
-    this.music(getDialogMusic().name, getDialogMusic().seconds)
+    if (!getHistoryPage().includes('dialog')) this.music(getDialogMusic().name, getDialogMusic().seconds)
     this.els.speaker.text = getDialogSpeaker()
     const shownCharacters = (
       (await Promise.race([
@@ -270,6 +263,7 @@ export class DialogPage extends Page {
     }
     return new Promise<void>((resolve) => {
       this.once('next_dialog', () => {
+        if (!this.getActive(true)) return
         if (callback) callback()
         resolve(undefined)
       })
@@ -319,17 +313,24 @@ export class DialogPage extends Page {
 
   public music(name?: string, seconds = 0) {
     if (!name) {
-      sound.stopAll()
+      this.ctx.media.stopAll()
       this.els.bgm = ''
       setDialogMusic()
       return
     }
+    this.ctx.media.stopAll()
     this.els.bgm = name
-    const song = Sound.from(name)
-    // setDialogMusic(name, )
-
-    logger.info(`Play music ${name} for ${1} seconds`, sound)
-    song.play({ loop: true /* , volume: 0.5 */, start: seconds })
+    const sound = this.ctx.media.play(name, seconds)
+    setDialogMusic(name, seconds)
+    const timerIntervalSeconds = 0.5
+    const timerId = setInterval(() => {
+      if (this.els.bgm !== name || this.ctx.pages.home.getActive()) {
+        this.ctx.media.stop(name)
+        clearInterval(timerId)
+        return
+      }
+      setDialogMusic(name, sound.seek())
+    }, timerIntervalSeconds * 1000)
   }
 }
 

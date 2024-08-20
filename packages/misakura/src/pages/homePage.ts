@@ -1,5 +1,5 @@
 import { Text } from 'PIXI.JS'
-import loadAssets from '../utils/loadAssets'
+import { loadAssets } from '../Ui/utils/loader'
 import { LayerLevel } from '../types'
 import SidebarPageAbstract from './SidebarPageAbstract'
 import { clearHistoryPage } from '../store'

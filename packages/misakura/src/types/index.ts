@@ -5,6 +5,8 @@ export interface CoreOption {
   entry?: string
   element?: HTMLElement
   render?: Exclude<ConstructorParameters<typeof Application>[0], 'width' | 'height'>
+
+  // ! This will be removed or changed in the future about UI system design.
   styles?: {
     background?: string
     dialog?: string
