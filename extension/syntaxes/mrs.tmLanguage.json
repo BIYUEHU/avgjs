@@ -62,7 +62,7 @@
       "patterns": [
         {
           "name": "meta.command.mrs",
-          "begin": "^(goto|call|using|play|background|image|character|say)[ \n]",
+          "begin": "^(show|label|goto|read|call|calc|if|for|let|const|use|video|music|voice|sound|background|image|character|say)[ \n]",
           "end": "$",
           "beginCaptures": {
             "1": {

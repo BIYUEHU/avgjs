@@ -1,11 +1,9 @@
-import { appWindow } from '@tauri-apps/api/window'
 import { HTMLText, type Container } from 'PIXI.JS'
 import { loadAssets } from '../Ui/utils/loader'
 import { Page } from '../class'
 import { LayerLevel } from '../types'
-import { getDialogScript, getHistoryPage, setDialogData } from '../store'
 import { SpriteButton } from '../Ui/button/SpriteButton'
-import { createLayout } from '../Ui/utils/layout'
+import { createAutoLayout } from '../Ui/utils/layout'
 import type Context from '../app'
 
 type ButtonType = 'START' | 'TITLE' | 'CONTINUE' | 'LOAD' | 'SAVE' | 'EXTRA' | 'CONFIG' | 'ABOUT' | 'EXIT'
@@ -17,9 +15,16 @@ export abstract class SidebarPageAbstract extends Page {
 
   private readonly buttonConfigList = [
     [
+      'FINAL',
+      () => {
+        this.ctx.store.setDialogScript({ entry: 'final', line: 0 })
+        this.ctx.pages.dialog.setActive()
+      }
+    ],
+    [
       'START',
       () => {
-        setDialogData({ entry: this.ctx.config.entry, line: 0, part: 0, count: 0 })
+        this.ctx.store.setDialogScript({ entry: this.ctx.config.entry, line: 0 })
         this.ctx.pages.dialog.setActive()
       }
     ],
@@ -32,7 +37,7 @@ export abstract class SidebarPageAbstract extends Page {
     [
       'CONTINUE',
       () => {
-        if (!getDialogScript()) return
+        if (!this.ctx.store.getDialogScript()) return
         this.ctx.pages.dialog.setActive()
       }
     ],
@@ -45,7 +50,7 @@ export abstract class SidebarPageAbstract extends Page {
     [
       'SAVE',
       () => {
-        if (!getDialogScript()) return
+        if (!this.ctx.store.getDialogScript()) return
         this.ctx.pages.save.setActive()
       }
     ],
@@ -70,8 +75,7 @@ export abstract class SidebarPageAbstract extends Page {
     [
       'EXIT',
       () => {
-        this.ctx.clear()
-        appWindow.close()
+        this.ctx.emit('exit')
       }
     ]
   ] as const
@@ -96,29 +100,37 @@ export abstract class SidebarPageAbstract extends Page {
       LayerLevel.AFTER
     )
     // buttons
-    this.buttonLayout = createLayout(
+    this.buttonLayout = createAutoLayout(
       this.buttonConfigList.filter(([name]) => {
         switch (name) {
+          case 'FINAL':
+            return this.ctx.store.getFinalPlot() && this.ctx.pages.home.getActive()
           case 'START':
             return this.ctx.pages.home.getActive()
           case 'TITLE':
             return !this.ctx.pages.home.getActive()
           case 'CONTINUE':
             return (
-              getDialogScript() &&
-              (getHistoryPage().some((page) => ['home', 'dialog'].includes(page)) || this.ctx.pages.home.getActive())
+              this.ctx.store.getDialogScript() &&
+              (this.ctx.store.getHistoryPage().some((page) => ['home', 'dialog'].includes(page)) ||
+                this.ctx.pages.home.getActive())
             )
           case 'SAVE':
-            return getDialogScript() && getHistoryPage().includes('dialog')
+            return this.ctx.store.getDialogScript() && this.ctx.store.getHistoryPage().includes('dialog')
           default:
             return ['ABOUT', 'EXTRA'].includes(name)
-              ? getHistoryPage().includes('home') || this.ctx.pages.home.getActive()
+              ? this.ctx.store.getHistoryPage().includes('home') || this.ctx.pages.home.getActive()
               : true
         }
       }),
-      ([text, callback], index) => {
+      {
+        pos: [120, 420],
+        spacing: 20,
+        direction: 'down'
+      },
+      ([text, callback]) => {
         const isSelf = text === this.lightButton
-        const button = new SpriteButton(
+        return new SpriteButton(
           text,
           (type) => {
             if (type === 'onPress' && !isSelf) callback()
@@ -128,9 +140,7 @@ export abstract class SidebarPageAbstract extends Page {
             hoverStyle: { fill: isSelf ? 0x0064ff : 0x0099ff },
             pressedStyle: { fill: 0x0064ff }
           }
-        )
-        button.view.position.set(120, 420 + index * 60)
-        return button.view
+        ).view
       }
     )
     this.layer.add(this.buttonLayout)
@@ -140,7 +150,7 @@ export abstract class SidebarPageAbstract extends Page {
     this.buttonLayout?.destroy()
   }
 
-  public constructor(ctx: Context, light?: ButtonType, title?: string, background = '/gui/home/background1.png') {
+  public constructor(ctx: Context, light?: ButtonType, title?: string, background = '/gui/home/background.png') {
     super(ctx)
     this.lightButton = light
     this.title = title

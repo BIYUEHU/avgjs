@@ -3,18 +3,27 @@
  * @Blog: https://hotaru.icu
  * @Date: 2023-07-11 14:18:27
  * @LastEditors: Hotaru biyuehuya@gmail.com
- * @LastEditTime: 2024-08-17 12:05:28
+ * @LastEditTime: 2024-08-22 17:16:30
  */
 
 import { UserAccess, CommandError, type Context, MessageScope, TsuError, ModuleError } from '@kotori-bot/core'
 import locales from './locales'
-import { logger } from '../../../tools/logger'
+import { logger } from '../../tools/logger'
 
 export function main(ctx: Context) {
   ctx.i18n.use(locales, 'en_US')
 
   ctx.on('before_command', (data) => {
-    const quick = data.session.quick.bind(data.session)
+    const quick = (arg: Parameters<typeof data.session.quick>[0]) => {
+      if (!arg) return
+      let text: string
+      if (Array.isArray(arg)) {
+        text = data.session.format(data.session.i18n.locale(arg[0]), arg[1] as string[])
+      } else {
+        text = data.session.i18n.locale(arg.toString())
+      }
+      logger.label('CommandError').error(text)
+    }
     if (!(data.result instanceof CommandError)) {
       const { scope, access } = data.command.meta
       if (scope && scope !== 'all' && data.session.type !== scope) {

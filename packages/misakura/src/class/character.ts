@@ -60,7 +60,7 @@ export class Character {
 
   public async figure(figure: string) {
     this.figureAssets = figure
-    const el = await loadAssets(figure)
+    const el = await loadAssets(this.figureAssets)
     el.anchor.set(0.5, 0.5)
     const isShow = this.isShow()
     const oldEl = this.element

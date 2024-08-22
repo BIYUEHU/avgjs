@@ -2,6 +2,7 @@ import { isMobile, Container, Sprite, Text, Texture, type ITextStyle } from 'PIX
 import { Button } from '@pixi/ui'
 import defu from 'defu'
 import { preload } from '../utils/loader'
+import { nextTick } from '../../tools/nextTick'
 
 type ActionType = 'down' | 'up' | 'upOut' | 'out' | 'onPress' | 'hover'
 
@@ -42,7 +43,7 @@ export class SpriteButton extends Button {
       [options?.button, options?.hoverButton, options?.pressedButton].filter((el) => el !== undefined) as string[]
     ).then(() => {
       if (typeof this.options.button !== 'string') return
-      this.textView.y = -10
+      // this.textView.y = -10
       this.textView.anchor.set(0.5)
       this.buttonBg.texture = Texture.from(this.options.button)
       this.buttonBg.anchor.set(0.5)
@@ -84,7 +85,7 @@ export class SpriteButton extends Button {
 
   public override press() {
     this.action('onPress')
-    setTimeout(() => {
+    nextTick(() => {
       if (this.options.button) this.buttonBg.texture = Texture.from(this.options.button)
       this.textView.style = { ...this.textView.style, ...this.options.style }
     })

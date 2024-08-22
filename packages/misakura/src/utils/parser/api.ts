@@ -10,6 +10,10 @@ class MisakuraApi extends Api {
     logger.record(...(Array.isArray(message) ? message : [message.toString()]))
     return { time: Date.now(), messageId: random.uuid() }
   }
+
+  public async sendGroupMsg() {
+    return { time: Date.now(), messageId: random.uuid() }
+  }
 }
 
 export default MisakuraApi

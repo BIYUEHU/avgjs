@@ -1,7 +1,7 @@
 import type { CoreOption } from '../types'
 
 export const DEFAULT_CORE_OPTION: Required<CoreOption> & { styles: Required<CoreOption['styles']> } = {
-  entry: '/scripts/main.mrs',
+  entry: 'main.mrs',
   element: document.body,
   styles: {
     background: '/gui/dialog/background.png',
@@ -18,7 +18,17 @@ export const DEFAULT_CORE_OPTION: Required<CoreOption> & { styles: Required<Core
     margin: 48,
     characterHeight: 718
   },
-  render: {}
+  render: {},
+  basedir: {
+    // gui: '/gui',
+    fonts: '/fonts',
+    scripts: '/scripts',
+    background: '/images/background',
+    figure: '/images/figure',
+    voice: '/audio/voice',
+    music: '/audio/music',
+    sound: '/audio/sound'
+  }
 }
 
 export default DEFAULT_CORE_OPTION

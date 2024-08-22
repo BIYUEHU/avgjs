@@ -4,6 +4,8 @@ import { Howl } from 'howler'
 class Media {
   private readonly musicList: Map<string, Howl> = new Map()
 
+  private lastVoice?: Howl
+
   public readonly ctx: Context
 
   public constructor(ctx: Context) {
@@ -16,14 +18,14 @@ class Media {
     return song
   }
 
-  public play(src: string, seconds?: number) {
-    if (this.musicList.has(src)) {
-      return this.musicList.get(src) as Howl
+  public music(name: string, seconds?: number, volume = 0.3) {
+    if (this.musicList.has(name)) {
+      return this.musicList.get(name) as Howl
     }
-    const audio = this.createAudio(src, true)
+    const audio = this.createAudio(this.ctx.path('music', name), true, volume)
     audio.play()
     if (seconds) /* audio.seek( */ seconds
-    this.musicList.set(src, audio)
+    this.musicList.set(name, audio)
     return audio
   }
 
@@ -44,8 +46,16 @@ class Media {
   //   return audio
   // }
 
-  public playOnce(src: string) {
-    const audio = this.createAudio(src)
+  public voice(name: string) {
+    this.lastVoice?.stop().unload()
+    this.lastVoice = this.createAudio(this.ctx.path('voice', name), false, 1)
+    this.lastVoice.play()
+    // return audio
+    return this.lastVoice
+  }
+
+  public sound(name: string, volume?: number) {
+    const audio = this.createAudio(this.ctx.path('sound', name), false, volume)
     audio.play()
     audio.once('end', () => audio.unload())
     return audio

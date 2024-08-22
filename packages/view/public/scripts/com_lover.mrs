@@ -1,0 +1,18 @@
+# background outside.png
+
+# character test --name '<font color="red">白岩雪菜</font>' --figure yurina.png
+
+
+test: 恭喜你进入这一个特别的结局！
+
+test: 真的有那么喜欢我吗？
+confirm realLike "真的" "骗你的啦"
+
+if !$realLike "apply 死ね"
+
+character test --name '<font color="lightgreen">愉悦的白眼雪菜</font>' --figure yurina_smile.png
+
+test: 真真真真真真真真真真真真真真真真真真真的吗？
+test: 不要骗我吗？
+test: 那好吧我信了
+final

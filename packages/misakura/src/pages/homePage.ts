@@ -2,7 +2,6 @@ import { Text } from 'PIXI.JS'
 import { loadAssets } from '../Ui/utils/loader'
 import { LayerLevel } from '../types'
 import SidebarPageAbstract from './SidebarPageAbstract'
-import { clearHistoryPage } from '../store'
 
 export class HomePage extends SidebarPageAbstract {
   public readonly level = LayerLevel.MIDDLE
@@ -42,7 +41,7 @@ export class HomePage extends SidebarPageAbstract {
   }
 
   public load() {
-    clearHistoryPage()
+    this.ctx.store.clearHistoryPage()
   }
 }
 

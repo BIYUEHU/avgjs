@@ -3,33 +3,29 @@ import { loadAssets } from '../Ui/utils/loader'
 import { Page } from '../class'
 import { type CharacterOption, LayerLevel } from '../types'
 import Character from '../class/character'
-import {
-  clearHistoryPage,
-  getDialogBackground,
-  getDialogCharacters,
-  getDialogLine,
-  getDialogMusic,
-  getDialogScript,
-  getDialogSpeaker,
-  getHistoryPage,
-  nextDialogLine,
-  setDialogBackground,
-  setDialogCharacters,
-  setDialogLine,
-  setDialogMusic,
-  setDialogSpeaker
-} from '../store'
 import Parser from '../utils/parser'
 import commander from '../utils/commander'
-import loadScript from '../utils/loadScript'
 import { logger } from '../tools/logger'
 import { SpriteButton } from '../Ui/button/SpriteButton'
-import { createLayout } from '../Ui/utils/layout'
+import { createAutoLayout } from '../Ui/utils/layout'
+import { loadScript, loadScriptPart, loadText } from '../tools/loadFile'
+import { interval, nextTick, timeout } from '../tools/nextTick'
 
 export class DialogPage extends Page {
   private lastPressNextDialogTime = 0
 
+  private clickLock = false
+
+  private autoMode = false
+
   public currentPromise?: Promise<unknown>
+
+  public setClickLock = () => {
+    this.clickLock = true
+    nextTick(() => {
+      this.clickLock = false
+    })
+  }
 
   public readonly parser = new Parser()
 
@@ -38,7 +34,9 @@ export class DialogPage extends Page {
     msg: new HTMLText(),
     speaker: new HTMLText(),
     chars: new Map<string, Character>(),
-    bgm: ''
+    bgm: '',
+    msgParts: [] as string[][],
+    voiceParts: [] as string[][]
   }
 
   public readonly level = LayerLevel.MIDDLE
@@ -62,16 +60,7 @@ export class DialogPage extends Page {
     this.layer.add(this.els.speaker, LayerLevel.BEFORE)
     this.layer.add(this.els.msg, LayerLevel.BEFORE)
 
-    let clickLock = false
-    const setClickLock = () => {
-      clickLock = true
-      const timer = setTimeout(() => {
-        clickLock = false
-        clearTimeout(timer)
-      })
-    }
-
-    const buttonLayout = createLayout(
+    const buttonLayout = createAutoLayout(
       [
         [
           'load',
@@ -89,7 +78,14 @@ export class DialogPage extends Page {
         ['quickSave', () => {}],
         ['log', () => {}],
         ['skip', () => {}],
-        ['auto', () => {}],
+        [
+          'auto',
+          () => {
+            this.autoMode = !this.autoMode
+            logger.info(`Auto mode ${this.autoMode ? 'on' : 'off'}`)
+            if (this.autoMode) this.ctx.emit('next_dialog')
+          }
+        ],
         [
           'config',
           () => {
@@ -97,17 +93,25 @@ export class DialogPage extends Page {
           }
         ]
       ] as const,
-      ([name, callback], index) => {
+      {
+        pos: [1150, 1055],
+        direction: 'right',
+        spacing: 60
+      },
+      ([name, callback]) => {
         const button = new SpriteButton(
           '',
           (type) => {
+            this.setClickLock()
             if (type !== 'onPress') return
-            setClickLock()
             callback()
           },
-          { button: `/gui/dialog/buttons/${name}.png` }
+          {
+            button: `/gui/dialog/buttons/${name}.png`,
+            hoverButton: `/gui/dialog/buttons/${name}Hover.png`,
+            pressedButton: `/gui/dialog/buttons/${name}Hover.png`
+          }
         )
-        button.view.position.set(1150 + index * 63, 1055)
         button.view.scale.set(0.38, 0.38)
         return button.view
       }
@@ -142,78 +146,146 @@ export class DialogPage extends Page {
     })
 
     this.listen('click', () => {
-      if (!clickLock || this.getActive(true)) nextDialogEmiter()
+      if (!this.clickLock && this.getActive(true)) nextDialogEmiter()
     })
   }
 
   public async load() {
-    if (!getHistoryPage().includes('dialog')) clearHistoryPage()
+    if (!this.ctx.store.getHistoryPage().includes('dialog')) this.ctx.store.clearHistoryPage()
 
+    // Load store data to view
+    await this.background(this.ctx.store.getDialogBackground())
+    if (!this.ctx.store.getHistoryPage().includes('dialog')) {
+      this.music(this.ctx.store.getDialogMusic().name, this.ctx.store.getDialogMusic().seconds)
+    }
+    this.els.speaker.text = this.ctx.store.getDialogSpeaker()
+    const shownCharacters = (
+      await Promise.all(
+        this.ctx.store
+          .getDialogCharacters()
+          .map(async (charData) => [charData, await this.character(charData.identity, charData)])
+      )
+    ).filter(([charData]) => charData.position)
+
+    const autoShownCharacters = shownCharacters
+      .filter(([charData]) => charData.position?.type === 'auto')
+      .sort(([a], [b]) => (a.position?.order as number) - (b.position?.order as number))
+    for (const [, char] of autoShownCharacters) (char as Character).view()
+
+    // Load script
+    const isFinish = await this.apply(this.ctx.store.getDialogScript())
+    if (isFinish) {
+      await this.pause(undefined, 1)
+      this.ctx.store.setDialogScript({ entry: '', line: 0 })
+      this.ctx.pages.home.setActive()
+    }
+  }
+
+  public async apply(name: string) {
     // Set stop signal
     let shouldBreak = false
     const breakListener = (page: Page) => {
       if (page !== this || page.getActive()) return
       shouldBreak = true
     }
-
     this.ctx.on('page_active_change', breakListener)
-    let timerId: number
-    const breakPromise = new Promise((resolve) => {
-      timerId = Number(
-        setInterval(() => {
-          if (!shouldBreak) return
-          clearInterval(timerId)
-          resolve(undefined)
-        }, 100)
-      )
+    let disposeTimer: (() => void) | undefined
+    const breakPromise = new Promise<void>((resolve) => {
+      disposeTimer = interval(() => {
+        if (!shouldBreak) return
+        resolve()
+      }, 100)
     })
     const dispose = () => {
       this.ctx.off('page_active_change', breakListener)
-      clearInterval(timerId)
+      disposeTimer?.()
     }
-
-    // Load store data to view
-    await this.background(getDialogBackground())
-    if (!getHistoryPage().includes('dialog')) this.music(getDialogMusic().name, getDialogMusic().seconds)
-    this.els.speaker.text = getDialogSpeaker()
-    const shownCharacters = (
-      (await Promise.race([
-        Promise.all(
-          getDialogCharacters().map(async (charData) => [charData, await this.character(charData.identity, charData)])
-        ),
-        breakPromise
-      ])) as [ReturnType<typeof getDialogCharacters>[0], Character][] | undefined
-    )?.filter(([charData]) => charData.position)
-    if (!shownCharacters) return dispose()
-
-    const autoShownCharacters = shownCharacters
-      .filter(([charData]) => charData.position?.type === 'auto')
-      .sort(([a], [b]) => (a.position?.order as number) - (b.position?.order as number))
-    for (const [, char] of autoShownCharacters) (char as Character).view('auto')
 
     // Load and execute scripts
-    const script = (await Promise.race([loadScript(getDialogScript()), breakPromise])) as string[] | undefined
-    if (!script || getDialogLine() === script.length) return dispose()
-    if (getDialogLine() > script.length) {
-      logger.error('Script error: running line to bigger')
-      return dispose()
+    const scriptFile = this.ctx.path('scripts', name)
+    const scriptTemp = await loadScript(scriptFile)
+
+    if (!scriptTemp || this.ctx.store.getDialogLine() === scriptTemp.length) {
+      logger.warn('Script error: empty or not found')
+      dispose()
+      return !shouldBreak
     }
 
-    while (getDialogLine() < script.length) {
+    this.els.msgParts = (await loadScriptPart(scriptFile)) ?? []
+    if (this.els.msgParts.length === 0) logger.warn('Script dialog message content be empty or not found')
+
+    this.els.voiceParts = (await loadScriptPart(scriptFile, 'voice')) ?? []
+    if (this.els.voiceParts.length === 0) logger.warn('Script dialog message voice be empty or not found')
+
+    // Pre handle 'read' command
+    const script: string[] = []
+    if (this.els.msgParts.length === this.els.voiceParts.length) {
+      let readCount = 0
+
+      for (const item of scriptTemp) {
+        if (item !== 'read') {
+          script.push(item)
+          continue
+        }
+        if (readCount >= this.els.msgParts.length || this.els.msgParts[readCount].length === 0) {
+          logger.warn(`Script pre handle failed: no content found for 'read' at position ${readCount}`)
+          break
+        }
+        for (const [index, item] of this.els.msgParts[readCount].entries()) {
+          const voice = this.els.voiceParts[readCount][index]
+          if (voice.length > 1) script.push(`voice ${JSON.stringify(voice)}`)
+          script.push(item)
+        }
+        readCount += 1
+      }
+    } else {
+      script.push(...scriptTemp)
+      logger.warn('Script pre handle failed: dialog message content and voice length not match')
+    }
+
+    if (this.ctx.store.getDialogLine() > script.length) {
+      logger.error('Script error: running line to bigger')
+      dispose()
+      return !shouldBreak
+    }
+
+    let lastPromise: Promise<unknown> | undefined
+    const notNewPromise = () => !lastPromise || lastPromise === this.currentPromise
+
+    while (this.ctx.store.getDialogLine() < script.length) {
       if (shouldBreak) break
-      const line = getDialogLine()
+      const line = this.ctx.store.getDialogLine()
       try {
-        this.parser.exec(script[line])
+        if (notNewPromise()) this.parser.exec(script[line])
+        lastPromise = this.currentPromise
         await Promise.race([this.currentPromise, breakPromise])
       } catch (e) {
-        logger.error(`Script error at ${getDialogScript()} line ${line}:`, e)
+        logger.error(`Script error at ${scriptFile} line ${line}:`, e instanceof Error ? e.message : e?.toString() ?? e)
       }
-      nextDialogLine()
+      if (notNewPromise()) this.ctx.store.nextDialogLine()
     }
 
     dispose()
-    const line = getDialogLine()
-    if (line) setDialogLine(line - 1)
+    const line = this.ctx.store.getDialogLine()
+    if (line) this.ctx.store.setDialogLine(line - 1)
+    return !shouldBreak
+  }
+
+  // TODO: modify by `import()`
+  public async call(name: string) {
+    const text = await loadText(this.ctx.path('scripts', name))
+    if (!text) {
+      logger.error(`Javascript file ${name} not found`)
+      return
+    }
+
+    try {
+      // biome-ignore lint:
+      const result = eval(text)
+      logger.info(`Javascript file ${name} call result:`, result)
+    } catch (e) {
+      logger.error(`Javascript file ${name} call failed`, e)
+    }
   }
 
   public dispose() {
@@ -225,11 +297,11 @@ export class DialogPage extends Page {
   }
 
   public async background(assets: string) {
-    setDialogBackground(assets)
+    this.ctx.store.setDialogBackground(assets)
 
     if (this.els.bg) this.layer.remove(this.els.bg, LayerLevel.AFTER)
     for (const char of this.els.chars) char[1].hide()
-    const el = await loadAssets(assets)
+    const el = await loadAssets(this.ctx.path('background', assets))
     el.width = this.ctx.width()
     el.height = this.ctx.height()
     this.layer.add(el, LayerLevel.AFTER)
@@ -245,8 +317,9 @@ export class DialogPage extends Page {
       char.display(name)
     }
     if (show) char[show ? 'view' : 'hide']()
-    if (figure) await char.figure(figure)
-    setDialogCharacters(...Array.from(this.els.chars.values()))
+    if (figure && figure !== 'undefined') await char.figure(this.ctx.path('figure', figure))
+    logger.info('figure', figure, typeof figure)
+    this.ctx.store.setDialogCharacters(...Array.from(this.els.chars.values()))
 
     return char
   }
@@ -254,37 +327,36 @@ export class DialogPage extends Page {
   public pause(callback?: () => void, sleep?: number) {
     if (sleep !== undefined) {
       return new Promise<void>((resolve) => {
-        const timer = setTimeout(() => {
+        timeout(() => {
           if (callback) callback()
-          clearTimeout(timer)
-          resolve(undefined)
+          resolve()
         }, sleep * 1000)
       })
     }
+
     return new Promise<void>((resolve) => {
       this.once('next_dialog', () => {
         if (!this.getActive(true)) return
         if (callback) callback()
-        resolve(undefined)
+        resolve()
       })
     })
   }
 
   public text(text: string, name = '') {
-    setDialogSpeaker(name)
+    this.ctx.store.setDialogSpeaker(name)
 
     let index = 0
-    let timerId: number
     let tempText = ''
+    let dispose: (() => void) | undefined
     this.els.speaker.text = name
     this.els.msg.text = text[index]
 
     const timer = () => {
-      timerId = setTimeout(
+      dispose = timeout(
         () => {
           index += 1
           if (index >= text.length || text[index] === undefined) {
-            clearTimeout(timerId)
             if (tempText) {
               this.els.msg.text += tempText
               tempText = ''
@@ -304,33 +376,130 @@ export class DialogPage extends Page {
           timer()
         },
         tempText ? 0 : 30
-      ) as unknown as number
-      this.ctx.once('resize', () => clearTimeout(timerId))
+      )
+      this.ctx.once('resize', dispose)
     }
     timer()
-    return this.pause(() => clearTimeout(timerId))
+    const nextClick = this.pause(dispose)
+    if (!this.autoMode) return nextClick
+    return Promise.race<void>([
+      nextClick,
+      new Promise((resolve) =>
+        timeout(() => {
+          if (this.autoMode) resolve()
+        }, text.length * 165)
+      )
+    ])
   }
 
   public music(name?: string, seconds = 0) {
     if (!name) {
       this.ctx.media.stopAll()
       this.els.bgm = ''
-      setDialogMusic()
+      this.ctx.store.setDialogMusic()
       return
     }
     this.ctx.media.stopAll()
     this.els.bgm = name
-    const sound = this.ctx.media.play(name, seconds)
-    setDialogMusic(name, seconds)
+    const sound = this.ctx.media.music(name, seconds)
+    this.ctx.store.setDialogMusic(name, seconds)
     const timerIntervalSeconds = 0.5
-    const timerId = setInterval(() => {
+    const dispose = interval(() => {
       if (this.els.bgm !== name || this.ctx.pages.home.getActive()) {
         this.ctx.media.stop(name)
-        clearInterval(timerId)
+        dispose()
         return
       }
-      setDialogMusic(name, sound.seek())
+      this.ctx.store.setDialogMusic(name, sound.seek())
     }, timerIntervalSeconds * 1000)
+  }
+
+  public options(name: string, ...text: string[]) {
+    return new Promise<void>((resolve) => {
+      const layout = createAutoLayout(
+        text,
+        {
+          pos: [this.ctx.width() / 2, this.ctx.height() / 2],
+          direction: 'column',
+          spacing: 40
+        },
+        (text, index) =>
+          new SpriteButton(
+            text,
+            (type) => {
+              if (type !== 'onPress') return
+              this.parser.exec(`let ${JSON.stringify(name)} ${index}`)
+              this.layer.remove(layout, LayerLevel.BEFORE)
+              nextTick(() => resolve())
+            },
+            {
+              style: { fontSize: 30 },
+              button: '/gui/dialog/option.png',
+              hoverButton: '/gui/dialog/optionHover.png',
+              pressedButton: '/gui/dialog/optionHover.png'
+            }
+          ).view
+      )
+      if (!this.layer.has(layout, LayerLevel.BEFORE)) this.layer.add(layout, LayerLevel.BEFORE)
+      const dispose = (page: Page) => {
+        if (this === page && !this.getActive()) this.layer.remove(layout, LayerLevel.BEFORE)
+        if (!this.layer.has(layout, LayerLevel.BEFORE)) this.ctx.off('page_active_change', dispose)
+      }
+      this.ctx.on('page_active_change', dispose)
+    })
+  }
+
+  public input(name: string, _submit: string) {
+    // let inputData = ''
+    return new Promise<void>((resolve) => {
+      let result = ''
+      while (!result.trim()) {
+        result = prompt() ?? ''
+      }
+      this.parser.exec(`let ${JSON.stringify(name)} ${JSON.stringify(result.replaceAll(' ', ''))}`)
+      nextTick(() => resolve())
+      /* shit from Pixi Ui */
+      /*       const layout = createAutoLayout(
+        ['', ''],
+        {
+          pos: [this.ctx.width() / 2, this.ctx.height() / 2],
+          direction: 'column',
+          spacing: 40
+        },
+        (_, index) => {
+          if (index === 0) {
+            const input = new Input({
+              bg: '/gui/dialog/input.png'
+            })
+            input.onChange.connect((value) => {
+              inputData = value
+            })
+            return input
+          }
+          return new SpriteButton(
+            submit,
+            (type) => {
+              if (type !== 'onPress') return
+              this.parser.exec(`let ${JSON.stringify(name)} ${inputData}`)
+              this.layer.remove(layout, LayerLevel.BEFORE)
+              nextTick(() => resolve())
+            },
+            {
+              style: { fontSize: 30 },
+              button: '/gui/dialog/option.png',
+              hoverButton: '/gui/dialog/optionHover.png',
+              pressedButton: '/gui/dialog/optionHover.png'
+            }
+          ).view
+        }
+      )
+      if (!this.layer.has(layout, LayerLevel.BEFORE)) this.layer.add(layout, LayerLevel.BEFORE)
+      const dispose = (page: Page) => {
+        if (this === page && !this.getActive()) this.layer.remove(layout, LayerLevel.BEFORE)
+        if (!this.layer.has(layout, LayerLevel.BEFORE)) this.ctx.off('page_active_change', dispose)
+      }
+      this.ctx.on('page_active_change', dispose) */
+    })
   }
 }
 

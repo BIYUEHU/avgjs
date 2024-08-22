@@ -1,0 +1,8 @@
+background sky_night.png
+
+character test --name '<font color="red">白岩雪菜</font>' --figure yurina.png
+
+show test
+
+test: 你能来到终章说明还是有点实例的
+test: 就这玩意让我们幸福在一起...了吗？

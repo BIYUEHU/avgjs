@@ -1,0 +1,55 @@
+read
+
+background outside.png
+
+character test --name '<font color="red">白岩雪菜</font>' --figure yurina.png
+
+read
+
+# 加载角色
+
+music /audio/music/1.flac
+
+show
+
+read
+
+show test --figure yurina_closedeyes.png
+
+read
+
+show test --figure yurina_asleep.png
+
+# 切换背景
+background seaside_beach.png
+read
+
+show test --figure yurina_closedeyes.png
+
+read
+
+show test --figure yurina_smile.png
+
+read
+
+background sky_night.png
+
+read
+
+show test --figure yurina_smile.png
+
+read
+
+background seaside_beach.png
+
+test: 这里需要点击三下
+
+pause
+pause
+
+test: ok 你成功点了俩下
+test: 现在你要等待三秒钟
+
+pause 3
+
+test: ok!

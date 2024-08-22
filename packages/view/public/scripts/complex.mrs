@@ -1,0 +1,39 @@
+background outside.png
+
+music 1.flac
+
+character test --name '<font color="red">白岩雪菜</font>' --figure yurina.png
+
+show test
+
+test: 说一个你喜欢的数字
+
+prompt num
+
+test: 你喜欢的数字是 $num
+
+test: 快来选一个吧
+
+options result "选项一" "请不要选我" "也别选我，行不行？" "别选我" "选项一" "请不要选我" "也别选我，行不行？" "别选我" "选项一" "请不要选我" "也别选我，行不行？" "别选我"
+
+# test: 你选择的是 $result
+if "$result == 0" "say 你选了第一个选项"
+if "$result == 1" "say 都说了让你别选我啊"
+if "$result == 2" "say 行吧，你选了我"
+if "![0, 2, 1].includes($result)" "say 你选的选项是别的啊"
+
+let isFirstLike 2
+
+label like
+test: 你是否喜欢我?
+confirm isLike 是 否 --speaker test
+if "$isLike" "say 谢谢你喜欢我 --speaker test"
+if "$isFirstLike == 2 && $isLike" "let isFirstLike 1"
+if "$isFirstLike != 1" "let isFirstLike 0"
+if "!$isLike" "say 我不接受！ --speaker test"
+if "!$isLike" "goto like"
+
+if "$isFirstLike != 1" "say 由于你不是第一次喜欢我，所以你的游戏将结束"
+if "$isFirstLike == 1" "apply com_lover"
+
+

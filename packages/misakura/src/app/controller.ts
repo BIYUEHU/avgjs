@@ -3,7 +3,8 @@ import type Context from './core'
 import { Layer } from '../class/layer'
 import type { Page } from '../class/page'
 import type { routes } from './routes'
-import { getLastPage, setLastPage } from '../store'
+import path from 'pathe'
+import type { CoreOption } from '../types'
 
 export class Controller {
   private readonly IS_PORTRAIT = window.innerHeight > window.innerWidth
@@ -57,7 +58,7 @@ export class Controller {
       const renderTime = Date.now()
       window.addEventListener('resize', () => {
         if (renderTime && Date.now() - renderTime <= 300) return
-        setLastPage(this.getCurrentPage())
+        this.ctx.store.setLastPage(this.getCurrentPage())
         window.location = '' as unknown as Location
       })
 
@@ -67,14 +68,14 @@ export class Controller {
       })
       this.ctx.config.element.appendChild(this.app.view as unknown as Node)
 
-      const lastPages = getLastPage()
+      const lastPages = this.ctx.store.getLastPage()
       if (lastPages.length === 0) {
         this.pages.home.setActive()
         return
       }
       this.clear()
       for (const page of lastPages) this.pages[page as 'home'].setActive()
-      setLastPage([])
+      this.ctx.store.setLastPage([])
     })
   }
 
@@ -102,6 +103,19 @@ export class Controller {
 
   public height() {
     return this.STANDARD_ASPECT[1]
+  }
+
+  public path(type: keyof Required<CoreOption>['basedir'], ...paths: string[]) {
+    const basedir = this.ctx.config.basedir[type]
+    let handle = path.join(...paths)
+
+    handle = handle.charAt(0) === '/' ? handle : path.join(basedir, handle)
+    if (basedir === this.ctx.config.basedir.scripts) {
+      if (path.basename(handle) === '') handle = path.join(handle, this.ctx.config.entry)
+      else if (!['.mrs', '.txt'].includes(path.extname(handle))) handle += '.mrs'
+    }
+
+    return handle
   }
 }
 

@@ -1,7 +1,6 @@
-import { Adapter, MessageScope, type Context } from '@kotori-bot/core'
+import { Adapter, MessageScope, type Context, random } from '@kotori-bot/core'
 import MisakuraApi from './api'
 import MisakuraElements from './elements'
-import { getDialogLine } from '../../store'
 
 class MisakuraAdapter extends Adapter<MisakuraApi> {
   public readonly api: MisakuraApi = new MisakuraApi(this)
@@ -15,9 +14,22 @@ class MisakuraAdapter extends Adapter<MisakuraApi> {
   }
 
   public exec(command: string) {
+    if (command.startsWith('pre')) {
+      this.session('on_message', {
+        type: MessageScope.GROUP,
+        groupId: '808',
+        messageId: random.int().toString(),
+        message: command,
+        messageAlt: command,
+        time: Date.now(),
+        userId: '808',
+        sender: { nickname: this.identity, role: 'member' }
+      })
+      return
+    }
     this.session('on_message', {
       type: MessageScope.PRIVATE,
-      messageId: getDialogLine().toString(),
+      messageId: random.int().toString(),
       message: command,
       messageAlt: command,
       time: Date.now(),

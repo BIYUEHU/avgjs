@@ -22,6 +22,17 @@ export interface CoreOption {
     margin?: number
     characterHeight?: number
   }
+  basedir?: {
+    // gui?: string
+    fonts?: string
+    scripts?: string
+    background?: string
+    figure?: string
+    voice?: string
+    music?: string
+    sound?: string
+    video?: string
+  }
 }
 
 export enum LayerLevel {
