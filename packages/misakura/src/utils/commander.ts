@@ -161,13 +161,23 @@ function commander(dialog: DialogPage) {
 
   ctx.command('exit').action(() => dialog.ctx.emit('exit'))
 
+  ctx
+    .command('title <text> [seconds:number=0]')
+    .option('T', 'textColor:string')
+    .option('B', 'bgColor:string')
+    .action(({ args: [text, seconds], options: { textColor, bgColor } }) => {
+      dialog.currentPromise = dialog.title(text, seconds, textColor, bgColor)
+    })
+
   ctx.midware((next, session) => {
     const raw = session.message.toString()
     if (raw.includes(':')) {
       const arr = raw.split(':')
       const speaker = arr[0] || dialog.ctx.store.getDialogSpeaker()
-      const msg = arr.slice(1).join(':')
-      session.message = `say ${JSON.stringify(msg)} -S ${speaker ? JSON.stringify(speaker) : ''}`
+      if (!speaker.includes(' ')) {
+        const msg = arr.slice(1).join(':')
+        session.message = `say ${JSON.stringify(msg)} -S ${speaker ? JSON.stringify(speaker) : ''}`
+      }
     }
 
     session.message = session.message.replace(/\$(\w+)/g, (_, variable) => {

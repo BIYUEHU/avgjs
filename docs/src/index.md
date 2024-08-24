@@ -9,16 +9,16 @@ hero:
   tagline: 下一代轻量级视觉小说/Galgame 游戏 制作引擎
   actions:
     - theme: brand
-      text: 马上开始🌊
+      text: Get started🌊
       link: /guide/
     - theme: alt
-      text: 查看关于🌸
+      text: View about🌸
       link: /about/
 
 features:
   - icon: 🔥
     title: 高性能
-    details: 前端底层使用基于真实 DOM 操作的 SolidJS，桌面端使用基于 Rust 开发的 Tauri 框架
+    details: 前端底层使用基于真实 DOM 操作的 SolidJS 框架，桌面端使用基于 Rust 开发的 Tauri 框架
   - icon: 📱
     title: 多平台
     details: 同时支持原生 Web 应用、桌面应用、移动应用等多个平台

@@ -2,7 +2,7 @@
   "name": "misakura",
   "version": "0.1.0",
   "main": "dist/index.js",
-  "description": "A simple visual novel engine",
+  "description": "Next generation lightweight visual novel/Galgame game production engine",
   "license": "GPL-3.0",
   "author": "Hotaru <biyuehuya@gmail.com>",
   "scripts": {

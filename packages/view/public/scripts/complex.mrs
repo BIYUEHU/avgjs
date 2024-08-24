@@ -1,5 +1,10 @@
 background outside.png
 
+title ...朦胧之中，我听到了微弱的脚步声。 3 -T #000 -B #fff
+title 不知为何，我有种预感。 3 -T #000 -B #fff
+title 当我睁开眼睛的时候--- 3 -T #000 -B #fff
+title 等待着我的，将是回忆过后的美好续篇。 0 -T #000 -B #fff
+
 music 1.flac
 
 character test --name '<font color="red">白岩雪菜</font>' --figure yurina.png

@@ -11,7 +11,9 @@
     "dev:vite": "nodemon --exec \"pnpm --filter misakura build && pnpm serve dev\" --ext ts --watch packages/misakura/src/ --ignore packages/view/",
     "dev:only": "pnpm --filter misakura build && pnpm serve exec tauri dev",
     "build": "pnpm serve tauri build",
-    "preview": "pnpm serve preview"
+    "preview": "pnpm serve preview",
+    "doc": "pnpm --filter @misakura/docs",
+    "dev:doc": "pnpm doc dev"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",

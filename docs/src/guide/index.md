@@ -1,4 +1,9 @@
-# 简介
+# Description
+
+> [!WARNING]
+> The project and its documentation are still under development.
+
+<!--markdownlint-disable-file MD033-->
 
 <script setup>
   import NpmBadge from '../components/NpmBadge.vue';
@@ -6,7 +11,7 @@
 
 <NpmBadge package="misakura" />
 
-## 前言
+## Preface
 
 > 「ゲームの中の美少女を見ると元気が出るわ。（我看到可爱的女孩子就会精神振奋，）
 > <br>でも、ゲームの中の女の子は可愛いだけじゃないの。（不过，游戏里的女孩子可不是仅仅只有可爱而已，）
@@ -20,19 +25,29 @@
 
 正是对作品的热爱，驱使人创造出自己的作品，让自己融入所热爱的世界，为这份热爱增添自己的贡献。而对于一个文案写不好、编曲一无所知、美术一窍不通的程序员而言，创造一个供他人更好创作的基石恰恰成为最佳选择。于是，**Misakura** 应运而生。
 
-## 概述
+## Introduction
 
 > - LOGO 设计灵感来源于 [神奈川沖浪裏](https://ja.wikipedia.org/wiki/%E5%AF%8C%E5%B6%BD%E4%B8%89%E5%8D%81%E5%85%AD%E6%99%AF)
 
 **Misakura**（别名：**GalJS**、**AvgJS**）是一款基于 SolidJS、PIXIJS、Tauri 与 TypeScript 开发的开源视觉小说/美少女游戏制作引擎。它致力于为用户提供一个简单、易用、功能丰富的编辑环境与游戏框架，让用户能够轻松制作出一个独属于自己的作品。
 
-### 特点
+### Features
 
 - **高性能**
-  前端底层使用基于真实 DOM 操作的 SolidJS，桌面端使用基于 Rust 开发的 Tauri 框架，保证了高性能与流畅的渲染效果
+  前端底层使用基于真实 DOM 操作的 SolidJS 框架，桌面端使用基于 Rust 开发的 Tauri 框架，保证了高性能与流畅的渲染效果
 
 - **多平台**
   同时支持原生 Web 应用、桌面应用、移动应用等多个平台
 
 - **可扩展**
-  既支持自定义脚本文件（.mrs），也支持引用 Ts/Js 文件实现各种复杂逻辑有，以及高定制度的 JSONUI
+  既支持自定义脚本文件（.mrs），也支持引用 Ts/Js 文件实现各种复杂逻辑有，以及高定制度的 JsonUI
+
+- **自适应**
+  由伟大的 [@jzwsbdem](https://github.com/jzwsbdem) 提出的 [Aspect Scaler](./aspect) 构想，用于不同分辨率下的最优自动适配屏幕方案
+
+SolidJS 从根本实现上便碾压一众基于 Vue / React 框架的视觉小说引擎，而 Tauri 从性能与打包大小上双重碾压肮脏的 Electron 等框架。
+
+## Declaration
+
+1. We only welcome to **Japanese** visual novels and galgame, don't accept any non-Japanese visual novels maker or producer in this project and especially the Zhinese .
+2. **Non-japanese visual novels maker and producer** don't represent you must be a Japanese person, but represent you can only create and make japanese visual novels and galgame. Nobody likes to see ugly someone (Chinaman) make the visual novels base on elements of his country and said "国 GAL 崛起 (Chinese visual novels are rising)". That behaviors must be rejected because it makes people feel uncomfortable and disgusting, and orthodox Japanese culture must be respected.

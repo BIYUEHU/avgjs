@@ -1,4 +1,4 @@
-import { HTMLText, Sprite } from 'PIXI.JS'
+import { Text, HTMLText, Sprite, Graphics } from 'PIXI.JS'
 import { loadAssets } from '../Ui/utils/loader'
 import { Page } from '../class'
 import { type CharacterOption, LayerLevel } from '../types'
@@ -500,6 +500,30 @@ export class DialogPage extends Page {
       }
       this.ctx.on('page_active_change', dispose) */
     })
+  }
+
+  public title(text: string, seconds = 0, textColor = '#fff', bgColor = '#333') {
+    const background = new Graphics()
+    background.beginFill(bgColor)
+    background.drawRect(0, 0, this.ctx.width(), this.ctx.height())
+    background.endFill()
+    const title = new Text(text, {
+      breakWords: true,
+      wordWrap: true,
+      fontSize: 65,
+      wordWrapWidth: this.ctx.width() * 0.8,
+      fill: textColor,
+      align: 'center'
+    })
+    title.anchor.set(0.5, 0.5)
+    title.position.set(this.ctx.width() / 2, this.ctx.height() / 2)
+
+    this.layer.add(background, LayerLevel.BEFORE)
+    this.layer.add(title, LayerLevel.BEFORE)
+    return this.pause(() => {
+      this.layer.remove(background, LayerLevel.BEFORE)
+      this.layer.remove(title, LayerLevel.BEFORE)
+    }, seconds || undefined)
   }
 }
 

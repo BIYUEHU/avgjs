@@ -7,7 +7,7 @@
 
 <img src="https://raw.githubusercontent.com/BIYUEHU/misakura/master/packages/view/src-tauri/icons/misakura.png" width="200px" height="200px" alt="logo"/>
 
-🌸 A simple visual novel engine base on Rust + Soild. 🌸
+🌸 Next generation lightweight visual novel/Galgame game production engine 🌸
 
 </div>
 <!--  markdownlint-enable -->

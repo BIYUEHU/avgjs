@@ -1,5 +1,5 @@
 {
-  "name": "@kotori-bot/docs",
+  "name": "@misakura/docs",
   "version": "1.1.0",
   "type": "module",
   "description": "Misakura docs",
@@ -9,10 +9,7 @@
     "dev": "vitepress dev",
     "build:only": "vitepress build",
     "build": "pnpm revision && vitepress build",
-    "preview": "vitepress preview",
-    "revision": "pnpx tsx scripts/revision",
-    "format": "prettier --write **/*/*.{ts,vue,md}",
-    "lint": "eslint --ext .ts,.vue --fix"
+    "preview": "vitepress preview"
   },
   "devDependencies": {
     "vitepress": "latest",
