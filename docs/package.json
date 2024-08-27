@@ -8,8 +8,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vitepress dev",
-    "build:only": "vitepress build",
-    "build": "pnpm revision && vitepress build",
+    "build": "vitepress build",
     "preview": "vitepress preview"
   },
   "devDependencies": {

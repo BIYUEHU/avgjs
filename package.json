@@ -2,7 +2,7 @@
   "name": "@misakura/root",
   "description": "Misakura Root",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.1",
   "type": "module",
   "packageManager": "pnpm@8.7.4",
   "scripts": {
@@ -14,10 +14,12 @@
     "build:all": "pnpm --filter misakura build && pnpm --filter avgjs build",
     "preview": "pnpm serve preview",
     "doc": "pnpm --filter @misakura/docs",
-    "dev:doc": "pnpm doc dev"
+    "dev:doc": "pnpm doc dev",
+    "release": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
+    "conventional-changelog-cli": "^5.0.0",
     "nodemon": "^3.1.0",
     "tsup": "^8.2.4"
   }
