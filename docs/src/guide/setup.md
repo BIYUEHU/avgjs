@@ -14,7 +14,6 @@ Misakura has many package name, so you can choose one you like:
 ```bash
 pnpm install misakura
 pnpm install avgjs
-pnpm install galjs
 ```
 
 ## Structure

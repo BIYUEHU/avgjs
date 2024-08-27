@@ -4,7 +4,7 @@ import sidebar from './config/sidebar'
 
 export default defineConfig({
   srcDir: 'src',
-  title: 'GALJS · Misakura',
+  title: 'AVGJS · Misakura',
   description: 'Cross-platform chatbot framework base on Node.js and TypeScript',
   head: [
     ['link', { rel: 'icon', href: '/favicon.svg' }],

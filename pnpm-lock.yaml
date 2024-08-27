@@ -22,12 +22,18 @@ importers:
     devDependencies:
       vitepress:
         specifier: latest
-        version: 1.3.3(@algolia/client-search@4.24.0)(@types/node@22.4.0)(@types/react@18.3.3)(axios@1.7.4)(postcss@8.4.41)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)(terser@5.31.6)(typescript@5.5.4)
+        version: 1.3.4(@algolia/client-search@4.24.0)(@types/node@22.4.0)(@types/react@18.3.3)(axios@1.7.4)(postcss@8.4.41)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)(terser@5.31.6)(typescript@5.5.4)
       vue:
         specifier: ^3.4.18
         version: 3.4.31(typescript@5.5.4)
 
   extension: {}
+
+  packages/avgjs:
+    dependencies:
+      misakura:
+        specifier: workspace:^
+        version: link:../misakura
 
   packages/misakura:
     dependencies:
@@ -37,9 +43,6 @@ importers:
       '@kotori-bot/logger':
         specifier: ^1.3.2
         version: 1.3.2
-      '@pixi/sound':
-        specifier: 5.x
-        version: 5.2.3(@pixi/assets@7.4.2(@pixi/core@7.4.2))(@pixi/core@7.4.2)
       '@pixi/ui':
         specifier: ^1.1.4
         version: 1.1.4(q4ma5qkle5amgwcblhvtdz4yka)
@@ -968,12 +971,6 @@ packages:
 
   '@pixi/settings@7.4.2':
     resolution: {integrity: sha512-pMN+L6aWgvUbwhFIL/BTHKe2ShYGPZ8h9wlVBnFHMtUcJcFLMF1B3lzuvCayZRepOphs6RY0TqvnDvVb585JhQ==}
-
-  '@pixi/sound@5.2.3':
-    resolution: {integrity: sha512-PMWZv3su6ykBUA6roN5OYMOCdl03eunK4iCB4rBbhxCM2qt6h0MFQNymr/DLBOa6AjV3ilOseHLu/9s/YKxYZw==}
-    peerDependencies:
-      '@pixi/assets': ^7.0.0
-      '@pixi/core': ^7.0.0
 
   '@pixi/sprite-animated@7.4.2':
     resolution: {integrity: sha512-QPT6yxCUGOBN+98H3pyIZ1ZO6Y7BN1o0Q2IMZEsD1rNfZJrTYS3Q8VlCG5t2YlFlcB8j5iBo24bZb6FUxLOmsQ==}
@@ -2451,8 +2448,8 @@ packages:
       vite:
         optional: true
 
-  vitepress@1.3.3:
-    resolution: {integrity: sha512-6UzEw/wZ41S/CATby7ea7UlffvRER/uekxgN6hbEvSys9ukmLOKsz87Ehq9yOx1Rwiw+Sj97yjpivP8w1sUmng==}
+  vitepress@1.3.4:
+    resolution: {integrity: sha512-I1/F6OW1xl3kW4PaIMC6snxjWgf3qfziq2aqsDoFc/Gt41WbcRv++z8zjw8qGRIJ+I4bUW7ZcKFDHHN/jkH9DQ==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4
@@ -3265,11 +3262,6 @@ snapshots:
       '@pixi/constants': 7.4.2
       '@types/css-font-loading-module': 0.0.12
       ismobilejs: 1.1.1
-
-  '@pixi/sound@5.2.3(@pixi/assets@7.4.2(@pixi/core@7.4.2))(@pixi/core@7.4.2)':
-    dependencies:
-      '@pixi/assets': 7.4.2(@pixi/core@7.4.2)
-      '@pixi/core': 7.4.2
 
   '@pixi/sprite-animated@7.4.2(@pixi/core@7.4.2)(@pixi/sprite@7.4.2(@pixi/core@7.4.2)(@pixi/display@7.4.2(@pixi/core@7.4.2)))':
     dependencies:
@@ -4738,7 +4730,7 @@ snapshots:
     optionalDependencies:
       vite: 5.4.0(@types/node@22.4.0)(terser@5.31.6)
 
-  vitepress@1.3.3(@algolia/client-search@4.24.0)(@types/node@22.4.0)(@types/react@18.3.3)(axios@1.7.4)(postcss@8.4.41)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)(terser@5.31.6)(typescript@5.5.4):
+  vitepress@1.3.4(@algolia/client-search@4.24.0)(@types/node@22.4.0)(@types/react@18.3.3)(axios@1.7.4)(postcss@8.4.41)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)(terser@5.31.6)(typescript@5.5.4):
     dependencies:
       '@docsearch/css': 3.6.1
       '@docsearch/js': 3.6.1(@algolia/client-search@4.24.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)

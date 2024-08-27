@@ -5,7 +5,7 @@ hero:
   image:
     src: /favicon.svg
     alt: Misakura
-  name: 'GALJS · Misakura'
+  name: 'AVGJS · Misakura'
   tagline: 下一代轻量级视觉小说/Galgame 游戏 制作引擎
   actions:
     - theme: brand

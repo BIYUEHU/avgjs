@@ -11,6 +11,7 @@
     "dev:vite": "nodemon --exec \"pnpm --filter misakura build && pnpm serve dev\" --ext ts --watch packages/misakura/src/ --ignore packages/view/",
     "dev:only": "pnpm --filter misakura build && pnpm serve exec tauri dev",
     "build": "pnpm serve tauri build",
+    "build:all": "pnpm --filter misakura build && pnpm --filter avgjs build",
     "preview": "pnpm serve preview",
     "doc": "pnpm --filter @misakura/docs",
     "dev:doc": "pnpm doc dev"

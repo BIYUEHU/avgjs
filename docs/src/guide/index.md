@@ -29,7 +29,7 @@
 
 > - LOGO 设计灵感来源于 [神奈川沖浪裏](https://ja.wikipedia.org/wiki/%E5%AF%8C%E5%B6%BD%E4%B8%89%E5%8D%81%E5%85%AD%E6%99%AF)
 
-**Misakura**（别名：**GalJS**、**AvgJS**）是一款基于 SolidJS、PIXIJS、Tauri 与 TypeScript 开发的开源视觉小说/美少女游戏制作引擎。它致力于为用户提供一个简单、易用、功能丰富的编辑环境与游戏框架，让用户能够轻松制作出一个独属于自己的作品。
+**Misakura**（别名：**AvgJS**）是一款基于 SolidJS、PIXIJS、Tauri 与 TypeScript 开发的开源视觉小说/美少女游戏制作引擎。它致力于为用户提供一个简单、易用、功能丰富的编辑环境与游戏框架，让用户能够轻松制作出一个独属于自己的作品。
 
 ### Features
 
