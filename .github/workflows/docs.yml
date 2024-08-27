@@ -35,18 +35,15 @@ jobs:
           node-version: 18
           cache: pnpm
 
-      - name: Enter docs directory
-        run: cd docs
-
       - name: Build VitePress site
-        run: pnpm build
+        run: cd docs && pnpm build
 
       - name: Deploy to GitHub Pages
         uses: crazy-max/ghaction-github-pages@v4
         with:
           repo: biyuehu/misakura
           target_branch: docs
-          build_dir: .vitepress/dist
+          build_dir: docs/.vitepress/dist
           fqdn: https://avg.js.org
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
