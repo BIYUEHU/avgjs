@@ -1,4 +1,4 @@
-# Misakura
+# AvgJS | Misakura
 
 <!--  markdownlint-disable -->
 <div align="center">
