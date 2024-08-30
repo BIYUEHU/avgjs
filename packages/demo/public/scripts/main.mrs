@@ -1,0 +1,93 @@
+# Misakura/AvgJS Engine Game Demo
+# Version: 1.0.0
+# Author: Arimura Sena
+# License: GPL-3.0
+# Repository: https://github.com/biyuehu/avgjs
+
+# Main.mrs - Misakura scritp entry point
+
+# Register global variables
+const soi shiori.png
+const soiC shiori_close.png
+const soiCS shiori_close_smile.png
+const soiS shiori_smile.png
+const soiO shiori_open.png
+const soiOL shiori_open_low.png
+const soiSh shiori_shy.png
+const soiSq shiori_squint.png
+
+
+# Register characters
+character soi --name '少女' --figure $soi
+character self --name '“我”?'
+
+# Start game
+
+title 现实的边缘开始模糊...
+title 闪烁的霓虹， -T red
+title 伴随意识的碎片， -T red
+title 世界在头脑中不断重组...
+title .
+title ...
+title ......
+title ...
+title "World connected successfully" -T lightgreen
+
+think: 刺眼的阳光令我难以忍受
+
+background /images/background/seaside_beach.png
+
+: 我睁开了眼
+: 我意识到我似乎我一直都在这站着
+: 我向四周望去，没有所谓陌生的天花板，视野格外广阔
+: 等下...
+
+show soi
+
+: 不知什么时候，在我面前出现了一位和服少女
+: 浅蓝色的瞳孔，和一副看起来既可爱又显冷淡的样子
+: 少女目不转睛地盯着我
+: 某种本能让我产生开口说些什么的欲望，以试图解答各种眼前的疑惑
+: 正当我准备开口时，突然发现
+: 我对自己的名字有点模糊了...我是“我”吗？我在心里问着自己
+
+soi: 是有什么疑惑吗？
+think: 少女向满脸疑惑的我轻声开口道
+self: 请问...你是？
+soi: 啊...抱歉，忘记做自我介绍了
+
+character soi --name '诗织'
+
+show soi -F $soiS
+
+self: 你好，我是...
+think: 我不断努力地从脑海中寻找名字的信息
+title "Uncaught ReferenceError： name is not defined" -B red -F black
+: ...名字未定义？
+: 搜寻名字的过程中突然出现了一串费解的文字在我眼前
+
+show soi -F $soi
+
+soi: 忘记自己名字了吗...那就让我来回答一下你的疑惑吧
+think: 夏叶看着不知所措的我再次说道
+soi: 这里是由我的师傅创造出的一个虚拟世界，而我是这个世界的管理者之一
+self: 之一？
+soi: 嗯...师傅是这样跟我说的，可能是在挖坑吧
+: 至于你忘记自己名字的原因，可能算不上是忘记，因为当我对你使用 typeof 操作符后发现你并非 Character 及其子类的实例
+: 而是 Player 的实例，这说明你并非这个世界的角色或路人，在你这一实例的原型对象上还定义了一些 setTime 之类与时间相关的方法
+self: 啊？这是什么意思？
+soi: 怎么说呢，我也是第一次见到这种实例，之前只在师傅口中提到过。
+: 总之你有操作这个世界时间的能力，在我所知的构造器中甚至是我自己都没有被定义与时间相关的方法
+: 据我推测，你并不属于这个世界，而是来自第四维度的人，Player 实例是你寄宿在这个世界的一种方式
+self: 啊？？？那为什么我不知道自己的名字也没有这方面的记忆？
+soi: 嗯...你不知道自己名字应该是师傅不知道怎么取名，所以没有为 Player 实例定义 name 属性吧，至于记忆这块，我就不清楚了，这可能得问师傅他呢
+: 总之，要不这样吧...请你现在给自己想一个称呼：
+think: 取什么好呢？
+
+prompt name
+
+character self --name $name
+
+soi: 初次见面 $name，以后请多多关照哦
+self: 初次见面。对了，你一直说的师傅是...？
+soi: 师傅他

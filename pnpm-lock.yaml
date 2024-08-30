@@ -38,6 +38,22 @@ importers:
         specifier: workspace:^
         version: link:../misakura
 
+  packages/demo:
+    dependencies:
+      '@misakura/view':
+        specifier: workspace:^
+        version: link:../view
+    devDependencies:
+      '@tauri-apps/cli':
+        specifier: ^1
+        version: 1.5.11
+      typescript:
+        specifier: ^5.2.2
+        version: 5.5.4
+      vite:
+        specifier: ^5.3.1
+        version: 5.4.1(@types/node@22.4.0)(terser@5.31.6)
+
   packages/misakura:
     dependencies:
       '@kotori-bot/core':
@@ -5059,8 +5075,7 @@ snapshots:
 
   typescript@5.4.2: {}
 
-  typescript@5.5.4:
-    optional: true
+  typescript@5.5.4: {}
 
   uglify-js@3.19.2:
     optional: true

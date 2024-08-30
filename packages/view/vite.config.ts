@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite';
-import solid from 'vite-plugin-solid';
+import { defineConfig } from 'vite'
+import solid from 'vite-plugin-solid'
 
 export default defineConfig(async () => ({
   plugins: [solid()],
@@ -8,7 +8,7 @@ export default defineConfig(async () => ({
     port: 30000,
     strictPort: true,
     watch: {
-      ignored: ['**/src-tauri/**'],
-    },
-  },
-}));
+      ignored: ['**/src-tauri/**']
+    }
+  }
+}))

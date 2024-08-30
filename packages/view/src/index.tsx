@@ -4,7 +4,7 @@ import './styles/index.css'
 import main from './main'
 
 function App() {
-  return <>{main()}</>
+  return <>{main('complex')}</>
 }
 
 const root = document.getElementById('root')

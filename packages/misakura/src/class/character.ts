@@ -47,7 +47,10 @@ export class Character {
     const margin = this.dialog.ctx.width() - this.dialog.ctx.config.styles.margin * 2
     const spacing = 1 / (chars.length + 1)
     for (const [index, char] of chars.entries()) {
-      char.element?.position.set(spacing * (index + 1) * margin + this.dialog.ctx.config.styles.margin, 728)
+      char.element?.position.set(
+        spacing * (index + 1) * margin + this.dialog.ctx.config.styles.margin,
+        this.dialog.ctx.height()
+      )
     }
     this.position = { type: type, order: chars.length }
   }
@@ -61,10 +64,13 @@ export class Character {
   public async figure(figure: string) {
     this.figureAssets = figure
     const el = await loadAssets(this.figureAssets)
-    el.anchor.set(0.5, 0.5)
+    el.anchor.set(0.5, 0.6)
     const isShow = this.isShow()
     const oldEl = this.element
     this.element = el
+    if (this.element.height > 1677) {
+      this.element.scale.set(1677 / this.element.height)
+    }
     if (!isShow) return
 
     const index = this.dialog.layer.findIndex((el) => el === oldEl)
