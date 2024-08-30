@@ -47,7 +47,7 @@
 
 SolidJS 从根本实现上便碾压一众基于 Vue / React 框架的视觉小说引擎，而 Tauri 从性能与打包大小上双重碾压肮脏的 Electron 等框架。
 
-<!-- ## Declaration
+## Declaration
 
 1. We only welcome to **Japanese** visual novels and galgame, don't accept any non-Japanese visual novels maker or producer in this project and especially the Zhinese .
-2. **Non-japanese visual novels maker and producer** don't represent you must be a Japanese person, but represent you can only create and make japanese visual novels and galgame. Nobody likes to see ugly someone (Chinaman) make the visual novels base on elements of his country and said "国 GAL 崛起 (Chinese visual novels are rising)". That behaviors must be rejected because it makes people feel uncomfortable and disgusting, and orthodox Japanese culture must be respected. -->
+2. **Non-japanese visual novels maker and producer** don't represent you must be a Japanese person, but represent you can only create and make japanese visual novels and galgame. Nobody likes to see ugly someone (Chinaman) make the visual novels base on elements of his country and said "国 GAL 崛起 (Chinese visual novels are rising)". That behaviors must be rejected because it makes people feel uncomfortable and disgusting, and orthodox Japanese culture must be respected.
