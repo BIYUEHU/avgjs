@@ -18,7 +18,7 @@ class Media {
     return song
   }
 
-  public music(name: string, seconds?: number, volume = 0.3) {
+  public music(name: string, seconds?: number, volume = 0.12) {
     if (this.musicList.has(name)) {
       return this.musicList.get(name) as Howl
     }

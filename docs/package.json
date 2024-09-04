@@ -8,10 +8,13 @@
   "license": "MIT",
   "scripts": {
     "dev": "vitepress dev",
-    "build": "vitepress build",
+    "build": "npm run build:vp && npx tsx build.cts",
+    "build:vp": "vitepress build",
     "preview": "vitepress preview"
   },
   "devDependencies": {
+    "@types/shelljs": "^0.8.15",
+    "shelljs": "^0.8.5",
     "vitepress": "latest",
     "vue": "^3.4.18"
   }

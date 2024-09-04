@@ -1,0 +1,77 @@
+background bg_good_end.png
+final
+
+show soi -F $soiSh
+voice 65.wav
+soi: 呃...似乎场景切换呢。
+# あら...場面が変わったようですね。
+voice 66.wav
+: 看样子你达成了 Good End。
+# グッドエンドに到達されたようです。
+voice 67.wav
+: 真是辛苦你了。
+# お疲れ様でした。
+
+let question_count = 0
+label "start"
+
+show soi -F $soiS
+if "$question_count != 0" "voice 68.wav"
+if "$question_count == 0" "say 现在可以向我随便提一个问题哦—— -S soi"
+# 何か質問はありますか？
+if "$question_count != 0" "voice 69.wav"
+if "$question_count != 0" "say 还有其他问题吗？ -S soi"
+# 他に質問はありますか？
+
+options $question "关于你的名字" "关于你的身体" "关于你的声音"
+calc question_count $question_count+1
+
+if "$question == 0" "voice 70.wav"
+if "$question == 0" "say 名字的话，师傅说那是在众多备选名字中为我精心挑选的，他是一个不擅长取名的人... -S soi"
+# 名前は師匠が多くの候補から選んでくれたそうです。彼は名付けが得意ではないらしくて...
+if "$question == 0" "show soi -F $soiSqL"
+if "$question == 0" "voice 71.wav"
+if "$question == 0" "say 师傅说这个名字的正确读音是 Natsuha Shiori，不过我似乎总是读错..."
+# 正しい読み方は「ナツハ・シオリ」だそうですが、私はいつも間違えてしまうんです...
+
+if "$question == 1" "voice 72.wav"
+if "$question == 1" "say 真是的，怎么问这么直接啊... -S soi"
+# まあ、なんて率直な質問なんでしょう...
+if "$question == 1" "show soi -F $soiM"
+if "$question == 1" "voice 73.wav"
+if "$question == 1" "say 关于我的身体，大概也是师傅基于他喜欢的一位美少女角色的样子创造出来的"
+# 私の外見は、師匠の好きな美少女キャラクターがモデルになっているのでしょうね。
+
+if "$question == 2"
+if "$question == 2" "show soi -F $soi"
+if "$question == 2" "voice 74.wav"
+if "$question == 2" "say 我的声音的音源来自于一位师傅喜欢的美少女角色"
+# 私の声も、師匠の好きな美少女キャラクターがベースになっています。
+
+
+if "$question < 3" "goto start"
+
+show soi -F $soiL
+self: 看样子你有点不开心？
+show soi -F $soiSqL
+voice 75.wav
+soi: 才没有吃醋呢...
+# 別に嫉妬なんてしていませんよ...
+show soi -F $soi
+voice 76.wav
+: 不过其实这些也无所谓——
+# 
+voice 77.wav
+: 师傅能给予我生命就已经十分感激呢。
+# 師匠が私に命を与えてくれただけで、十分感謝しています。
+voice 78.wav
+: 对了——
+# そうそう——
+voice 79.wav
+: 在解锁完所有结局后可以在开始界面中找到一个新按钮进入 True End，千万不要忘了哦~
+#
+think: <font color="lightgreen">--GOOD END--</font>
+
+pause 1
+
+apply info

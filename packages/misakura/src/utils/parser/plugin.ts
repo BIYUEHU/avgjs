@@ -3,7 +3,7 @@
  * @Blog: https://hotaru.icu
  * @Date: 2023-07-11 14:18:27
  * @LastEditors: Hotaru biyuehuya@gmail.com
- * @LastEditTime: 2024-08-22 17:16:30
+ * @LastEditTime: 2024-09-04 16:05:01
  */
 
 import { UserAccess, CommandError, type Context, MessageScope, TsuError, ModuleError } from '@kotori-bot/core'
@@ -22,7 +22,7 @@ export function main(ctx: Context) {
       } else {
         text = data.session.i18n.locale(arg.toString())
       }
-      logger.label('CommandError').error(text)
+      logger.label('CommandError').error(text, 'at: ', data.raw)
     }
     if (!(data.result instanceof CommandError)) {
       const { scope, access } = data.command.meta

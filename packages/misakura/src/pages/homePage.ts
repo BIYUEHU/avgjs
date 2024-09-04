@@ -1,14 +1,18 @@
-import { Text } from 'PIXI.JS'
-import { loadAssets } from '../Ui/utils/loader'
+import { Text, Graphics } from 'PIXI.JS'
+// import { loadAssets } from '../Ui/utils/loader'
 import { LayerLevel } from '../types'
 import SidebarPageAbstract from './SidebarPageAbstract'
+import pkg from '../../package.json'
+import { sleep } from '@kotori-bot/core'
+import { createAutoLayout } from '../Ui/utils/layout'
+import { loadAssets } from '../Ui/utils/loader'
 
 export class HomePage extends SidebarPageAbstract {
   public readonly level = LayerLevel.MIDDLE
 
   public async init() {
-    const opts = { width: this.ctx.width(), height: this.ctx.height() }
-    this.layer.add([await loadAssets('/gui/home/background.png', opts)], LayerLevel.AFTER)
+    // const opts = { width: this.ctx.width(), height: this.ctx.height() }
+    // this.layer.add([await loadAssets('/gui/home/background.png', opts)], LayerLevel.AFTER)
     /* title */
     const title = new Text('視覚小説ゲームテスト', {
       fontFamily: 'Noto Sans JP',
@@ -31,8 +35,8 @@ export class HomePage extends SidebarPageAbstract {
       fontSize: 40,
       fill: 0x00b4ff
     }
-    const version = new Text('v0.1.0', style2)
-    const copyright = new Text('© 2024 Hotaru', style2)
+    const version = new Text(`v${pkg.version}`, style2)
+    const copyright = new Text('© 2024 Arimura Sena', style2)
     version.anchor.set(1, 1)
     copyright.anchor.set(1, 1)
     version.position.set(1910, 1020)
@@ -40,7 +44,59 @@ export class HomePage extends SidebarPageAbstract {
     this.layer.add([version, copyright, title, subtitle], LayerLevel.BEFORE)
   }
 
-  public load() {
+  public async load() {
+    const history = this.ctx.store.getHistoryPage()
+    if (history.length === 0 || (history.length === 1 && history[0] === 'dialog')) {
+      const background = new Graphics()
+      background.beginFill('#fff')
+      background.drawRect(0, 0, this.ctx.width(), this.ctx.height())
+      background.endFill()
+      this.layer.add(background, LayerLevel.BEFORE)
+
+      await sleep(800)
+
+      const layout = createAutoLayout(
+        [
+          await loadAssets('/misakura.svg', { width: 150, height: 150 }),
+          new Text('AvgJS | Misakura', {
+            fontSize: 80,
+            fill: 'pink',
+            align: 'center'
+          })
+        ],
+        {
+          pos: [this.ctx.width() / 2 - 190, this.ctx.height() / 2],
+          direction: 'row',
+          spacing: 40
+        },
+        (sprite) => sprite
+      )
+
+      this.layer.add(layout, LayerLevel.BEFORE)
+
+      await sleep(4500)
+
+      this.layer.remove(layout)
+
+      await sleep(500)
+
+      const author = new Text('By Arimura Sena', {
+        fontSize: 75,
+        fill: 'deepskyblue',
+        align: 'center'
+      })
+      author.anchor.set(0.5, 0.5)
+      author.position.set(this.ctx.width() / 2, this.ctx.height() / 2)
+      this.layer.add(author, LayerLevel.BEFORE)
+
+      await sleep(3500)
+
+      this.layer.remove(author)
+
+      await sleep(800)
+
+      this.layer.remove(background)
+    }
     this.ctx.store.clearHistoryPage()
   }
 }

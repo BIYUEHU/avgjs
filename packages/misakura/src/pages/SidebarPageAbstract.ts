@@ -150,7 +150,7 @@ export abstract class SidebarPageAbstract extends Page {
     this.buttonLayout?.destroy()
   }
 
-  public constructor(ctx: Context, light?: ButtonType, title?: string, background = '/gui/home/background.png') {
+  public constructor(ctx: Context, light?: ButtonType, title?: string, background = '/images/background/bg.png') {
     super(ctx)
     this.lightButton = light
     this.title = title

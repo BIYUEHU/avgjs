@@ -177,6 +177,7 @@ export class DialogPage extends Page {
     if (isFinish) {
       await this.pause(undefined, 1)
       this.ctx.store.setDialogScript({ entry: '', line: 0 })
+      this.ctx.store.clearHistoryPage()
       this.ctx.pages.home.setActive()
     }
   }
@@ -348,39 +349,41 @@ export class DialogPage extends Page {
 
     let index = 0
     let tempText = ''
-    let dispose: (() => void) | undefined
+    const dispose: (() => void)[] = []
     this.els.speaker.text = name
     this.els.msg.text = text[index]
 
     const timer = () => {
-      dispose = timeout(
-        () => {
-          index += 1
-          if (index >= text.length || text[index] === undefined) {
-            if (tempText) {
-              this.els.msg.text += tempText
-              tempText = ''
+      dispose.push(
+        timeout(
+          () => {
+            index += 1
+            if (index >= text.length || text[index] === undefined) {
+              if (tempText) {
+                this.els.msg.text += tempText
+                tempText = ''
+              }
+              return
             }
-            return
-          }
-          if (text[index] === '<') {
-            if (tempText) this.els.msg.text += tempText
-            tempText = '<'
-          } else if (text[index] === '>') {
-            this.els.msg.text += `${tempText ?? ''}>`
-            tempText = ''
-          } else {
-            if (tempText) tempText += text[index]
-            else this.els.msg.text += text[index]
-          }
-          timer()
-        },
-        tempText ? 0 : 30
+            if (text[index] === '<') {
+              if (tempText) this.els.msg.text += tempText
+              tempText = '<'
+            } else if (text[index] === '>') {
+              this.els.msg.text += `${tempText ?? ''}>`
+              tempText = ''
+            } else {
+              if (tempText) tempText += text[index]
+              else this.els.msg.text += text[index]
+            }
+            timer()
+          },
+          tempText ? 0 : 30
+        )
       )
-      this.ctx.once('resize', dispose)
+      this.ctx.once('resize', () => dispose.map((dispose) => dispose()))
     }
     timer()
-    const nextClick = this.pause(dispose)
+    const nextClick = this.pause(() => dispose.map((dispose) => dispose()))
     if (!this.autoMode) return nextClick
     return Promise.race<void>([
       nextClick,
