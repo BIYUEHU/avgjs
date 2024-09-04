@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vitepress dev",
-    "build": "npm run build:vp && npx tsx build.cts",
+    "build": "npm run build:vp",
     "build:vp": "vitepress build",
     "preview": "vitepress preview"
   },
