@@ -8,4 +8,4 @@ exec('npm run build')
 
 cd('dist')
 mv('index.html', 'demo.html')
-mv('./*', resolve(runningDir, './.vitepress/dist/'))
+mv('./dist', resolve(runningDir, './.vitepress/dist/'))
