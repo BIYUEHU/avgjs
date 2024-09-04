@@ -6,7 +6,7 @@
   "license": "GPL-3.0",
   "author": "Hotaru <biyuehuya@gmail.com>",
   "scripts": {
-    "build": "pnpm build"
+    "build": "tsc --build"
   },
   "keywords": ["misakura", "engine", "galgame", "gal", "visual novel"],
   "files": ["dist", "LICENSE", "README.md"],
