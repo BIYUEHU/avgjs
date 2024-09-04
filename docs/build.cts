@@ -3,8 +3,11 @@ import { resolve } from 'node:path'
 
 const runningDir = process.cwd()
 
-cd(resolve(runningDir, '../packages/demo'))
+exec('pnpm install')
+cd(resolve(runningDir, '..'))
 exec('pnpm --filter misakura build')
+
+cd('./packages/demo')
 exec('pnpm run build')
 
 cd('dist')
