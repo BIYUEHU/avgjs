@@ -4,8 +4,9 @@ import { resolve } from 'node:path'
 const runningDir = process.cwd()
 
 cd(resolve(runningDir, '../packages/demo'))
-exec('npm run build')
+exec('pnpm --filter misakura build')
+exec('pnpm run build')
 
-cd(resolve(runningDir, '../packages/demo/dist/'))
+cd('dist')
 mv('index.html', 'demo.html')
 mv('./*', resolve(runningDir, './.vitepress/dist/'))
