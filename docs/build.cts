@@ -6,6 +6,6 @@ const runningDir = process.cwd()
 cd(resolve(runningDir, '../packages/demo'))
 exec('npm run build')
 
-cd('dist')
+cd(resolve(runningDir, '../packages/demo/dist/'))
 mv('index.html', 'demo.html')
-mv('./dist', resolve(runningDir, './.vitepress/dist/'))
+mv('./*', resolve(runningDir, './.vitepress/dist/'))
