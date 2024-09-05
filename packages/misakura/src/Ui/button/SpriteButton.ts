@@ -1,4 +1,4 @@
-import { isMobile, Container, Sprite, Text, Texture, type ITextStyle } from 'PIXI.JS'
+import { isMobile, Container, Sprite, Text, Texture, type ITextStyle } from 'pixi.js'
 import { Button } from '@pixi/ui'
 import defu from 'defu'
 import { preload } from '../utils/loader'

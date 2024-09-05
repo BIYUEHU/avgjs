@@ -1,4 +1,4 @@
-import { Text, Graphics } from 'PIXI.JS'
+import { Text, Graphics } from 'pixi.js'
 // import { loadAssets } from '../Ui/utils/loader'
 import { LayerLevel } from '../types'
 import SidebarPageAbstract from './SidebarPageAbstract'

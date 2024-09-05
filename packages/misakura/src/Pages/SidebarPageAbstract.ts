@@ -1,4 +1,4 @@
-import { HTMLText, type Container } from 'PIXI.JS'
+import { HTMLText, type Container } from 'pixi.js'
 import { loadAssets } from '../Ui/utils/loader'
 import { Page } from '../class'
 import { LayerLevel } from '../types'

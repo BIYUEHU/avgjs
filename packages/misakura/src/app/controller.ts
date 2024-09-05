@@ -1,4 +1,4 @@
-import { Application } from 'PIXI.JS'
+import { Application } from 'pixi.js'
 import type Context from './core'
 import { Layer } from '../class/layer'
 import type { Page } from '../class/page'

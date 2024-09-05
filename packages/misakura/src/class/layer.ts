@@ -1,4 +1,4 @@
-import { Container, type DisplayObject, type AllFederatedEventMap } from 'PIXI.JS'
+import { Container, type DisplayObject, type AllFederatedEventMap } from 'pixi.js'
 import { type Elements, LayerLevel } from '../types'
 
 export class Layer {

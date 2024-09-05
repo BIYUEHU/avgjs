@@ -1,4 +1,4 @@
-import { Container, type DisplayObject, type Sprite } from 'PIXI.JS'
+import { Container, type DisplayObject, type Sprite } from 'pixi.js'
 
 export function createLayout<T extends unknown[]>(meta: T, handler: (data: T[number], index: number) => DisplayObject) {
   const container = new Container()

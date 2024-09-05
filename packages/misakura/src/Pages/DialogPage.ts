@@ -1,4 +1,4 @@
-import { Text, HTMLText, Sprite, Graphics } from 'PIXI.JS'
+import { Text, HTMLText, Sprite, Graphics } from 'pixi.js'
 import { loadAssets } from '../Ui/utils/loader'
 import { Page } from '../class'
 import { type CharacterOption, LayerLevel } from '../types'

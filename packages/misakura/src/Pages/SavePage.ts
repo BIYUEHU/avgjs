@@ -1,4 +1,4 @@
-import { Graphics } from 'PIXI.JS'
+import { Graphics } from 'pixi.js'
 import { LayerLevel } from '../types'
 import SidebarPageAbstract from './SidebarPageAbstract'
 import type Context from '../'

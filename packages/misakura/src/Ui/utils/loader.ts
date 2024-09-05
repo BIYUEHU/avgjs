@@ -1,4 +1,4 @@
-import { Assets, Sprite } from 'PIXI.JS'
+import { Assets, Sprite } from 'pixi.js'
 
 export async function preload(assets: string[]): Promise<void> {
   if (assets.length === 0) return

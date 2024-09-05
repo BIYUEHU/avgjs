@@ -1,4 +1,4 @@
-import type { DisplayObject, Application } from 'PIXI.JS'
+import type { DisplayObject, Application } from 'pixi.js'
 import type { Layer } from '../class'
 
 export interface CoreOption {

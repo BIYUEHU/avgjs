@@ -1,4 +1,4 @@
-import type { Sprite } from 'PIXI.JS'
+import type { Sprite } from 'pixi.js'
 import '@kotori-bot/core'
 import { loadAssets } from '../Ui/utils/loader'
 import type DialogPage from '../Pages/DialogPage'
