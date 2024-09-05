@@ -14,7 +14,9 @@
 
 > Stack: Rust + Tauri + Solid.js + TypeScript
 
-More information please visit [avg.js.org](https://avg.js.org)
+More information please visit [avg.js.org](https://avg.js.org).
+
+- [Demo](https://avg.js.org/guide/demo.html)
 
 ## Pictures
 
