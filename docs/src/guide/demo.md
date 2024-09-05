@@ -14,6 +14,17 @@ Application download:
 - [Android v0.1.2](http://39.105.169.71:5244/d/AvgJS%7CMisakura/Misakura~Demo_0.1.2.apk?sign=2msSaoN9n6Q27-2ssv3RMRfJeUenPQRxZG9zTn-64Vs=:0)
 - [Windows v0.1.2](http://39.105.169.71:5244/d/AvgJS%7CMisakura/Misakura~Demo%20v0.1.2.exe?sign=KyDdFkaLRTiySxb47vwOwZ0vm2_A5XxS2W8VKaiwBTU=:0)
 
+## Pictures
+
+![1](https://pic.imgdb.cn/item/66d975a8d9c307b7e99d4956.png)
+![2](https://pic.imgdb.cn/item/66d975a8d9c307b7e99d47d5.png)
+![3](https://pic.imgdb.cn/item/66d975a9d9c307b7e99d4be1.png)
+![4](https://pic.imgdb.cn/item/66d975bed9c307b7e99d8999.png)
+![5](https://pic.imgdb.cn/item/66d975bed9c307b7e99d89d2.png)
+![6](https://pic.imgdb.cn/item/66d975bdd9c307b7e99d88e6.png)
+![7](https://pic.imgdb.cn/item/66d975a8d9c307b7e99d4a8f.png)
+![8](https://pic.imgdb.cn/item/66d975a7d9c307b7e99d4613.png)
+
 ## Strategy
 
 If you can't approved good end, you can follow the strategy below (Not mentioned options will don't influence the result):
