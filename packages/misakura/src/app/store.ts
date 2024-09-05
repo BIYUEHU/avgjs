@@ -17,6 +17,7 @@ export interface MisakuraState {
     values: { constant: ValuesList; variables: ValuesList }
   }
   lastPages: string[]
+  isFull: boolean
   historyPages: string[]
   isFinalPlot: boolean
   getDialogScript(): string
@@ -47,6 +48,7 @@ export interface MisakuraState {
   clearHistoryPage(): void
   getFinalPlot(): boolean
   openFinalPlot(): void
+  full(state?: boolean): boolean
 }
 
 const initialized = {
@@ -62,6 +64,7 @@ const initialized = {
     }
   },
   lastPages: [],
+  isFull: false,
   historyPages: [],
   isFinalPlot: false
 }
@@ -172,6 +175,11 @@ const Store = create(
       },
       openFinalPlot() {
         set(() => ({ isFinalPlot: true }))
+      },
+      full(state?: boolean) {
+        if (state === undefined) return this.isFull
+        set(() => ({ isFull: state }))
+        return state
       }
     }),
     {

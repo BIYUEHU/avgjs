@@ -1,10 +1,11 @@
 title "Script Writer：Arimura Sena" 3
 title "Natsuha Shiori's Voice Source：有村ロミ" 3
 title "Natsuha Shiori's Figure Source：有村ロミ" 3
-# title “Music"
+title "Music 1：一号线" 3
+title "Music 2：last whisper (slos arrange)" 3
 title "Project Developer：Arimura Sena" 3
 title "Project Manager：Arimura Sena" 3
 title "Docs Writer：Arimura Sena" 3
 title "Project Link：github.com/biyuehu/avgjs" 3
-title "—— AvgJS | Misakura ——" 4  -T pink
+title "—— AvgJS | Misakura ——" 4 -T pink
 title " " 2

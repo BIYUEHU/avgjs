@@ -4,6 +4,7 @@ import { Layer } from '../class/layer'
 import type { Page } from '../class/page'
 import type { routes } from './routes'
 import path from 'pathe'
+import screen from 'screenfull'
 import type { CoreOption } from '../types'
 
 export class Controller {
@@ -13,11 +14,11 @@ export class Controller {
 
   private readonly ctx: Context
 
-  public app: Application
+  public readonly app = new Application()
 
-  public pages: Record<keyof typeof routes, Page> = {} as Controller['pages']
+  public readonly pages: Record<keyof typeof routes, Page> = {} as Controller['pages']
 
-  public layer = new Layer()
+  public readonly layer = new Layer()
 
   private getAspect() {
     const targetRatio = this.STANDARD_ASPECT[0] / this.STANDARD_ASPECT[1]
@@ -34,9 +35,13 @@ export class Controller {
     if (this.IS_PORTRAIT) [width, height] = [height, width]
     return { width, height }
   }
-
   public constructor(ctx: Context) {
     this.ctx = ctx
+    if (this.ctx.store.full()) {
+      console.log('full')
+      screen.toggle()
+    }
+
     const { width, height } = this.getAspect()
     this.app = new Application({
       width,
@@ -58,8 +63,12 @@ export class Controller {
       const renderTime = Date.now()
       window.addEventListener('resize', () => {
         if (renderTime && Date.now() - renderTime <= 300) return
+        // setTimeout(() => {
+        this.ctx.store.full(!!document.fullscreenElement)
         this.ctx.store.setLastPage(this.getCurrentPage())
-        window.location = '' as unknown as Location
+        // window.location = '' as unknown as Location
+        window.location.reload()
+        // }, 2000)
       })
 
       this.listen('contextmenu', (event) => event.preventDefault())

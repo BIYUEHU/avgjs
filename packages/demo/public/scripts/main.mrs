@@ -237,12 +237,48 @@ soi: 呃，是吗...还以为是写脚本文件的程序员呢...能否告诉我
 # あ、そうですか...スクリプトを書くプログラマーかと思いました...あなたの好きなシナリオライターを教えていただけますか？
 self: 那当然是——
 
-options choice "大魔王-麻技准" "爱的战士-虚渊玄" "型月之父-奈须蘑菇" "冬日回忆-片冈智" "虐妹高手-ルクル" "幸福物语-SCA自" "催眠日常-漆原雪人" "暖人心田-新岛夕" "慈悲为怀-濑户口廉也" "销量毒药-田中罗密欧" "胃痛无穷-丸户史明" "时空轮回-打越钢太郎" 其它
-if "$choice == 12" "prompt temp"
+options scripter "大魔王-麻技准" "爱的战士-虚渊玄" "型月之父-奈须蘑菇" "冬日回忆-片冈智" "虐妹高手-ルクル" "幸福物语-SCA自" "催眠日常-漆原雪人" "暖人心田-新岛夕" "慈悲为怀-濑户口廉也" "销量毒药-田中罗密欧" "胃痛无穷-丸户史明" "时空轮回-打越钢太郎" 其它
+if "$scripter == 12" "prompt temp"
 
 show soi -F $soiM
-voice 36.wav
-soi: 我知道了。
+if "$scripter == 0" "voice 36_0.wav"
+if "$scripter == 0" "say 原来是那位写出名为「CLANNAD」的KEY社三部曲之一和名为「LittleBusters!」的友情圣经的大魔王啊。 -S soi"
+# 「CLANNAD」や「リトルバスターズ！」を書いた、KEYの大魔王ですね。
+if "$scripter == 1" "voice 36_1.wav"
+if "$scripter == 1" "say 和我签订契约，成为魔法少女吧！ -S soi"
+# 僕と契約して魔法少女になってよ！
+if "$scripter == 2" "voice 36_2.wav"
+if "$scripter == 2" "say 试问。你就是我的御主吗？ -S soi"
+# 問おう。貴方が私のマスターか？
+if "$scripter == 3" "voice 36_3.wav"
+if "$scripter == 3" "say 片冈智老师的「Narcissu」真的是一部既意难平又充满希望的作品啊... -S soi"
+# 片冈智先生の「ナルキッソス」は、切なくも希望に満ちた作品ですね...
+if "$scripter == 4" "voice 36_4.wav"
+if "$scripter == 4" "say ルクル老师的三部曲每一部都会有十分令人难以抉择的选项... -S soi"
+# ルクル先生の三部作は、どれも難しい選択に迫られますね...
+if "$scripter == 5" "voice 36_5.wav"
+if "$scripter == 5" "say 你是空气力学少女还是樱之艺术家？...亦或归来的小燕子？ -S soi"
+# あなたは空力少女？桜のアーティスト？それとも帰ってきた燕？
+if "$scripter == 6" "voice 36_6.wav"
+if "$scripter == 6" "say 祈祷你今后的人生能有名为「幸福」的魔法相伴哦... -S soi"
+# あなたの人生に「幸せ」という魔法が伴いますように...
+if "$scripter == 7" "voice 36_7.wav"
+if "$scripter == 7" "say 心之声一定传达到了哦。 -S soi"
+# 心の声はきっと届いていますよ。
+if "$scripter == 8" "voice 36_8.wav"
+if "$scripter == 8" "say 向这个狗娘养的世界，献出我全部的爱！ -S soi"
+# この、くそったれな世界に、精一杯愛をこめて。
+if "$scripter == 9" "voice 36_9.wav"
+if "$scripter == 9" "say 这里是群青学院广播部，请问还有人活着吗？ -S soi"
+# こちら群青学園放送部。生存者はいますか？
+if "$scripter == 10" "voice 36_10.wav"
+if "$scripter == 10" "say 冬天来了——那是悲喜交加、永远的瞬间。 -S soi"
+# 冬が来る——嬉しくて切ない、永遠の一瞬が
+if "$scripter == 11" "voice 36_11.wav"
+if "$scripter == 11" "say 你知道阿基米德原理吗？ -S soi"
+# アルキメデスの原理を知っていますか？
+if "$scripter == 12" "voice 36.wav"
+if "$scripter == 12" "say 我知道了。 -S soi"
 # 分かりました。
 self: 简而言之就是想要自己制作一款美少女游戏，让其它的观众也能因自己笔下的角色流泪或者产生共鸣！
 : 没错，这也正是我打开「Misakura」的原因。
@@ -273,7 +309,7 @@ options choice "因为 SolidJS 使用 WebAssembly 开发" "因为 SolidJS 用 RU
 
 if "$choice == 2" "calc score $score+1"
 if "$choice == 2" "show soi -F $soiCS"
-if "$choice != 2" "voice bingo.wav"
+if "$choice == 2" "voice bingo.wav"
 if "$choice == 2" "say BINGO！ -S soi"
 if "$choice != 2" "calc score $score-1"
 if "$choice != 2" "show soi -F $soiSq"
@@ -287,7 +323,7 @@ voice 43.wav
 : 那么为何 Tauri 能如此轻量了？
 # では、なぜタウリがこれほど軽量なのでしょうか？
 
-options choice "Tauri 使用 Rust 开发" "Tauri 没有内置笨重的 Chrome 内核" "Tauri 使用 Node.js 和 Chrome 开发"
+options choice "Tauri 使用 Rust 开发" "Tauri 没有内置笨重的 Chromium 内核" "Tauri 使用 Node.js 和 Chromium 开发"
 
 if "$choice != 2" "calc score $score+1"
 if "$choice != 2" "show soi -F $soiCS"
@@ -332,13 +368,13 @@ options choice "变量需要在声明时指定类型并且之后无法改变类�
 
 if "$choice == 1" "calc score $score+1"
 if "$choice == 1" "show soi -F $soiCS"
-if "$choice != 2" "voice bingo.wav"
+if "$choice == 1" "voice bingo.wav"
 if "$choice == 1" "say BINGO！ -S soi"
 if "$choice != 1" "calc score $score-1"
 if "$choice != 1" "show soi -F $soiSq"
 if "$choice != 1" "voice 53.wav"
 if "$choice != 1" "say 回答错误噢，静态类型意味着类型不可改变，隐式意味着会自动推断出类型无需显式指明 -S soi"
-# 
+# 間違いです。静的型付けは型が変更できないこと、暗黙的は型を明示せず自動推論されることを意味します。
 
 background demo1.png
 show soi -F $soiL

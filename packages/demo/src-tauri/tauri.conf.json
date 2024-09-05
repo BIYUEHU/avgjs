@@ -12,10 +12,22 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false,
       "shell": {
-        "all": false,
         "open": true
+      },
+      "fs": {
+        "createDir": true,
+        "exists": true,
+        "readDir": true,
+        "readFile": true,
+        "removeFile": true,
+        "writeFile": true,
+        "scope": [
+          "$RUNTIME"
+        ]
+      },
+      "window": {
+        "all": true
       }
     },
     "windows": [

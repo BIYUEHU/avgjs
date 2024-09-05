@@ -1,6 +1,6 @@
 {
   "name": "misakura",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist/index.js",
   "description": "Next generation lightweight visual novel/Galgame game production engine",
   "license": "GPL-3.0",
@@ -8,8 +8,18 @@
   "scripts": {
     "build": "tsc --build"
   },
-  "keywords": ["misakura", "engine", "galgame", "gal", "visual novel"],
-  "files": ["dist", "LICENSE", "README.md"],
+  "keywords": [
+    "misakura",
+    "engine",
+    "galgame",
+    "gal",
+    "visual novel"
+  ],
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "bugs": {
     "url": "https://github.com/biyuehu/misakura/issues"
   },
@@ -29,6 +39,7 @@
     "path-browserify": "^1.0.1",
     "pathe": "^1.1.2",
     "pixi.js": "^7.4.2",
+    "screenfull": "^6.0.2",
     "solid-js": "^1.8.15",
     "zustand": "^4.5.5"
   },

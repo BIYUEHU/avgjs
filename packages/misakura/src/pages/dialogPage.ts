@@ -94,9 +94,9 @@ export class DialogPage extends Page {
         ]
       ] as const,
       {
-        pos: [1150, 1055],
+        pos: [1135, 1040],
         direction: 'right',
-        spacing: 60
+        spacing: 85
       },
       ([name, callback]) => {
         const button = new SpriteButton(
@@ -112,11 +112,48 @@ export class DialogPage extends Page {
             pressedButton: `/gui/dialog/buttons/${name}Hover.png`
           }
         )
-        button.view.scale.set(0.38, 0.38)
+        button.view.scale.set(0.45, 0.45)
         return button.view
       }
     )
     this.layer.add(buttonLayout, LayerLevel.BEFORE)
+
+    const fullButton = new SpriteButton(
+      '',
+      (type) => {
+        this.setClickLock()
+        if (type !== 'onPress') return
+        if (!document.fullscreenElement) {
+          // if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen()
+          /*}  else if (document.documentElement.mozRequestFullScreen) { // Firefox
+            document.documentElement.mozRequestFullScreen();
+          } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari and Opera
+            document.documentElement.webkitRequestFullscreen();
+          } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+            document.documentElement.msRequestFullscreen();
+          } */
+        } else {
+          // if (document.exitFullscreen) {
+          document.exitFullscreen()
+          /* } else if (document.mozCancelFullScreen) { // Firefox
+            document.mozCancelFullScreen();
+          } else if (document.webkitExitFullscreen) { // Chrome, Safari and Opera
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) { // IE/Edge
+            document.msExitFullscreen();
+          } */
+        }
+      },
+      {
+        button: '/gui/dialog/buttons/full.png',
+        hoverButton: '/gui/dialog/buttons/fullHover.png',
+        pressedButton: '/gui/dialog/buttons/fullHover.png'
+      }
+    )
+    fullButton.view.position.set(50, 50)
+    fullButton.view.scale.set(0.5, 0.5)
+    // this.layer.add(fullButton.view, LayerLevel.BEFORE)
 
     // Register commands
     commander(this)

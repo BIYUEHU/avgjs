@@ -53,7 +53,7 @@ export class HomePage extends SidebarPageAbstract {
       background.endFill()
       this.layer.add(background, LayerLevel.BEFORE)
 
-      await sleep(800)
+      await sleep(500)
 
       const layout = createAutoLayout(
         [
@@ -74,11 +74,11 @@ export class HomePage extends SidebarPageAbstract {
 
       this.layer.add(layout, LayerLevel.BEFORE)
 
-      await sleep(4500)
+      await sleep(3000)
 
       this.layer.remove(layout)
 
-      await sleep(500)
+      await sleep(400)
 
       const author = new Text('By Arimura Sena', {
         fontSize: 75,
@@ -89,11 +89,11 @@ export class HomePage extends SidebarPageAbstract {
       author.position.set(this.ctx.width() / 2, this.ctx.height() / 2)
       this.layer.add(author, LayerLevel.BEFORE)
 
-      await sleep(3500)
+      await sleep(2700)
 
       this.layer.remove(author)
 
-      await sleep(800)
+      await sleep(500)
 
       this.layer.remove(background)
     }
