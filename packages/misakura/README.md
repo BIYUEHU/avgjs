@@ -18,6 +18,11 @@ More information please visit [avg.js.org](https://avg.js.org).
 
 - [Demo](https://avg.js.org/guide/demo.html)
 
+## Declaration
+
+1. We only welcome to **Japanese** visual novels and galgame, don't accept any non-Japanese visual novels maker or producer in this project and especially the Zhinese .
+2. **japanese visual novels maker and producer** don't represent you must be a Japanese person, but represent you can only create and make japanese visual novels and galgame. Nobody likes to see ugly someone (Zhinaman) make the visual novels base on elements of his country and said "国 GAL 崛起 (Zhinese visual novels are rising)". That behaviors must be rejected because it makes people feel uncomfortable and disgusting, and orthodox Japanese culture must be respected.
+
 ## Pictures
 
 ![1](https://files.superbed.cn/proxy/7468686c6f2633337a7570796f326f696c796e7e7978327f72336f68736e793375717d7b796f33282533292a332a2a78252b297d2478257f2f2c2b7e2b792525782825292a326c727b.png)
