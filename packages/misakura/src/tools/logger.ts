@@ -1,8 +1,8 @@
 import Logger, { ConsoleTransport, LoggerLevel } from '@kotori-bot/logger'
-// import { State } from '../tools/state'
+import isDev from './isDev'
 
 export const logger = new Logger({
-  level: /* State.debug ? LoggerLevel.DEBUG : LoggerLevel.SILENT */ LoggerLevel.DEBUG,
+  level: isDev() ? LoggerLevel.DEBUG : LoggerLevel.SILENT,
   transports: new ConsoleTransport({ template: '<blue>%time%</blue> <bold>%level%</bold> %labels%: %msg%' })
 })
 

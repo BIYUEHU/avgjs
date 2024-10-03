@@ -44,7 +44,7 @@ export abstract class SidebarPageAbstract extends Page {
     [
       'LOAD',
       () => {
-        this.ctx.pages.load.setActive(true)
+        this.ctx.pages.load.setActive()
       }
     ],
     [

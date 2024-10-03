@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import { DEFAULT_CORE_OPTION } from '../constant'
 import defu from 'defu'
 import type Character from '../class/character'
+import type { LevelsData } from '../class/levels/LevelsAdapter'
 
 type ValuesType = string | number | boolean
 type ValuesList = Record<string, ValuesType>
@@ -16,12 +17,16 @@ export interface MisakuraState {
     speaker: string
     values: { constant: ValuesList; variables: ValuesList }
   }
+  levels: LevelsData[]
   lastPages: string[]
   isFull: boolean
   historyPages: string[]
   isFinalPlot: boolean
   getDialogScript(): string
-  setDialogScript(script: { entry: string; line: number }, extend?: boolean): void
+  setDialogScript(
+    script: { entry: string; line: number },
+    extend?: boolean | Omit<MisakuraState['dialog'], 'script'>
+  ): void
   getDialogLine(): number
   setDialogLine(line: number): void
   nextDialogLine(): void
@@ -49,6 +54,9 @@ export interface MisakuraState {
   getFinalPlot(): boolean
   openFinalPlot(): void
   full(state?: boolean): boolean
+  getLevels(): LevelsData[]
+  setLevels(levels: LevelsData[]): void
+  getDialogAll(): MisakuraState['dialog']
 }
 
 const initialized = {
@@ -63,6 +71,7 @@ const initialized = {
       variables: {}
     }
   },
+  levels: [],
   lastPages: [],
   isFull: false,
   historyPages: [],
@@ -77,7 +86,9 @@ const Store = create(
         return get().dialog.script.entry
       },
       setDialogScript(script: { entry: string; line: number }, extend = false) {
-        set((state) => ({ dialog: { ...(extend ? state.dialog : initialized.dialog), script } }))
+        set((state) => ({
+          dialog: { ...(extend ? (extend === true ? state.dialog : extend) : initialized.dialog), script }
+        }))
       },
       getDialogLine() {
         return get().dialog.script.line
@@ -180,6 +191,15 @@ const Store = create(
         if (state === undefined) return this.isFull
         set(() => ({ isFull: state }))
         return state
+      },
+      getLevels() {
+        return get().levels
+      },
+      setLevels(levels: LevelsData[]) {
+        set(() => ({ levels }))
+      },
+      getDialogAll() {
+        return get().dialog
       }
     }),
     {

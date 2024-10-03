@@ -46,7 +46,7 @@ export class HomePage extends SidebarPageAbstract {
 
   public async load() {
     const history = this.ctx.store.getHistoryPage()
-    if (history.length === 0 || (history.length === 1 && history[0] === 'dialog')) {
+    if (!this.ctx.meta.isDev && (history.length === 0 || (history.length === 1 && history[0] === 'dialog'))) {
       const background = new Graphics()
       background.beginFill('#fff')
       background.drawRect(0, 0, this.ctx.width(), this.ctx.height())

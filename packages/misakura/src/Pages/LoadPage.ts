@@ -1,12 +1,12 @@
 import { LayerLevel } from '../types'
-import SidebarPageAbstract from './SidebarPageAbstract'
 import type Context from '../'
+import { LevelsPageAbstract } from './LevelsPageAbstract'
 
-export class LoadPage extends SidebarPageAbstract {
+export class LoadPage extends LevelsPageAbstract {
   public readonly level = LayerLevel.MIDDLE
 
   public constructor(ctx: Context) {
-    super(ctx, 'LOAD', 'Load')
+    super(ctx, 'LOAD')
   }
 
   public async init() {}

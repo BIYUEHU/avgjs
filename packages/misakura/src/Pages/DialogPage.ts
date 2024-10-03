@@ -18,6 +18,47 @@ export class DialogPage extends Page {
 
   private autoMode = false
 
+  private setIconData() {
+    const originalCanvas = this.ctx.app.renderer.extract.canvas(this.ctx.app.stage) as HTMLCanvasElement
+
+    const standardCanvas = document.createElement('canvas')
+    const [standardWidth, standardHeight] = this.ctx.meta.standardAspect
+    standardCanvas.width = standardWidth
+    standardCanvas.height = standardHeight
+    standardCanvas
+      .getContext('2d')
+      ?.drawImage(originalCanvas, 0, 0, standardWidth, standardHeight, 0, 0, standardWidth, standardHeight)
+
+    const resizedCanvas = document.createElement('canvas')
+    const [tempWidth, tempHeight] = [445, 250]
+    resizedCanvas.width = tempWidth
+    resizedCanvas.height = tempHeight
+    resizedCanvas
+      .getContext('2d')
+      ?.drawImage(standardCanvas, 0, 0, standardCanvas.width, standardCanvas.height, 0, 0, tempWidth, tempHeight)
+
+    const croppedCanvas = document.createElement('canvas')
+    croppedCanvas.width = tempHeight
+    croppedCanvas.height = tempHeight
+    croppedCanvas
+      .getContext('2d')
+      ?.drawImage(
+        resizedCanvas,
+        (tempWidth - tempHeight) / 2,
+        (tempHeight - tempHeight) / 2,
+        tempHeight,
+        tempHeight,
+        0,
+        0,
+        tempHeight,
+        tempHeight
+      )
+
+    this.iconData = croppedCanvas.toDataURL('image/png')
+  }
+
+  public iconData = ''
+
   public currentPromise?: Promise<unknown>
 
   public setClickLock = () => {
@@ -63,19 +104,21 @@ export class DialogPage extends Page {
     const buttonLayout = createAutoLayout(
       [
         [
-          'load',
-          () => {
-            this.ctx.pages.load.setActive()
-          }
-        ],
-        [
           'save',
           () => {
+            this.setIconData()
             this.ctx.pages.save.setActive()
           }
         ],
-        ['quickLoad', () => {}],
+        [
+          'load',
+          () => {
+            this.setIconData()
+            this.ctx.pages.load.setActive()
+          }
+        ],
         ['quickSave', () => {}],
+        ['quickLoad', () => {}],
         ['log', () => {}],
         ['skip', () => {}],
         [
@@ -89,6 +132,7 @@ export class DialogPage extends Page {
         [
           'config',
           () => {
+            this.setIconData()
             this.ctx.pages.config.setActive()
           }
         ]
@@ -146,9 +190,9 @@ export class DialogPage extends Page {
         }
       },
       {
-        button: '/gui/dialog/buttons/full.png',
-        hoverButton: '/gui/dialog/buttons/fullHover.png',
-        pressedButton: '/gui/dialog/buttons/fullHover.png'
+        // button: '/gui/dialog/buttons/full.png',
+        // hoverButton: '/gui/dialog/buttons/fullHover.png',
+        // pressedButton: '/gui/dialog/buttons/fullHover.png'
       }
     )
     fullButton.view.position.set(50, 50)
@@ -173,6 +217,7 @@ export class DialogPage extends Page {
       }
       switch (event.key) {
         case 'Escape':
+          this.setIconData()
           if (!this.ctx.pages.pause.getActive()) this.ctx.pages.pause.setActive(true, false)
           break
         case 'Control':

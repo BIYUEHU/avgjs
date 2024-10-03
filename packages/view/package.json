@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Misakura view",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite --mode development --host",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri"

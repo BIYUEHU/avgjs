@@ -8,10 +8,6 @@ import screen from 'screenfull'
 import type { CoreOption } from '../types'
 
 export class Controller {
-  private readonly IS_PORTRAIT = window.innerHeight > window.innerWidth
-
-  private readonly STANDARD_ASPECT = [1920, 1080]
-
   private readonly ctx: Context
 
   public readonly app = new Application()
@@ -21,10 +17,10 @@ export class Controller {
   public readonly layer = new Layer()
 
   private getAspect() {
-    const targetRatio = this.STANDARD_ASPECT[0] / this.STANDARD_ASPECT[1]
+    const targetRatio = this.ctx.meta.standardAspect[0] / this.ctx.meta.standardAspect[1]
     let width = window.innerWidth
     let height = window.innerHeight
-    if (this.IS_PORTRAIT) [width, height] = [height, width]
+    if (this.ctx.meta.isPortrait) [width, height] = [height, width]
     const currentRatio = width / height
 
     if (currentRatio > targetRatio) {
@@ -32,13 +28,12 @@ export class Controller {
     } else {
       height = width / targetRatio
     }
-    if (this.IS_PORTRAIT) [width, height] = [height, width]
+    if (this.ctx.meta.isPortrait) [width, height] = [height, width]
     return { width, height }
   }
   public constructor(ctx: Context) {
     this.ctx = ctx
     if (this.ctx.store.full()) {
-      console.log('full')
       screen.toggle()
     }
 
@@ -50,12 +45,12 @@ export class Controller {
       resolution: 1,
       ...(this.ctx.config.render ?? {})
     })
-    if (this.IS_PORTRAIT) {
+    if (this.ctx.meta.isPortrait) {
       this.app.stage.rotation = Math.PI / 2
       this.app.stage.position.x = width
-      this.app.stage.scale.set(height / this.STANDARD_ASPECT[0], width / this.STANDARD_ASPECT[1])
+      this.app.stage.scale.set(height / this.ctx.meta.standardAspect[0], width / this.ctx.meta.standardAspect[1])
     } else {
-      this.app.stage.scale.set(width / this.STANDARD_ASPECT[0], height / this.STANDARD_ASPECT[1])
+      this.app.stage.scale.set(width / this.ctx.meta.standardAspect[0], height / this.ctx.meta.standardAspect[1])
     }
     this.app.stage.addChild(...this.layer.combine())
 
@@ -107,11 +102,11 @@ export class Controller {
   }
 
   public width() {
-    return this.STANDARD_ASPECT[0]
+    return this.ctx.meta.standardAspect[0]
   }
 
   public height() {
-    return this.STANDARD_ASPECT[1]
+    return this.ctx.meta.standardAspect[1]
   }
 
   public path(type: keyof Required<CoreOption>['basedir'], ...paths: string[]) {

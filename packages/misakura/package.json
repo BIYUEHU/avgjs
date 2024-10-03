@@ -41,6 +41,7 @@
     "pixi.js": "^7.4.2",
     "screenfull": "^6.0.2",
     "solid-js": "^1.8.15",
+    "tsukiko": "^1.4.2",
     "zustand": "^4.5.5"
   },
   "devDependencies": {

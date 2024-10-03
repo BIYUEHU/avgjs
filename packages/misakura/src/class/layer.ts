@@ -17,11 +17,15 @@ export class Layer {
     return [this.before, this.middle, this.after]
   }
 
-  public remove(elements: Elements | Elements[], type: 'all' | LayerLevel = 'all') {
+  public remove(elements: Elements | Elements[] | 'all', type: 'all' | LayerLevel = 'all') {
     if (type === 'all') {
       this.remove(elements, LayerLevel.BEFORE)
       this.remove(elements, LayerLevel.MIDDLE)
       this.remove(elements, LayerLevel.AFTER)
+      return
+    }
+    if (elements === 'all') {
+      this.remove(this.combine()[type].children, type)
       return
     }
     if (Array.isArray(elements)) {
@@ -44,7 +48,8 @@ export class Layer {
   }
 
   public removeAt(index: number, type: LayerLevel = LayerLevel.MIDDLE) {
-    this.combine()[type].removeChildAt(index)
+    const container = this.combine()[type]
+    if (container.children.length > index) container.removeChildAt(index)
   }
 
   public has(element: Elements, type: 'all' | LayerLevel = 'all'): boolean {

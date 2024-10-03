@@ -6,7 +6,6 @@
     "distDir": "../dist",
     "withGlobalTauri": true
   },
-
   "package": {
     "productName": "misakura",
     "version": "0.1.0"
@@ -23,9 +22,14 @@
         "readFile": true,
         "removeFile": true,
         "writeFile": true,
-        "scope": ["$RUNTIME"]
+        "scope": [
+          "$RUNTIME"
+        ]
       },
       "window": {
+        "all": true
+      },
+      "dialog": {
         "all": true
       }
     },
@@ -43,7 +47,10 @@
       "active": true,
       "targets": "all",
       "identifier": "com.hotaru.misakura",
-      "icon": ["icons/misakura.png", "icons/misakura.ico"],
+      "icon": [
+        "icons/misakura.png",
+        "icons/misakura.ico"
+      ],
       "copyright": "© Copyright 2024 Hotaru",
       "category": "WordGame"
     }

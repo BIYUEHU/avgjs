@@ -28,6 +28,9 @@
       },
       "window": {
         "all": true
+      },
+      "dialog": {
+        "all": true
       }
     },
     "windows": [

@@ -16,7 +16,8 @@
     "doc": "pnpm --filter @misakura/docs",
     "dev:doc": "pnpm doc dev",
     "release": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "dev:demo": "nodemon --exec \"pnpm --filter misakura build && pnpm --filter @misakura/demo dev\" --ext ts --watch packages/misakura/src/ --ignore packages/demo/"
+    "dev:demo": "nodemon --exec \"pnpm --filter misakura build && pnpm --filter @misakura/demo exec tauri dev\" --ext ts --watch packages/misakura/src/ --ignore packages/demo/",
+    "dev:demo:vite": "nodemon --exec \"pnpm --filter misakura build && pnpm --filter @misakura/demo dev\" --ext ts --watch packages/misakura/src/ --ignore packages/demo/"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
