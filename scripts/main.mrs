@@ -1,0 +1,432 @@
+# Misakura/AvgJS Engine Game Demo
+# Version: 1.0.0
+# Author: Arimura Sena
+# License: GPL-3.0
+# Repository: https://github.com/biyuehu/avgjs
+
+# Main.mrs - Misakura scritp entry point
+
+# Register global variables
+const soi shiori.png
+const soiL shiori_low.png
+const soiM shiori_mid.png
+const soiC shiori_close.png
+const soiCS shiori_close_smile.png
+const soiS shiori_smile.png
+const soiO shiori_open.png
+const soiOL shiori_open_low.png
+const soiSh shiori_shy.png
+const soiSq shiori_squint.png
+let score 50
+
+# Register characters
+character soi --name '少女' --figure $soi
+character self --name '“我”?'
+character author --name '夏叶的师傅'
+
+# Start game
+
+title 现实的边缘开始模糊...
+title 闪烁的霓虹—— -T red
+title 伴随意识的碎片—— -T orange
+title 世界在头脑中不断重组... -T yellow
+title .
+title ...
+title ......
+title ...
+title .
+title "「世界」连接成功。" -T lightgreen
+
+music 1.mp3
+
+think: 刺眼的阳光令我难以忍受。
+
+background bg.png
+
+: 我睁开了眼——
+: 我意识到我似乎我一直都在这站着。
+: 我向四周望去，没有所谓陌生的天花板，视野格外广阔。
+: 等下...
+
+show soi
+
+: 不知什么时候，在我面前出现了一位和服少女。
+: 浅蓝色的瞳孔，和一副看起来既可爱又显冷淡的样子。
+: 少女目不转睛地盯着我。
+: 某种本能让我产生开口说些什么的欲望，以试图解答各种眼前的疑惑。
+: 正当我准备开口时，突然发现。
+: 我对自己的名字有点模糊了...
+: 我，是“我”吗？我在心里问着自己。
+
+show soi -F $soiSq
+
+voice 1.wav
+soi: 有什么疑惑吗？
+# 何か疑問はありますか？
+
+think: 少女向满脸疑惑的我轻声开口道。
+self: 请问...你是？
+voice 2.wav
+soi: 啊...抱歉，忘记做自我介绍了。
+# あっ...申し訳ありません。自己紹介をするのを忘れてしまいました。
+
+character soi --name '诗织'
+
+show soi -F $soiSh
+
+voice 3.wav
+soi: 初次见面，我叫夏叶诗织。
+# 初めまして、夏葉詩織と申します。
+self: 你好，我是...
+think: 我不断努力地从脑海中寻找名字的信息。
+title "Uncaught ReferenceError： name is not defined" -B red -T black
+: ...？
+: 搜寻名字的过程中突然出现了一串费解的文字在我眼前。
+
+show soi -F $soi
+
+voice 4.wav
+soi: 看来情况有点乱啊...那就让我一一回答下你的疑惑吧。
+# 状況が少し混乱しているようですね...では、あなたの疑問に一つずつお答えしましょう。
+think: 夏叶看着不知所措的我再次说道。
+voice 5.wav
+soi: 这里是由我的师傅创造出的世界，而我是这个世界的管理者之一。
+# ここは私の師が創造した世界で、私はこの世界の管理者の一人です。
+self: 之一？
+voice 6.wav
+soi: 嗯...师傅是这样跟我说的，可能是在挖坑吧。
+# うーん...師がそう言っていたのですが、きっと伏線を張っているのでしょうね。
+voice 7.wav
+: 至于你自己，当我尝试使用 typeof 操作符后发现你并非 Character 及其子类的实例——
+# あなた自身については、typeofオペレータを使用してみたところ、Characterやそのサブクラスのインスタンスではないことが分かりました——
+voice 8.wav
+: 而是 Player 的实例，这说明你并非这个世界的角色或路人，在你这一实例的 prototype 上还定义了一些 setTime 之类与时间相关的方法。
+# Playerのインスタンスであることが判明しました。これは、あなたがこの世界のキャラクターや通行人ではないことを意味します。さらに、あなたのインスタンスのprototypeには、setTimeなどの時間に関連するメソッドが定義されています。
+self: 啊？这是什么意思？
+show soi -F $soiL
+voice 9.wav
+soi: 怎么说呢，我也是第一次见到这种实例，之前只是听闻过。
+# どう言えばいいでしょうか...私もこのようなインスタンスを見るのは初めてで、以前に噂を聞いただけです。
+voice 10.wav
+: 总之你有操作这个世界时间的能力，在我所知的 Constructor 中甚至是我自己都没有被定义与时间相关的方法——
+# 要するに、あなたはこの世界の時間を操作する能力を持っているのです。私が知っているConstructorの中で、私自身さえも時間に関連するメソッドは定義されていません——
+voice 11.wav
+: 据我推测，你并不属于这个世界，而是来自第四维度的人，Player 实例是你寄宿在这个世界的一种方式。
+# 私の推測では、あなたはこの世界に属していない、第四次元からやってきた方で、Playerインスタンスはあなたがこの世界に宿る一つの方法なのでしょう。
+self: 啊？？？那为什么我不知道自己的名字也没有这方面的记忆？
+show soi -F $soiM
+voice 12.wav
+soi: 嗯...你不知道自己名字应该是师傅不知道怎么取名，所以没有为 Player 实例定义 name 属性吧，至于剩下的，可能得问他本人呢，当然也说不定是程序 bug 哦。
+# うーん...あなたが自分の名前を知らないのは、恐らく師が名前の付け方が分からなかったので、Playerインスタンスにnameプロパティを定義しなかったのでしょう。残りの部分については、師本人に聞くしかないかもしれません。もちろん、プログラムのバグかもしれませんけどね。
+voice 13.wav
+: 总之，要不这样吧...请你现在给自己想一个称呼——
+# とりあえず、こうしましょう...今すぐ自分で呼び名を考えてみてください——
+think: 叫什么好呢？
+
+prompt name
+
+character self --name $name
+
+show soi -F $soiCS
+
+voice 14.wav
+soi: 你好$name，以后请多多关照哦
+# こんにちは、君さん。これからよろしくお願いしますね。
+self: 初次见面。对了，你一直说的师傅是...？
+
+show soi -F $soiS
+
+voice 15.wav
+soi: 如前面所说，师傅他创造了这个世界，同时也创造出了我的一切，给予了我生命和名字，是我非常非常尊敬的人，而他本身也不属于这个世界，跟你一样都来自第四维度。
+# 先ほど申し上げたように、師はこの世界を創造し、私の全てを作り出し、私に生命と名前を与えてくださいました。私が非常に尊敬している方です。そして、師自身もこの世界には属しておらず、あなたと同じく第四次元から来ています。
+voice 16.wav
+: 顺带一提，师傅给我的设定是带有反差萌并且充满智慧的三无少女，因为他似乎很喜欢这一类角色...不过我觉得也有他懒得给我画表情这一原因在里面。
+# ちなみに、師は私を「ギャップ萌えがあり、知性に満ちた無表情少女」として設定しました。この種のキャラクターが好きなようです...でも、表情を描くのが面倒だったというのも理由の一つだと思います。
+
+options choice 我好像想起什么了 那你话是不是有点多了？
+
+if "$choice == 1" "voice 17.wav"
+if "$choice == 1" "say 请不要在意这些细节！ -S soi"
+# そんな細かいことは気にしないでください！
+if "$choice == 1" "calc score $score-1"
+
+if "$choice == 0" "voice 18.wav"
+if "$choice == 0" "say 是指？ -S soi"
+# どういうことでしょうか？
+if "$choice == 0" "say 可能是几分钟前，又或者更早，我点开了一个叫做「Misakura」的程序，好像是什么视觉小说制作引擎？ -S self"
+if "$choice == 0" "voice 19.wav"
+if "$choice == 0" "say 原来如此...世界之外的存在是这样称呼这个世界的啊 -S soi"
+# なるほど...世界の外の存在がこの世界をそう呼んでいるんですね。
+
+think: 紧接着，夏叶的旁边出现了一个人。
+
+show soi -F $soi
+
+voice 20.wav
+soi: 来得正好。$name，在我旁边的这位就是我的师傅。
+# ちょうどいいところに。君さん、私の隣にいるのが私の師です。
+author: ...
+voice 21.wav
+soi: 喂喂，要不说点什么吧...？
+# ねえねえ、何か言ってみませんか...？
+author: ...
+show soi -F $soiO
+voice 22.wav
+soi: 抱歉，师傅他有点不善言谈，接下来就由我替他给你进一步解释吧——
+# 申し訳ありません。師はあまり話すのが得意ではないので、これからは私が師に代わって詳しく説明させていただきますね——
+think: 夏叶接过了师傅给他的稿子，距离有点远，没能看清上面的字。
+show soi -F $soi
+voice 23.wav
+soi: 我尽量按照师傅的原意转述，有些地方会有点理解困难我会尽量补充说明，还请见谅。
+# 師の意図をできるだけ忠実に伝えようと思います。理解しづらい部分があれば補足説明しますので、ご了承ください。
+voice 24.wav
+: 咳咳。
+# えへん。
+voice 25.wav
+: 如你所见，在第四维度，这个世界的一切都被一个称之为「Misakura」的程序所运行着，世界的创造者...确切的说是这个程序的制作者是我的师傅。
+# ご覧の通り、第四次元では、この世界の全てが「Misakura」というプログラムによって運行されています。世界の創造者...正確に言えば、このプログラムの製作者が私の師なのです。
+
+calc device "navigator.userAgent.toLowerCase().includes(`windows`) && `电脑` || `手机`"
+self: 说起来，我确实在我的$device上打开了这样一个程序，然后就...眼前一黑了？
+show soi -F $soiSh
+voice 26.wav
+soi: 在你们的世界，这个世界被统一称之为视觉小说或者说美少女游戏...？
+self: 确实是这么回事，我记得我玩过许多的美少女游戏——
+show soi -F $soiM
+: 那是由文字、音乐、图像巧妙结合的一种独特载体，每一个美少女游戏对我来说都是一个故事——
+: 尽管有些故事看似平凡又枯燥，但却依旧动人心弦，足以铭记良久的眼泪收割情景。
+show soi -F $soi
+voice 27.wav
+soi: 嗯...身为这个世界之中的我并不是很能体会到这种心情...能说说为什么喜欢这样的世界呢？
+self: 无论最终是喜是悲，这里都有太多美好和感动，或许是我过于厌倦真正枯燥无味的现实了吧...
+voice 28.wav
+soi: 对你们而言，这样的世界是虚拟的吗？如果是的话...那还有什么意义呢？
+
+options choice 世界的意义在于世界之外 不是虚拟的！一定在某个遥远的地方真实存在！
+if "$choice == 0" "show soi -F $soiL"
+if "$choice == 0" "voice 29.wav"
+if "$choice == 0" "say 净说些难懂的话欺负我！ -S soi"
+if "$choice == 1" "voice 30.wav"
+if "$choice == 1" "say 这样啊...我明白呢。 -S soi"
+
+show soi -F $soiL
+voice 31.wav
+soi: 那么对你们而言，这样的世界或者说...故事。在结束之后是否会有失落感呢？
+# では、あなたがたにとって、このような世界、つまり...物語が終わった後、喪失感のようなものを感じるのでしょうか？
+self: 肯定会的啊——
+: 就像我刚才说的那样，有些故事是 bad end，这会让人感到意难平，即便是一些留白的或者美好的 good end，也不免会让人产生一种空虚感，似乎叫什么「完结综合征」？
+: 不同的人会用不同的方式去回味故事中的点点滴滴。有些人会写感言，有些人会循环播放游戏的音乐、会把自己的账号头像、壁纸、背景甚至是签名都换成游戏中的某一角色——
+: 当然，我想也会有选择沉默将这份感情藏于心底的人吧。
+show soi -F $soiM
+voice 32.wav
+soi: 看来你对这样的虚拟世界感到满足呢。
+# このような仮想世界に満足しているようですね。
+self: 是啊，不过...当空虚感经历地太多，我就会想着自己也要去做些什么的念头——
+voice 33.wav
+soi: 具体是指？
+# 具体的にはどういうことでしょうか？
+self: 比如说成为一名脚本家，或者一名作曲家制作音乐感动他人，又或者成为一名画师通过画笔绘制出令人喜爱的美少女。
+show soi -F $soiOL
+voice 34.wav
+soi: 脚..本..家？
+# シナ...リオ...ライター？
+self: 就是指故事的编写者，类似于「编剧」吧？
+show soi -F $soiS
+voice 35.wav
+soi: 呃，是吗...还以为是写脚本文件的程序员呢...能否告诉我你最喜欢的脚本家呢？
+# あ、そうですか...スクリプトを書くプログラマーかと思いました...あなたの好きなシナリオライターを教えていただけますか？
+self: 那当然是——
+
+options scripter "大魔王-麻技准" "爱的战士-虚渊玄" "型月之父-奈须蘑菇" "冬日回忆-片冈智" "虐妹高手-ルクル" "幸福物语-SCA自" "催眠日常-漆原雪人" "暖人心田-新岛夕" "慈悲为怀-濑户口廉也" "销量毒药-田中罗密欧" "胃痛无穷-丸户史明" "时空轮回-打越钢太郎" 其它
+if "$scripter == 12" "prompt temp"
+
+show soi -F $soiM
+if "$scripter == 0" "voice 36_0.wav"
+if "$scripter == 0" "say 原来是那位写出名为「CLANNAD」的KEY社三部曲之一和名为「LittleBusters!」的友情圣经的大魔王啊。 -S soi"
+# 「CLANNAD」や「リトルバスターズ！」を書いた、KEYの大魔王ですね。
+if "$scripter == 1" "voice 36_1.wav"
+if "$scripter == 1" "say 和我签订契约，成为魔法少女吧！ -S soi"
+# 僕と契約して魔法少女になってよ！
+if "$scripter == 2" "voice 36_2.wav"
+if "$scripter == 2" "say 试问。你就是我的御主吗？ -S soi"
+# 問おう。貴方が私のマスターか？
+if "$scripter == 3" "voice 36_3.wav"
+if "$scripter == 3" "say 片冈智老师的「Narcissu」真的是一部既意难平又充满希望的作品啊... -S soi"
+# 片冈智先生の「ナルキッソス」は、切なくも希望に満ちた作品ですね...
+if "$scripter == 4" "voice 36_4.wav"
+if "$scripter == 4" "say ルクル老师的三部曲每一部都会有十分令人难以抉择的选项... -S soi"
+# ルクル先生の三部作は、どれも難しい選択に迫られますね...
+if "$scripter == 5" "voice 36_5.wav"
+if "$scripter == 5" "say 你是空气力学少女还是樱之艺术家？...亦或归来的小燕子？ -S soi"
+# あなたは空力少女？桜のアーティスト？それとも帰ってきた燕？
+if "$scripter == 6" "voice 36_6.wav"
+if "$scripter == 6" "say 祈祷你今后的人生能有名为「幸福」的魔法相伴哦... -S soi"
+# あなたの人生に「幸せ」という魔法が伴いますように...
+if "$scripter == 7" "voice 36_7.wav"
+if "$scripter == 7" "say 心之声一定传达到了哦。 -S soi"
+# 心の声はきっと届いていますよ。
+if "$scripter == 8" "voice 36_8.wav"
+if "$scripter == 8" "say 向这个狗娘养的世界，献出我全部的爱！ -S soi"
+# この、くそったれな世界に、精一杯愛をこめて。
+if "$scripter == 9" "voice 36_9.wav"
+if "$scripter == 9" "say 这里是群青学院广播部，请问还有人活着吗？ -S soi"
+# こちら群青学園放送部。生存者はいますか？
+if "$scripter == 10" "voice 36_10.wav"
+if "$scripter == 10" "say 冬天来了——那是悲喜交加、永远的瞬间。 -S soi"
+# 冬が来る——嬉しくて切ない、永遠の一瞬が
+if "$scripter == 11" "voice 36_11.wav"
+if "$scripter == 11" "say 你知道阿基米德原理吗？ -S soi"
+# アルキメデスの原理を知っていますか？
+if "$scripter == 12" "voice 36.wav"
+if "$scripter == 12" "say 我知道了。 -S soi"
+# 分かりました。
+self: 简而言之就是想要自己制作一款美少女游戏，让其它的观众也能因自己笔下的角色流泪或者产生共鸣！
+: 没错，这也正是我打开「Misakura」的原因。
+voice 37.wav
+soi: 那么说回正题——
+# では、本題に戻りましょう——
+
+background demo1.png
+show soi -F $soi
+
+voice 38.wav
+: 「Misakura」基于 PIXIJS、Tauri 与 TypeScript 开发，致力于为用户提供一个简单、易用、功能丰富的编辑环境与游戏框架，让用户能够轻松制作出一个独属于自己的作品。
+# 「Misakura」はPIXIJS、Tauri、TypeScriptをベースに開発されており、ユーザーに簡単で使いやすく、機能豊富な編集環境とゲームフレームワークを提供することを目指しています。これにより、ユーザーは自分だけのオリジナル作品を簡単に作成できるのです。
+voice 39.wav
+: 前端底层使用基于真实 DOM 操作的 SolidJS 框架，桌面端使用基于 Rust 开发的 Tauri 框架，保证了高性能与流畅的渲染效果——
+# フロントエンドの基盤には実際のDOMを操作するソリッドジェーエスフレームワークを、デスクトップ版にはラストで開発されたタウリフレームワークを使用しており、高性能で滑らかなレンダリング効果を保証しています。
+
+background demo2.png
+show soi -F $soiL
+voice 40.wav
+: SolidJS 从根本实现上便碾压一众基于 Vue / React 框架的视觉小说引擎，而 Tauri 从性能与打包大小上双重碾压肮脏的 Electron 等框架，打包后的大小与实际资源的大小相差无几，程序本身的体积仅仅只有几 MB。
+# ソリッドジェーエスは根本的な実装において、ビューやリアクトベースのビジュアルノベルエンジンを圧倒しています。一方、タウリはパフォーマンスとパッケージサイズの両面で、エレクトロンのような汚いフレームワークを圧倒しています。パッケージ後のサイズは実際のリソースとほぼ同じで、プログラム自体はわずか数メガバイトです。
+voice 41.wav
+: 话说，知道为什么 SolidJS 性能能超越 Vue / React / Angular 这类框架吗？
+# ところで、なぜソリッドジェーエスの性能がビューやリアクト、アンギュラーのようなフレームワークを超えられるか、ご存知ですか？
+
+options choice "因为 SolidJS 使用 WebAssembly 开发" "因为 SolidJS 用 RUST 写的" "因为这些框架都是基于虚拟 DOM"
+
+if "$choice == 2" "calc score $score+1"
+if "$choice == 2" "show soi -F $soiCS"
+if "$choice == 2" "voice bingo.wav"
+if "$choice == 2" "say BINGO！ -S soi"
+if "$choice != 2" "calc score $score-1"
+if "$choice != 2" "show soi -F $soiSq"
+if "$choice != 2" "voice 42.wav"
+if "$choice != 2" "say 回答错误噢，都说了是因为它使用真实DOM操作。 -S soi"
+# 残念ながら不正解です。先ほど申し上げたように、実際のDOM操作を使用しているからなのです。
+
+background demo3.png
+show soi -F $soiL
+voice 43.wav
+: 那么为何 Tauri 能如此轻量了？
+# では、なぜタウリがこれほど軽量なのでしょうか？
+
+options choice "Tauri 使用 Rust 开发" "Tauri 没有内置笨重的 Chromium 内核" "Tauri 使用 Node.js 和 Chromium 开发"
+
+if "$choice != 2" "calc score $score+1"
+if "$choice != 2" "show soi -F $soiCS"
+if "$choice != 2" "voice bingo.wav"
+if "$choice != 2" "say BINGO！ -S soi"
+if "$choice == 2" "calc score $score-1"
+if "$choice == 2" "show soi -F $soiSq"
+if "$choice == 2" "voice 44.wav"
+if "$choice == 2" "say 回答错误，其它两个都是对的哦。 -S soi"
+# 不正解です。他の二つが正解なのですよ。
+
+show soi -F $soiM
+voice 45.wav
+: 此外，Misakura 同时支持原生 Web 应用、桌面应用、移动应用等多个平台。
+# さらに、ミサクラはネイティブウェブアプリ、デスクトップアプリ、モバイルアプリなど、複数のプラットフォームに対応しています。
+voice 46.wav
+: 理论上支持所有的桌面端平台，但仅实测了 Windows 系统。对于移动端，已支持 Android 系统。也可以通过托管服务搭建网页快速体验游玩。
+# 理論上はすべてのデスクトップ環境に対応していますが、実際にテストしたのはウィンドウズシステムのみです。モバイル端末では、アンドロイドシステムに対応しています。ホスティングサービスを通じてウェブページを構築し、すぐに体験プレイすることも可能です。
+
+background demo4.png
+show soi -F $soi
+voice 47.wav
+: 既支持自定义脚本文件，也支持引用 JavaScript 文件实现各种复杂逻辑，以及高定制度的 JsonUI。
+# カスタムスクリプトとジャバスクリプトファイルの使用に対応し、高度にカスタマイズ可能なジェイソンユーアイも提供しています。
+voice 48.wav
+: Misakura 提供的是一套简单的剧情对话控制脚本，将其称之为 Misakura Rust Script，简称 MRS，虽然带有 Rust 但其解释器部分为纯 TypeScript 编写，取该名仅仅是因为 MJS 不可取。
+# ミサクラが提供するのは、ミサクラ・ラスト・スクリプト（略称MRS）という簡単な対話制御スクリプトです。ラストとありますが、インタープリターは純粋なタイプスクリプトで書かれています。
+show soi -F $soiM
+voice 49.wav
+: MRS 文件的格式参考了 Windows 系统的 BAT 文件以及游戏 Minecraft 的 mcfunction 文件，它们都是一行一行读取命令执行相关内容的批处理文件。
+# エムアールエスの形式は、ウィンドウズのバットファイルやマインクラフトのエムシーファンクションを参考にしています。これらは全て、コマンドを一行ずつ実行するバッチファイルです。
+voice 50.wav
+: 不过，MRS 在现有的命令中不仅支持简单的角色对话、标题、背景、立绘、表情、音效、音乐控制，和选择肢、输入框这些常见的视觉小说功能——
+# エムアールエスは、一般的なビジュアルノベルの機能だけでなく——
+voice 51.wav
+: 也支持变量定义与赋值以及判断、跳转语句和与或非、数学运算等，甚至于可以直接调用编写的 JavaScript 文件获取当前对话的上下文实例并对其进行各种操作以实现更复杂的效果。
+# 変数定義や条件分岐、ジャンプ文なども対応しています。ジャバスクリプトファイルを直接呼び出し、より複雑な効果も実現できます。
+voice 52.wav
+: 值得一提的是，MRS 中的变量都是隐式静态的，这意味着——
+
+options choice "变量需要在声明时指定类型并且之后无法改变类型" "变量无需在声明时指定类型并且之后无法改变类型" "变量需要在声明时指定类型并且之后无法改制值"
+
+if "$choice == 1" "calc score $score+1"
+if "$choice == 1" "show soi -F $soiCS"
+if "$choice == 1" "voice bingo.wav"
+if "$choice == 1" "say BINGO！ -S soi"
+if "$choice != 1" "calc score $score-1"
+if "$choice != 1" "show soi -F $soiSq"
+if "$choice != 1" "voice 53.wav"
+if "$choice != 1" "say 回答错误噢，静态类型意味着类型不可改变，隐式意味着会自动推断出类型无需显式指明 -S soi"
+# 間違いです。静的型付けは型が変更できないこと、暗黙的は型を明示せず自動推論されることを意味します。
+
+background demo1.png
+show soi -F $soiL
+
+voice 54.wav
+: 至于刚才说的 JsonUI，目前正在开发中并未上线，因此你现在看到的 Misakura 的 UI 部分非常简洁。JsonUI 的理念是让引擎用户尽可能在无需改动源码的情况下通过 JSON 格式来高度自定义游戏的界面以及内容。
+# 先ほどのジェイソンユーアイは開発中で、まだリリースされていません。ですので、現在のミサクラのユーアイはとてもシンプルです。ジェイソンユーアイは、ソースコードを変更せずにゲームの外観やコンテンツをカスタマイズできるようにする理念です。
+voice 55.wav
+: 怎么说了，它的设计也参考了游戏 Minecraft 基岩版的 UI 系统，不过那个东西有点过于复杂，而 Misakura 的 JsonUI 会在追求高度自定义同时保持语法格式简洁明了。
+# マインクラフトのベッドロック版のユーアイを参考にしていますが、それは少し複雑すぎます。ミサクラのジェイソンユーアイは、カスタマイズ性を保ちつつ、シンプルな文法を目指しています。
+
+show soi -F $soiM
+
+voice 56.wav
+: 在开发模式下运行脚本时，Misakura 会通过 WebWorker 技术多线程快速地预检查脚本中可能出现的各种错误，如资源文件路径有误、指令语法错误、找不到目标内容等。
+# 開発モードでは、ウェブワーカー技術を使用して、スクリプトの潜在的なエラーを素早くチェックします。
+
+show soi -F $soiS
+
+voice 57.wav
+: Misakura 最终目的皆为提供一种简单易懂的方式，让各位在座的有梦的脚本家畅所欲言般制作出自己的美少女游戏——
+# ミサクラの目的は、皆様が思い通りに美少女ゲームを作れるよう、シンプルな方法を提供することです。
+voice 58.wav
+: 在将来，Misakura 也将开发出一整套可视化编辑的图形化界面，用于方便制作与测试游戏。
+# 将来的には、ゲーム制作とテストを容易にする、ビジュアル編集のインターフェースも開発予定です。
+
+background bg.png
+
+show soi -F $soi
+
+voice 59.wav
+: 由于种种原因，Misakura 的文档暂时还没能完成，项目也仍在努力开发中。
+# 諸事情により、ミサクラのドキュメントはまだ完成していません。プロジェクトも開発中です
+voice 60.wav
+: 同时，这个 DEMO 演示的剧情也没有规划好，所以说故事就先到这里了——
+# また、このデモのストーリーもまだ十分に計画されていないので、ここで一旦終わりにしたいと思います。
+voice 61.wav
+: 最后，如果喜欢这个项目的话请一定要来 GitHub 上点一个 star 哦。
+# 最後に、このプロジェクトを気に入っていただけたら、ギットハブでスターを付けてくださいね
+show soi -F $soiS
+voice 62.wav
+: 也欢迎各个有能力的开发者参与到 Misakura 的各项开发中来，期待你的加入与 PR。
+# 有能な開発者の皆様のご参加もお待ちしております。あなたのプルリクエストを楽しみにしています。
+voice 63.wav
+: 剩下的，就敬请期待 Misakura 正式发布吧！
+# あとは、ミサクラの正式リリースをお楽しみに！
+voice 64.wav
+: 那么，bye~
+# では、さようなら〜
+
+title " " 1.5
+
+if "$score >= 50" "apply good_end"
+if "$score < 50" "apply bad_end"
+
