@@ -1,9 +1,12 @@
+use crate::as_crypt;
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use std::collections::HashMap;
 use std::env;
 use std::fs::{self, File};
 use std::io::{self, Read, Write};
 use std::path::PathBuf;
+
+const LEVELS_CRYPTO_KEY: &str = "きみがこの世界に生まれてきてくれて、本当に、よかった";
 
 struct MisakuraDirectory {
     base_directory: PathBuf,
@@ -54,7 +57,7 @@ pub fn set_levels(name: &str, png_data: &str, dat_content: &str) -> Result<Strin
 
     let mut dat_file = File::create(&dat_path).map_err(|e| e.to_string())?;
     dat_file
-        .write_all(dat_content.as_bytes())
+        .write_all(as_crypt::encrypt(dat_content, LEVELS_CRYPTO_KEY).as_bytes())
         .map_err(|e| e.to_string())?;
 
     Ok("".to_string())
@@ -86,7 +89,11 @@ pub fn get_all_levels() -> Result<Vec<(String, String, String)>, String> {
                     let mut contents = String::new();
                     file.read_to_string(&mut contents)
                         .map_err(|e| e.to_string())?;
-                    dat_files.insert(file_stem, contents);
+                    dat_files.insert(
+                        file_stem,
+                        as_crypt::decrypt(contents.as_str(), LEVELS_CRYPTO_KEY)
+                            .map_err(|e| e.to_string())?,
+                    );
                 }
             }
         }

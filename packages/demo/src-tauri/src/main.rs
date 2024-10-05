@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod as_crypt;
 mod levels;
 
 use levels::{get_all_levels, get_base_directory, set_levels};
